@@ -6,7 +6,7 @@ public class Cashier {
     private String checkInDate ;
     private String categoryName ;
     private double categoryValue ;
-    private int categoryQty ;
+    private int categoryQty ; // 2
 
     public Cashier (){
 
