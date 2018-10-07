@@ -1,0 +1,568 @@
+package com.tamimi.sundos.restpos;
+
+import android.annotation.SuppressLint;
+import android.app.Dialog;
+import android.content.Intent;
+import android.os.Bundle;
+import android.view.Gravity;
+import android.view.MotionEvent;
+import android.view.View;
+import android.view.Window;
+import android.widget.Button;
+import android.view.View.OnClickListener;
+import android.view.View.OnTouchListener;
+import android.widget.EditText;
+import android.widget.TableLayout;
+import android.widget.TableRow;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import com.tamimi.sundos.restpos.BackOffice.BackOfficeActivity;
+import com.tamimi.sundos.restpos.Models.Cashier;
+import com.tamimi.sundos.restpos.Models.Money;
+import com.tamimi.sundos.restpos.Models.Pay;
+
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
+
+public class Main extends AppCompatActivity {
+
+    Button back, exit;
+    Button takeAway, dineIn;
+    TextView userName , date , cashierIn, cashierOut, payIn, payOut, timeCard, safeMode, cashDrawer;
+
+    DatabaseHandler mDHandler;
+    Dialog dialog;
+    String today;
+    TextView focusedTextView;
+    TableLayout categories;
+
+    @SuppressLint("ClickableViewAccessibility")
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        this.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        setContentView(R.layout.main);
+
+        mDHandler = new DatabaseHandler(Main.this);
+
+        focusedTextView = null;
+        initialize();
+
+        userName.setText(Settings.user_name);
+
+        Date currentTimeAndDate = Calendar.getInstance().getTime();
+        SimpleDateFormat df = new SimpleDateFormat("dd-MM-yyyy");
+        today = df.format(currentTimeAndDate);
+        date.setText(today);
+
+    }
+
+    OnClickListener onClickListener = new OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            switch (view.getId()) {
+                case R.id.back:
+//                    showDialog();
+                    Intent intent0 = new Intent(Main.this, BackOfficeActivity.class);
+                    startActivity(intent0);
+                    break;
+
+                case R.id.exit:
+                    finish();
+                    System.exit(0);
+                    break;
+
+                case R.id.tack_away:
+                    Intent intent1 = new Intent(Main.this, Order.class);
+                    startActivity(intent1);
+                    break;
+
+                case R.id.dine_in:
+                    Intent intent = new Intent(Main.this, DineIn.class);
+                    startActivity(intent);
+                    break;
+
+                case R.id.cashier_in:
+                    showCashierInDialog();
+                    break;
+
+                case R.id.cashier_out:
+                    showCashierOutDialog();
+                    break;
+
+                case R.id.pay_in:
+                    showPayInDialog(0);
+                    break;
+
+                case R.id.pay_out:
+                    showPayInDialog(1);
+                    break;
+
+                case R.id.time_card:
+                    showTimeCardDialog();
+                    break;
+
+                case R.id.safe_mode:
+                    showSafeModeDialog();
+                    break;
+
+                case R.id.cash_drawer:
+                    showCashDrawerDialog();
+                    break;
+            }
+        }
+    };
+
+    OnTouchListener onTouchListener = new OnTouchListener() {
+        @Override
+        public boolean onTouch(View view, MotionEvent motionEvent) {
+            switch (view.getId()) {
+                case R.id.back:
+                    if (motionEvent.getAction() == MotionEvent.ACTION_UP) {
+                        back.setBackgroundColor(ContextCompat.getColor(getApplicationContext(), R.color.colorPrimary));
+                    } else if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
+                        back.setBackgroundColor(ContextCompat.getColor(getApplicationContext(), R.color.colorPrimaryLight));
+                    }
+                    break;
+
+                case R.id.exit:
+                    if (motionEvent.getAction() == MotionEvent.ACTION_UP) {
+                        exit.setBackgroundColor(ContextCompat.getColor(getApplicationContext(), R.color.exit));
+                    } else if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
+                        exit.setBackgroundColor(ContextCompat.getColor(getApplicationContext(), R.color.exit_hover));
+                    }
+                    break;
+
+                case R.id.tack_away:
+                    if (motionEvent.getAction() == MotionEvent.ACTION_UP) {
+                        takeAway.setBackgroundResource(R.drawable.take_away);
+                    } else if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
+                        takeAway.setBackgroundResource(R.drawable.take_away_hover);
+                    }
+                    break;
+
+                case R.id.dine_in:
+                    if (motionEvent.getAction() == MotionEvent.ACTION_UP) {
+                        dineIn.setBackgroundResource(R.drawable.dine_in);
+                    } else if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
+                        dineIn.setBackgroundResource(R.drawable.dine_in_hover);
+                    }
+                    break;
+            }
+            return false;
+        }
+    };
+
+    @SuppressLint("ClickableViewAccessibility")
+    void showCashierInDialog() {
+        dialog = new Dialog(Main.this);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setCancelable(false);
+        dialog.setContentView(R.layout.cashier_in_dialog);
+        dialog.setCanceledOnTouchOutside(true);
+
+        Window window = dialog.getWindow();
+        window.setLayout(920, 470);
+
+        final ArrayList<Money> money = mDHandler.getAllMoneyCategory();
+
+        categories = (TableLayout) dialog.findViewById(R.id.money_categories);
+        final TextView mainTotal = (TextView) dialog.findViewById(R.id.mainTotal);
+        final TextView user = (TextView) dialog.findViewById(R.id.user);
+        final TextView date = (TextView) dialog.findViewById(R.id.date);
+        user.setText("Sundos Tamimi");
+
+        date.setText(today);
+
+        Button b1, b2, b3, b4, b5, b6, b7, b8, b9, b0 , clear , save;
+        b1 = (Button) dialog.findViewById(R.id.b1);
+        b2 = (Button) dialog.findViewById(R.id.b2);
+        b3 = (Button) dialog.findViewById(R.id.b3);
+        b4 = (Button) dialog.findViewById(R.id.b4);
+        b5 = (Button) dialog.findViewById(R.id.b5);
+        b6 = (Button) dialog.findViewById(R.id.b6);
+        b7 = (Button) dialog.findViewById(R.id.b7);
+        b8 = (Button) dialog.findViewById(R.id.b8);
+        b9 = (Button) dialog.findViewById(R.id.b9);
+        b0 = (Button) dialog.findViewById(R.id.b0);
+        clear = (Button) dialog.findViewById(R.id.b_clear);
+        save = (Button) dialog.findViewById(R.id.save);
+
+        b1.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (focusedTextView != null)
+                    focusedTextView.setText(focusedTextView.getText().toString() + "1");
+            }
+        });
+        b2.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (focusedTextView != null)
+                    focusedTextView.setText(focusedTextView.getText().toString() + "2");
+            }
+        });
+        b3.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (focusedTextView != null)
+                    focusedTextView.setText(focusedTextView.getText().toString() + "3");
+            }
+        });
+        b4.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (focusedTextView != null)
+                    focusedTextView.setText(focusedTextView.getText().toString() + "4");
+            }
+        });
+        b5.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (focusedTextView != null)
+                    focusedTextView.setText(focusedTextView.getText().toString() + "5");
+            }
+        });
+        b6.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (focusedTextView != null)
+                    focusedTextView.setText(focusedTextView.getText().toString() + "6");
+            }
+        });
+        b7.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (focusedTextView != null)
+                    focusedTextView.setText(focusedTextView.getText().toString() + "7");
+            }
+        });
+        b8.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (focusedTextView != null)
+                    focusedTextView.setText(focusedTextView.getText().toString() + "8");
+            }
+        });
+        b9.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (focusedTextView != null)
+                    focusedTextView.setText(focusedTextView.getText().toString() + "9");
+            }
+        });
+        b0.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (focusedTextView != null)
+                    focusedTextView.setText(focusedTextView.getText().toString() + "0");
+            }
+        });
+        clear.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                for (int i = 0; i < money.size(); i++) {
+                    TableRow tableRow = (TableRow) categories.getChildAt(i);
+                    TextView text1 = (TextView) tableRow.getChildAt(1);
+                    TextView text2 = (TextView) tableRow.getChildAt(2);
+                    text1.setText("1");
+                    text2.setText(money.get(i).getCatValue()+"");
+                    mainTotal.setText("0.000");
+                }
+            }
+        });
+        save.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                ArrayList<Cashier> cashier = new ArrayList<>();
+                for (int i = 0; i < money.size(); i++) {
+                    Cashier cash = new Cashier();
+                    TableRow tableRow = (TableRow) categories.getChildAt(i);
+                    TextView text = (TextView) tableRow.getChildAt(0);
+                    TextView text1 = (TextView) tableRow.getChildAt(1);
+
+                    cash.setCashierName(user.getText().toString());
+                    cash.setCheckInDate(date.getText().toString());
+                    cash.setCategoryName(text.getText().toString());
+                    cash.setCategoryValue(Double.parseDouble(text.getTag().toString()));
+                    cash.setCategoryQty(Integer.parseInt(text1.getText().toString()));
+
+                    cashier.add(cash);
+                }
+                mDHandler.addCashierInOut(cashier);
+            }
+        });
+
+
+        for (int i = 0; i < money.size(); i++) {
+            final int position = i;
+            TableRow row = new TableRow(Main.this);
+            TableLayout.LayoutParams lp = new TableLayout.LayoutParams(TableLayout.LayoutParams.MATCH_PARENT, TableLayout.LayoutParams.WRAP_CONTENT);
+            lp.setMargins(0, 10, 0, 5);
+            row.setLayoutParams(lp);
+
+            TextView textView = new TextView(Main.this);
+            textView.setText(money.get(i).getCatName() + "   ");
+            textView.setTag(money.get(i).getCatValue());
+            textView.setGravity(Gravity.CENTER);
+            textView.setTextColor(getResources().getColor(R.color.text_color));
+
+            final TextView textView1 = new TextView(Main.this);
+            textView1.setBackgroundColor(getResources().getColor(R.color.layer1));
+            textView1.setHeight(26);
+            textView1.setPadding(10, 0, 0, 0);
+            textView1.setTextColor(getResources().getColor(R.color.text_color));
+            textView1.setText("1");
+            textView1.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if (focusedTextView != null) {
+                        if (focusedTextView.getText().toString().equals("")) {
+                            focusedTextView.setText("1");
+                        }
+                        TableRow tableRow = (TableRow) categories.getChildAt(Integer.parseInt(focusedTextView.getTag().toString()));
+                        TextView text = (TextView) tableRow.getChildAt(0);
+                        TextView text2 = (TextView) tableRow.getChildAt(2);
+                        int total = Integer.parseInt(text.getTag().toString()) * Integer.parseInt(focusedTextView.getText().toString());
+                        text2.setText("" + total);
+
+                        mainTotal.setText("0.000");
+                        for (int i = 0; i < money.size(); i++) {
+                            TableRow tRow = (TableRow) categories.getChildAt(i);
+                            TextView t = (TextView) tRow.getChildAt(2);
+                            mainTotal.setText("" +(Double.parseDouble(mainTotal.getText().toString())+ Double.parseDouble(t.getText().toString())));
+                        }
+
+                    }
+                    focusedTextView = textView1;
+                    focusedTextView.setText("");
+                    focusedTextView.setTag("" + position);
+                }
+            });
+
+            TextView textView2 = new TextView(Main.this);
+            textView2.setText("" + money.get(i).getCatValue());
+
+            TableRow.LayoutParams lp2 = new TableRow.LayoutParams(130, TableRow.LayoutParams.MATCH_PARENT, 1.0f);
+            lp2.setMargins(15, 0, 15, 0);
+            textView.setLayoutParams(lp2);
+            textView1.setLayoutParams(lp2);
+            textView2.setLayoutParams(lp2);
+            textView2.setGravity(Gravity.CENTER);
+            textView2.setTextColor(getResources().getColor(R.color.text_color));
+
+            row.addView(textView);
+            row.addView(textView1);
+            row.addView(textView2);
+
+            categories.addView(row);
+        }
+        double totals = 0;
+        for (int i = 0; i < money.size(); i++) {
+            totals+=money.get(i).getCatValue();
+            mainTotal.setText(""+totals);
+        }
+
+
+        dialog.show();
+
+    }
+
+    void showCashierOutDialog() {
+        dialog = new Dialog(Main.this);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setCancelable(false);
+        dialog.setContentView(R.layout.table_edit_outhorization_dialog);
+        dialog.setCanceledOnTouchOutside(true);
+
+        Window window = dialog.getWindow();
+        window.setLayout(920, 470);
+
+
+        dialog.show();
+
+    }
+
+    void showPayInDialog(final int transType) {
+        dialog = new Dialog(Main.this);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setCancelable(false);
+        dialog.setContentView(R.layout.pay_in_out_dialog);
+        dialog.setCanceledOnTouchOutside(true);
+
+        Window window = dialog.getWindow();
+        window.setLayout(920, 470);
+
+        final TextView tranType = (TextView) dialog.findViewById(R.id.trans_type);
+        final TextView date = (TextView) dialog.findViewById(R.id.date);
+        final TextView serial = (TextView) dialog.findViewById(R.id.trans);
+        final TextView value = (TextView) dialog.findViewById(R.id.value);
+        final TextView remark = (TextView) dialog.findViewById(R.id.remark);
+        final Button save = (Button) dialog.findViewById(R.id.save);
+        final Button exit = (Button) dialog.findViewById(R.id.exit);
+
+        tranType.setText(transType ==0 ?"Pay In":"Pay Out") ;
+        date.setText("Date:  " + today);
+
+        ArrayList<Pay> pays = mDHandler.getAllPayInOut();
+        serial.setText(pays.size()==0 ?"Transaction Number:  0": "Transaction Number:  " + pays.size()) ;
+
+        save.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(!value.getText().toString().equals("")){
+                    mDHandler.addPayInOut(new Pay(transType ,Settings.POS_number , Settings.password, Settings.user_name, today ,
+                            Double.parseDouble(value.getText().toString()), remark.getText().toString() , Settings.shift_number ,
+                            Settings.shift_name));
+                    Toast.makeText(Main.this , "Saved successfully" , Toast.LENGTH_SHORT).show();
+                    dialog.dismiss();
+                } else
+                    Toast.makeText(Main.this , "Please ensure your inputs" , Toast.LENGTH_SHORT).show();
+            }
+        });
+        exit.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialog.dismiss();
+            }
+        });
+
+        dialog.show();
+
+    }
+
+    void showPayOutDialog() {
+        dialog = new Dialog(Main.this);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setCancelable(false);
+        dialog.setContentView(R.layout.table_edit_outhorization_dialog);
+        dialog.setCanceledOnTouchOutside(true);
+
+        Window window = dialog.getWindow();
+        window.setLayout(920, 470);
+
+
+        dialog.show();
+
+    }
+
+    void showTimeCardDialog() {
+        dialog = new Dialog(Main.this);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setCancelable(false);
+        dialog.setContentView(R.layout.table_edit_outhorization_dialog);
+        dialog.setCanceledOnTouchOutside(true);
+
+        Window window = dialog.getWindow();
+        window.setLayout(920, 470);
+
+
+        dialog.show();
+
+    }
+
+    void showSafeModeDialog() {
+        dialog = new Dialog(Main.this);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setCancelable(false);
+        dialog.setContentView(R.layout.table_edit_outhorization_dialog);
+        dialog.setCanceledOnTouchOutside(true);
+
+        Window window = dialog.getWindow();
+        window.setLayout(920, 470);
+
+
+        dialog.show();
+
+    }
+
+    void showCashDrawerDialog() {
+        dialog = new Dialog(Main.this);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setCancelable(false);
+        dialog.setContentView(R.layout.table_edit_outhorization_dialog);
+        dialog.setCanceledOnTouchOutside(true);
+
+        Window window = dialog.getWindow();
+        window.setLayout(920, 470);
+
+
+        dialog.show();
+
+    }
+
+    void showAouthorizingDialog() {
+        dialog = new Dialog(Main.this);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setCancelable(false);
+        dialog.setContentView(R.layout.table_edit_outhorization_dialog);
+        dialog.setCanceledOnTouchOutside(true);
+
+        Window window = dialog.getWindow();
+        window.setLayout(610, 270);
+
+        final EditText editText = (EditText) dialog.findViewById(R.id.password);
+        Button buttonDone = (Button) dialog.findViewById(R.id.b_done);
+
+        buttonDone.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (!editText.getText().toString().equals("")) {
+                    if (Integer.parseInt(editText.getText().toString()) == 4444) {
+                        Settings settings = new Settings();
+                        settings.table_edit_authorized = true;
+                        Toast.makeText(Main.this, "Your'r authorized to edit tables ", Toast.LENGTH_SHORT).show();
+                        dialog.dismiss();
+                    } else {
+                        Toast.makeText(Main.this, "Your authorization number is incorrect", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            }
+        });
+
+        dialog.show();
+
+    }
+
+    void initialize() {
+
+        back = (Button) findViewById(R.id.back);
+        exit = (Button) findViewById(R.id.exit);
+        takeAway = (Button) findViewById(R.id.tack_away);
+        dineIn = (Button) findViewById(R.id.dine_in);
+
+        userName = (TextView) findViewById(R.id.user_name);
+        date = (TextView) findViewById(R.id.date);
+        cashierIn = (TextView) findViewById(R.id.cashier_in);
+        cashierOut = (TextView) findViewById(R.id.cashier_out);
+        payIn = (TextView) findViewById(R.id.pay_in);
+        payOut = (TextView) findViewById(R.id.pay_out);
+        timeCard = (TextView) findViewById(R.id.time_card);
+        safeMode = (TextView) findViewById(R.id.safe_mode);
+        cashDrawer = (TextView) findViewById(R.id.cash_drawer);
+
+        back.setOnClickListener(onClickListener);
+        exit.setOnClickListener(onClickListener);
+        takeAway.setOnClickListener(onClickListener);
+        dineIn.setOnClickListener(onClickListener);
+        cashierIn.setOnClickListener(onClickListener);
+        cashierOut.setOnClickListener(onClickListener);
+        payIn.setOnClickListener(onClickListener);
+        payOut.setOnClickListener(onClickListener);
+        timeCard.setOnClickListener(onClickListener);
+        safeMode.setOnClickListener(onClickListener);
+        cashDrawer.setOnClickListener(onClickListener);
+
+        back.setOnTouchListener(onTouchListener);
+        exit.setOnTouchListener(onTouchListener);
+        takeAway.setOnTouchListener(onTouchListener);
+        dineIn.setOnTouchListener(onTouchListener);
+    }
+}

@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/layer3"
+    android:orientation="vertical"
+    android:padding="20dp">
+
+    <TableLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+
+        android:layout_marginTop="25dp">
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="8dp"
+            android:layout_margin="1dp"
+            android:gravity="center">
+
+            <TextView
+
+                android:layout_width="220dp"
+                android:layout_height="45dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginStart="10dp"
+                android:gravity="left"
+                android:text="@string/modifier_no"
+                android:textColor="@color/text_color"
+                android:textSize="25sp" />
+
+            <TextView
+                android:id="@+id/modifierNumber"
+                android:layout_width="260dp"
+                android:layout_height="35dp"
+                android:layout_marginLeft="40dp"
+                android:layout_marginStart="40dp"
+                android:background="@color/layer2"
+                android:gravity="center"
+                android:textColor="@color/text_color"
+                android:textSize="22sp" />
+
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="8dp"
+            android:layout_margin="1dp"
+            android:gravity="center">
+
+            <TextView
+                android:layout_width="220dp"
+                android:layout_height="45dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginStart="10dp"
+                android:gravity="left"
+                android:text="@string/modifier_name"
+                android:textColor="@color/text_color"
+                android:textSize="25sp" />
+
+            <EditText
+                android:id="@+id/modifier_name"
+                android:layout_width="260dp"
+                android:layout_height="35dp"
+                android:layout_marginLeft="40dp"
+                android:layout_marginStart="40dp"
+                android:background="@color/layer2"
+                android:gravity="center"
+                android:textColor="@color/text_color"
+                android:textSize="22sp" />
+
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="8dp"
+            android:layout_margin="1dp"
+            android:gravity="center">
+
+            <TextView
+                android:layout_width="220dp"
+                android:layout_height="45dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginStart="10dp" />
+
+            <CheckBox
+                android:id="@+id/active"
+                android:layout_width="wrap_content"
+                android:layout_height="43dp"
+                android:layout_marginLeft="60dp"
+                android:layout_marginStart="60dp"
+                android:checked="true"
+                android:text="@string/active"
+                android:textColor="@color/text_color" />
+
+        </TableRow>
+
+    </TableLayout>
+
+    <Button
+        android:id="@+id/add_modifier"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/done_buttons"
+        android:text="@string/add"
+        android:textColor="@color/text_color"
+        android:textSize="20sp" />
+
+</LinearLayout>

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimaryLight">#7BCCB5</color>
+    <color name="colorPrimary">#008577</color>
+    <color name="colorPrimaryDark">#00574B</color>
+    <color name="colorAccent">#D81B60</color>
+
+    <color name="layer1">#F0FFFF</color>
+    <color name="layer2">#F0F8FF</color>
+    <color name="layer3">#E5E4E2</color>
+    <color name="layer4">#B6B6B4</color>
+    <color name="text_color">#25383C</color>
+    <color name="exit">#C24641</color>
+    <color name="exit_hover">#E77471</color>
+    <color name="light_blue">#C2DFFF</color>
+    <color name="dark_blue">#89cbee</color>#98AFC7
+    <color name="gray">#98AFC7</color>
+    <color name="floor">#E8ADAA</color>
+</resources>
