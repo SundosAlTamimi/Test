@@ -7,6 +7,7 @@ public class Cashier {
     private String categoryName ;
     private double categoryValue ;
     private int categoryQty ;
+    private int categoryQty2 ;
 
     public Cashier (){
 
