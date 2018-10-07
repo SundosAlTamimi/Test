@@ -8,8 +8,6 @@ public class Cashier {
     private double categoryValue ;
     private int categoryQty ;
 
-    private int categoryQty2 ;
-
     public Cashier (){
 
     }
