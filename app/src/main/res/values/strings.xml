@@ -247,4 +247,12 @@
     <string name="add_force_question">Add Force Question</string>
     <string name="join_item_with_question">Join Item With Force question</string>
 
+    <string name="customer_name"> Customer Name </string>
+    <string name="customer_no"> Customer  NO  </string>
+    <string name="customer_balance"> Customer Balance </string>
+    <string name="trans_no"> Trans NO </string>
+    <string name="trans_date"> Trans Date  </string>
+    <string name="payment_type"> Payment Type  </string>
+    <string name="customer_payment_type"> Customer Payment  </string>
+
 </resources>

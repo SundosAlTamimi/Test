@@ -30,15 +30,22 @@ import android.widget.Toast;
 
 import com.tamimi.sundos.restpos.DatabaseHandler;
 import com.tamimi.sundos.restpos.Models.CategoryWithModifier;
+import com.tamimi.sundos.restpos.Models.CustomerPayment;
 import com.tamimi.sundos.restpos.Models.ForceQuestions;
 import com.tamimi.sundos.restpos.Models.ItemWithFq;
 import com.tamimi.sundos.restpos.Models.ItemWithModifier;
 import com.tamimi.sundos.restpos.Models.Items;
 import com.tamimi.sundos.restpos.Models.Modifier;
 import com.tamimi.sundos.restpos.Models.Money;
+import com.tamimi.sundos.restpos.Models.PayMethod;
+import com.tamimi.sundos.restpos.PayMethods;
 import com.tamimi.sundos.restpos.R;
+import com.tamimi.sundos.restpos.Settings;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
@@ -61,6 +68,7 @@ public class BackOfficeActivity extends AppCompatActivity {
             salesReportByCustomer, profitLossReport, detailSalesReport;
 
     Dialog dialog;
+    String today;
     DatabaseHandler mDHandler;
     Bitmap imageBitmap = null;
     ImageView moneyPicImageView = null;
@@ -76,6 +84,10 @@ public class BackOfficeActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         this.requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.back_office_activity);
+
+        Date currentTimeAndDate = Calendar.getInstance().getTime();
+        SimpleDateFormat df = new SimpleDateFormat("dd-MM-yyyy");
+        today = df.format(currentTimeAndDate);
 
         itemWithFqsList = new ArrayList<>();
         itemWithModifiersList = new ArrayList<>();
@@ -140,6 +152,7 @@ public class BackOfficeActivity extends AppCompatActivity {
                     break;
 
                 case R.id.membership:
+                    showCustomerPaymentDialog();
                     break;
 
                 case R.id.job_group:
@@ -240,6 +253,85 @@ public class BackOfficeActivity extends AppCompatActivity {
             }
         }
     };
+
+    void showCustomerPaymentDialog() {
+
+        dialog = new Dialog(BackOfficeActivity.this);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setCancelable(true);
+        dialog.setContentView(R.layout.customer_payment_dialog);
+        dialog.setCanceledOnTouchOutside(true);
+
+        Window window = dialog.getWindow();
+        window.setLayout(880, 510);
+
+        Button save, exit;
+        final EditText customerNo, customerName, customerBalance, value;
+        TextView transDate, transNo;
+        final Spinner paymentType;
+
+        paymentType = (Spinner) dialog.findViewById(R.id.spinner1);
+        save = (Button) dialog.findViewById(R.id.save);
+        exit = (Button) dialog.findViewById(R.id.exit);
+        customerNo = (EditText) dialog.findViewById(R.id.customerno);
+        customerName = (EditText) dialog.findViewById(R.id.customername);
+        customerBalance = (EditText) dialog.findViewById(R.id.customerbal);
+        transNo = (TextView) dialog.findViewById(R.id.transno);
+        transDate = (TextView) dialog.findViewById(R.id.transndate);
+        value = (EditText) dialog.findViewById(R.id.values);
+
+        ArrayList<PayMethod> payMethods = mDHandler.getAllExistingPay();
+        ArrayList<String> payType = new ArrayList<>();
+
+        for (int i = 0; i < payMethods.size(); i++) {
+            payType.add(payMethods.get(i).getPayType());
+        }
+
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(BackOfficeActivity.this, R.layout.spinner_style, payType);
+        paymentType.setAdapter(adapter);
+
+        transDate.setText(today);
+        final int transNumber = mDHandler.getAllCustomerPayment().size();
+        transNo.setText(" " + transNumber);
+
+        save.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                CustomerPayment customerPayment = new CustomerPayment();
+
+                if (!value.getText().toString().equals("") && !customerBalance.getText().toString().equals("") && !customerName.getText().toString().equals("") && !customerNo.getText().toString().equals("")) {
+
+                    customerPayment.setPointOfSaleNumber(Settings.POS_number);
+                    customerPayment.setUserNO(Settings.password);
+                    customerPayment.setUserName(Settings.user_name);
+                    customerPayment.setCustomerNo(1);
+                    customerPayment.setCustomerName("name1");
+                    customerPayment.setCustomerBalance(Double.parseDouble(customerBalance.getText().toString()));
+                    customerPayment.setTransNo(transNumber);
+                    customerPayment.setTransDate(today);
+                    customerPayment.setPayMentType(paymentType.getSelectedItem().toString());
+                    customerPayment.setValue(Double.parseDouble(value.getText().toString()));
+                    customerPayment.setShiftNo(Settings.shift_number);
+                    customerPayment.setShiftName(Settings.shift_name);
+
+                    mDHandler.addCustomerPayment(customerPayment);
+                    Toast.makeText(BackOfficeActivity.this, "Saved Successful", Toast.LENGTH_SHORT).show();
+                    dialog.dismiss();
+
+                } else {
+                    Toast.makeText(BackOfficeActivity.this, " Please fill out all required information ", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
+        exit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+        dialog.show();
+    }
 
     void showMoneyCategoryDialog() {
         dialog = new Dialog(BackOfficeActivity.this);

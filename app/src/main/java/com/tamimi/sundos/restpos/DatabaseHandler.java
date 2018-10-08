@@ -13,6 +13,7 @@ import com.tamimi.sundos.restpos.Models.Cashier;
 import com.tamimi.sundos.restpos.Models.CategoryWithModifier;
 import com.tamimi.sundos.restpos.Models.Cheque;
 import com.tamimi.sundos.restpos.Models.CreditCard;
+import com.tamimi.sundos.restpos.Models.CustomerPayment;
 import com.tamimi.sundos.restpos.Models.ForceQuestions;
 import com.tamimi.sundos.restpos.Models.ItemWithFq;
 import com.tamimi.sundos.restpos.Models.ItemWithModifier;
@@ -265,6 +266,24 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     private static final String QUESTION_NO2 = "QUESTION_NO";
     private static final String QUESTION_TEXT2 = "QUESTION_TEXT";
 
+    //__________________________________________________________________________________
+
+    private static final String CUSTOMER_PAYMENT = "CUSTOMER_PAYMENT";
+
+    private static final String POINT_OF_SALE_NUMBER3 = "POINT_OF_SALE_NUMBER";
+    private static final String USER_NAME3 = "USER_NAME";
+    private static final String USER_NO3 = "USER_NO";
+    private static final String CUSTOMER_NO3 = "CUSTOMER_NO";
+    private static final String CUSTOMER_NAME3 = "CUSTOMER_NAME";
+    private static final String CUSTOMER_BALANCE3 = "CUSTOMER_BALANCE";
+    private static final String TRANS_NO3 = "TRANS_NO";
+    private static final String TRANS_DATE3 = "TRANS_DATE";
+    private static final String PAYMENT_TYPE3 = "PAYMENT_TYPE";
+    private static final String VALUE3 = "VALUE";
+    private static final String SHIFT_NUMBER3 = "SHIFT_NUMBER";
+    private static final String SHIFT_NAME3 = "SHIFT_NAME";
+    //__________________________________________________________________
+
     public DatabaseHandler(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
@@ -510,6 +529,23 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                 + QUESTION_NO2 + " TEXT,"
                 + QUESTION_TEXT2 + " TEXT " + ")";
         db.execSQL(CREATE_TABLE_ITEM_WITH_FQ);
+
+        //___________________________________________________________________________________
+        String CREATE_TABLE_CUSTOMER_PAYMENT = "CREATE TABLE " + CUSTOMER_PAYMENT + "("
+                + POINT_OF_SALE_NUMBER3 + " INTEGER ,"
+                + USER_NO3 + " INTEGER,"
+                + USER_NAME + " TEXT,"
+                + CUSTOMER_NO3 + " INTEGER,"
+                + CUSTOMER_NAME3 + " TEXT,"
+                + CUSTOMER_BALANCE3 + " DOUBLE,"
+                + TRANS_NO3 + " INTEGER,"
+                + TRANS_DATE3 + " TEXT,"
+                + PAYMENT_TYPE3 + " TEXT,"
+                + SHIFT_NUMBER3 + " INTEGER,"
+                + SHIFT_NAME3 + " TEXT,"
+                + VALUE3 + " DOUBLE " + ")";
+        db.execSQL(CREATE_TABLE_CUSTOMER_PAYMENT);
+
     }
 
     // Upgrading database
@@ -875,6 +911,27 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         values.put(QUESTION_TEXT2, fq.getQuestionText());
 
         db.insert(ITEM_WITH_FQ, null, values);
+        db.close();
+    }
+
+    public void addCustomerPayment(CustomerPayment customerPayment) {
+        db = this.getReadableDatabase();
+        ContentValues values = new ContentValues();
+
+        values.put(POINT_OF_SALE_NUMBER3, customerPayment.getPointOfSaleNumber());
+        values.put(USER_NO3,customerPayment.getUserNO());
+        values.put(USER_NAME3,customerPayment.getUserName());
+        values.put(CUSTOMER_NO3,customerPayment.getCustomerNo());
+        values.put(CUSTOMER_NAME3,customerPayment.getCustomerName());
+        values.put(CUSTOMER_BALANCE3,customerPayment.getCustomerBalance());
+        values.put(TRANS_NO3,customerPayment.getTransNo());
+        values.put(TRANS_DATE3,customerPayment.getTransDate());
+        values.put(PAYMENT_TYPE3,customerPayment.getPayMentType());
+        values.put(VALUE3,customerPayment.getValue());
+        values.put(SHIFT_NUMBER3,customerPayment.getShiftNo());
+        values.put(SHIFT_NAME3,customerPayment.getShiftName());
+
+        db.insert(CUSTOMER_PAYMENT, null, values);
         db.close();
     }
 
@@ -1339,6 +1396,36 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                 modifiers.add(modifier);
             } while (cursor.moveToNext());
         return modifiers;
+    }
+
+    public ArrayList<CustomerPayment> getAllCustomerPayment() {
+        ArrayList<CustomerPayment> customerPayments = new ArrayList<>();
+
+        String selectQuery = "SELECT  * FROM " + CUSTOMER_PAYMENT;
+        db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+
+        if (cursor.moveToFirst()) {
+            do {
+                CustomerPayment customerPayment = new CustomerPayment();
+
+                customerPayment.setPointOfSaleNumber(cursor.getInt(0));
+                customerPayment.setUserNO(cursor.getInt(1));
+                customerPayment.setUserName(cursor.getString(2));
+                customerPayment.setCustomerNo(cursor.getInt(3));
+                customerPayment.setCustomerName(cursor.getString(4));
+                customerPayment.setCustomerBalance(cursor.getDouble(5));
+                customerPayment.setTransNo(cursor.getInt(6));
+                customerPayment.setTransDate(cursor.getString(7));
+                customerPayment.setPayMentType(cursor.getString(8));
+                customerPayment.setValue(cursor.getDouble(9));
+                customerPayment.setShiftNo(cursor.getInt(10));
+                customerPayment.setShiftName(cursor.getString(11));
+
+                customerPayments.add(customerPayment);
+            } while (cursor.moveToNext());
+        }
+        return customerPayments;
     }
 
     public ArrayList<CategoryWithModifier> getAllCategoryModifier() {
