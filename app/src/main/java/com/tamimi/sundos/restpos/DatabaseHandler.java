@@ -1447,10 +1447,10 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         return categoryModifiers;
     }
 
-    public ArrayList<ItemWithModifier> getAllItemWithModifiers() {
+    public ArrayList<ItemWithModifier> getAllItemWithModifiers(int itemBarcode) {
         ArrayList<ItemWithModifier> modifiers = new ArrayList<>();
 
-        String selectQuery = "SELECT * FROM " + ITEM_WITH_MODIFIER;
+        String selectQuery = "SELECT * FROM " + ITEM_WITH_MODIFIER + " where ITEM_CODE = '" + itemBarcode +"'";
         db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
 

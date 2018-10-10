@@ -75,8 +75,8 @@
     <string name="discount">Discount</string>
     <string name="line_discount">Line Discount</string>
     <string name="price_change">Price Change</string>
-    <string name="product_name">Product Name</string>
-    <string name="unit_price">Unit Price</string>
+    <string name="product_name">Pro-Name</string>
+    <string name="unit_price">Price</string>
     <string name="total">Total</string>
     <string name="zero_decimal">0.00</string>
     <string name="delivery_change">Delivery Change</string>
@@ -254,5 +254,10 @@
     <string name="trans_date"> Trans Date  </string>
     <string name="payment_type"> Payment Type  </string>
     <string name="customer_payment_type"> Customer Payment  </string>
+
+    <string name="extra">Extra</string>
+    <string name="no">No</string>
+    <string name="little">Little</string>
+    <string name="half">Half</string>
 
 </resources>

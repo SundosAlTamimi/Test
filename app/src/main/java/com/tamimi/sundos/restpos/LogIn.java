@@ -94,9 +94,6 @@ public class LogIn extends AppCompatActivity {
         dialog.setContentView(R.layout.user_name_dialog);
         dialog.setCanceledOnTouchOutside(false);
 
-        Window window = dialog.getWindow();
-        window.setLayout(460, 220);
-
         final EditText userNameEditText = (EditText) dialog.findViewById(R.id.user_name);
         Button buttonDone = (Button) dialog.findViewById(R.id.b_done);
 

@@ -13,6 +13,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
@@ -25,7 +26,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.tamimi.sundos.restpos.BackOffice.MenuRegistration;
+import com.tamimi.sundos.restpos.Models.ItemWithModifier;
 import com.tamimi.sundos.restpos.Models.Items;
+import com.tamimi.sundos.restpos.Models.Modifier;
 import com.tamimi.sundos.restpos.Models.OrderHeader;
 import com.tamimi.sundos.restpos.Models.OrderTransactions;
 import com.tamimi.sundos.restpos.Models.PayMethod;
@@ -69,6 +72,7 @@ public class Order extends AppCompatActivity {
     ArrayList<Double> lineDiscount;
 
     TableRow focused = null;
+    int selectedModifier = -1;
 
     Dialog dialog;
     private DatabaseHandler mDbHandler;
@@ -112,6 +116,10 @@ public class Order extends AppCompatActivity {
                 case R.id.order:
                     saveInOrderTransaction();
                     saveInOrderHeader();
+                    break;
+
+                case R.id.modifier:
+                    showModifierDialog();
                     break;
 
                 case R.id.void_:
@@ -295,7 +303,7 @@ public class Order extends AppCompatActivity {
                         if (!exist) {
                             wantedItems.add(requestedItems.get(i));
                             lineDiscount.add(0.0);
-                            insertRaw(requestedItems.get(i));
+                            insertItemRaw(requestedItems.get(i));
                         } else {
                             TableRow tableRow = (TableRow) tableLayout.getChildAt(index);
                             TextView textViewQty = (TextView) tableRow.getChildAt(0);
@@ -317,7 +325,7 @@ public class Order extends AppCompatActivity {
 
     }
 
-    void insertRaw(Items item) {
+    void insertItemRaw(Items item) {
         final TableRow row = new TableRow(Order.this);
 
         TableLayout.LayoutParams lp = new TableLayout.LayoutParams();
@@ -348,8 +356,13 @@ public class Order extends AppCompatActivity {
             textView.setTextColor(ContextCompat.getColor(Order.this, R.color.text_color));
             textView.setGravity(Gravity.CENTER);
 
-            TableRow.LayoutParams lp2 = new TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT, TableRow.LayoutParams.MATCH_PARENT, 1.0f);
-            textView.setLayoutParams(lp2);
+            if(i != 4){
+                TableRow.LayoutParams lp1 = new TableRow.LayoutParams(0, TableRow.LayoutParams.MATCH_PARENT, 1.0f);
+                textView.setLayoutParams(lp1);
+            } else {
+                TableRow.LayoutParams lp2 = new TableRow.LayoutParams(0, TableRow.LayoutParams.MATCH_PARENT, 0.00001f);
+                textView.setLayoutParams(lp2);
+            }
 
             row.addView(textView);
             row.setTag(tableLayoutPosition);
@@ -377,6 +390,72 @@ public class Order extends AppCompatActivity {
         calculateTotal();
     }
 
+    void insertModifierRaw(String modifierText) {
+        final TableRow row = new TableRow(Order.this);
+
+        TableLayout.LayoutParams lp = new TableLayout.LayoutParams();
+        lp.setMargins(2, 0, 2, 0);
+        row.setLayoutParams(lp);
+
+        for (int i = 0; i < 5; i++) {
+            TextView textView = new TextView(Order.this);
+
+            switch (i) {
+                case 0:
+                    textView.setText("*");
+                    break;
+                case 1:
+                    textView.setText(modifierText);
+                    break;
+                case 2:
+                    textView.setText("-");
+                    break;
+                case 3:
+                    textView.setText("-");
+                    break;
+                case 4:
+                    textView.setText(""); // line discount
+                    break;
+            }
+
+            textView.setTextColor(ContextCompat.getColor(Order.this, R.color.exit));
+            textView.setGravity(Gravity.CENTER);
+            textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 10);
+
+            if(i != 4){
+                TableRow.LayoutParams lp1 = new TableRow.LayoutParams(0, TableRow.LayoutParams.MATCH_PARENT, 1.0f);
+                textView.setLayoutParams(lp1);
+            } else {
+                TableRow.LayoutParams lp2 = new TableRow.LayoutParams(0, TableRow.LayoutParams.MATCH_PARENT, 0.00001f);
+                textView.setLayoutParams(lp2);
+            }
+
+            row.addView(textView);
+            row.setTag(tableLayoutPosition);
+
+            row.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    focused = row;
+                    setRawFocused(row);
+                }
+            });
+
+            row.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    focused = row;
+                    setRawFocused(row);
+                    return true;
+                }
+            });
+        }
+        tableLayout.addView(row , Integer.parseInt(focused.getTag().toString()) +1);
+        tableLayoutPosition++;
+        resetPosition();
+
+    }
+
     void setRawFocused(TableRow raw) {
         for (int k = 0; k < tableLayout.getChildCount(); k++) {
             TableRow tableRow = (TableRow) tableLayout.getChildAt(k);
@@ -397,7 +476,7 @@ public class Order extends AppCompatActivity {
                     tableLayout.removeView(row);
                     wantedItems.remove(Integer.parseInt(row.getTag().toString()));
                     lineDiscount.remove(Integer.parseInt(row.getTag().toString()));
-                    tableLayoutPosition++;
+                    tableLayoutPosition--;
                     resetPosition();
                     calculateTotal();
                 }
@@ -420,6 +499,146 @@ public class Order extends AppCompatActivity {
             TableRow tableRow = (TableRow) tableLayout.getChildAt(i);
             tableRow.setTag("" + i);
         }
+    }
+
+    void showModifierDialog() {
+
+        dialog = new Dialog(Order.this);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setCancelable(false);
+        dialog.setContentView(R.layout.pick_modifier_dialog);
+        dialog.setCanceledOnTouchOutside(true);
+
+        final Button extra = dialog.findViewById(R.id.extra);
+        final Button no = dialog.findViewById(R.id.no);
+        final Button little = dialog.findViewById(R.id.little);
+        final Button half = dialog.findViewById(R.id.half);
+        final Button save = dialog.findViewById(R.id.save);
+        final Button exit = dialog.findViewById(R.id.exit);
+        final GridView gridView = dialog.findViewById(R.id.modifiers);
+
+        int itemBarcode = wantedItems.get(Integer.parseInt(focused.getTag().toString())).getItemBarcode();
+        Log.e("hi" , "********" + itemBarcode);
+        final ArrayList<ItemWithModifier> modifiers = mDbHandler.getAllItemWithModifiers(itemBarcode);
+        final ArrayList<String> modifiersName = new ArrayList<>();
+
+        for (int i = 0; i < modifiers.size(); i++) {
+            modifiersName.add("(" + modifiers.get(i).getModifierNo() + ") " + modifiers.get(i).getModifierText());
+        }
+
+        final ArrayAdapter<String> adapter = new ArrayAdapter<>(Order.this, R.layout.grid_style, modifiersName);
+        gridView.setAdapter(adapter);
+
+        gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+
+                for (int j = 0; j < gridView.getChildCount(); j++) {
+                    gridView.getChildAt(j).setBackgroundDrawable(null);
+                }
+                gridView.getChildAt(i).setBackgroundDrawable(getResources().getDrawable(R.drawable.focused_table));
+                selectedModifier = i;
+            }
+        });
+
+        extra.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (selectedModifier != -1) {
+                    if (!modifiersName.get(selectedModifier).contains("*  Extra")) { // if contain the same string
+                        if (!modifiersName.get(selectedModifier).contains("*")) { // if contain another string
+                            modifiersName.set(selectedModifier, modifiersName.get(selectedModifier) + " \n " + "  *  Extra");
+                            adapter.notifyDataSetChanged();
+                        } else { // if it has another string it will extract it and add the new one
+                            modifiersName.set(selectedModifier, modifiersName.get(selectedModifier).substring(0, modifiersName.get(selectedModifier).indexOf('*') - 1) + " *  Extra");
+                            adapter.notifyDataSetChanged();
+                        }
+                    }
+                } else
+                    Toast.makeText(Order.this, "Please select a modifier ", Toast.LENGTH_SHORT).show();
+            }
+        });
+        no.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (selectedModifier != -1) {
+                    if (!modifiersName.get(selectedModifier).contains("*  No")) { // if contain the same string
+                        if (!modifiersName.get(selectedModifier).contains("*")) { // if contain another string
+                            modifiersName.set(selectedModifier, modifiersName.get(selectedModifier) + " \n " + "  *  No");
+                            adapter.notifyDataSetChanged();
+                        } else { // if it has another string it will extract it and add the new one
+                            modifiersName.set(selectedModifier, modifiersName.get(selectedModifier).substring(0, modifiersName.get(selectedModifier).indexOf('*') - 1) + " *  No");
+                            adapter.notifyDataSetChanged();
+                        }
+                    }
+                } else
+                    Toast.makeText(Order.this, "Please select a modifier ", Toast.LENGTH_SHORT).show();
+            }
+        });
+        little.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (selectedModifier != -1) {
+                    if (!modifiersName.get(selectedModifier).contains("*  Little")) { // if contain the same string
+                        if (!modifiersName.get(selectedModifier).contains("*")) { // if contain another string
+                            modifiersName.set(selectedModifier, modifiersName.get(selectedModifier) + " \n " + "  *  Little");
+                            adapter.notifyDataSetChanged();
+                        } else { // if it has another string it will extract it and add the new one
+                            modifiersName.set(selectedModifier, modifiersName.get(selectedModifier).substring(0, modifiersName.get(selectedModifier).indexOf('*') - 1) + " *  Little");
+                            adapter.notifyDataSetChanged();
+                        }
+                    }
+                } else
+                    Toast.makeText(Order.this, "Please select a modifier ", Toast.LENGTH_SHORT).show();
+            }
+        });
+        half.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (selectedModifier != -1) {
+                    if (!modifiersName.get(selectedModifier).contains("*  Half")) { // if contain the same string
+                        if (!modifiersName.get(selectedModifier).contains("*")) { // if contain another string
+                            modifiersName.set(selectedModifier, modifiersName.get(selectedModifier) + " \n " + "  *  Half");
+                            adapter.notifyDataSetChanged();
+                        } else { // if it has another string it will extract it and add the new one
+                            modifiersName.set(selectedModifier, modifiersName.get(selectedModifier).substring(0, modifiersName.get(selectedModifier).indexOf('*') - 1) + " *  Half");
+                            adapter.notifyDataSetChanged();
+                        }
+                    }
+                } else
+                    Toast.makeText(Order.this, "Please select a modifier ", Toast.LENGTH_SHORT).show();
+            }
+        });
+        save.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                for (int i = 0; i < modifiersName.size(); i++) {
+                    if (modifiersName.get(i).contains("*")) {
+                        insertModifierRaw( modifiersName.get(i).substring(modifiersName.get(selectedModifier).indexOf('-')+1,
+                                modifiersName.get(selectedModifier).indexOf('-')+10) + "..");
+                        wantedItems.add( Integer.parseInt(focused.getTag().toString()) +1 ,
+                                new Items("modifier",modifiers.get(i).getModifierText(),"",0,
+                                0,"","",0,0,0,"",0,
+                                0,0,0,"","",0,0,0,null));
+                        lineDiscount.add(0.0);
+                        focused.setBackgroundDrawable(null);
+                    }
+                }
+                selectedModifier = -1;
+                dialog.dismiss();
+            }
+        });
+        exit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                selectedModifier = -1;
+                focused.setBackgroundDrawable(null);
+                dialog.dismiss();
+            }
+        });
+
+        dialog.show();
+
     }
 
     void showDeliveryChangeDialog() {
@@ -538,12 +757,15 @@ public class Order extends AppCompatActivity {
         for (int k = 0; k < tableLayout.getChildCount(); k++) {
             TableRow tableRow = (TableRow) tableLayout.getChildAt(k);
             TextView textViewTotal = (TextView) tableRow.getChildAt(3);
+            TextView firstText = (TextView) tableRow.getChildAt(0);
 
-            sum += Double.parseDouble(textViewTotal.getText().toString());
-            lineDisCountValue += lineDiscount.get(k);
+            if(!firstText.getText().toString().contains("*")) {
+                sum += Double.parseDouble(textViewTotal.getText().toString());
+                lineDisCountValue += lineDiscount.get(k);
 
-            if (wantedItems.get(k).getDiscountAvailable() == 1) // items have discount available
-                totalItemsWithDiscount += Double.parseDouble(textViewTotal.getText().toString()) - lineDiscount.get(k);
+                if (wantedItems.get(k).getDiscountAvailable() == 1) // items have discount available
+                    totalItemsWithDiscount += Double.parseDouble(textViewTotal.getText().toString()) - lineDiscount.get(k);
+            }
         }
 
         double subTotalValue = sum - (lineDisCountValue + disCountValue) + deliveryChargeValue;
@@ -579,7 +801,7 @@ public class Order extends AppCompatActivity {
             if (wantedItems.get(k).getDiscountAvailable() == 1)
                 discount = (disc / totalItemsWithDiscount) * (totalLine - lineDiscount_);
 
-            Log.e("here" , "******" + disc + "/" + totalItemsWithDiscount +"*" + totalLine +"-" + lineDiscount_);
+            Log.e("here", "******" + disc + "/" + totalItemsWithDiscount + "*" + totalLine + "-" + lineDiscount_);
 
             mDbHandler.addOrderTransaction(new OrderTransactions(orderTypeFlag, 0, today, Settings.POS_number, Settings.store_number,
                     voucherNo, voucherSerial, "" + wantedItems.get(k).getItemBarcode(), wantedItems.get(k).getMenuName(),
@@ -666,6 +888,7 @@ public class Order extends AppCompatActivity {
 
         pay.setOnClickListener(onClickListener);
         order.setOnClickListener(onClickListener);
+        modifier.setOnClickListener(onClickListener);
         void_.setOnClickListener(onClickListener);
         delivery.setOnClickListener(onClickListener);
         discount.setOnClickListener(onClickListener);

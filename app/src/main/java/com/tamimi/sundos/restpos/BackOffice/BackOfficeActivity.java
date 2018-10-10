@@ -481,9 +481,6 @@ public class BackOfficeActivity extends AppCompatActivity {
         dialog.setContentView(R.layout.modifier_dialog);
         dialog.setCanceledOnTouchOutside(true);
 
-        Window window = dialog.getWindow();
-        window.setLayout(770, 370);
-
         LinearLayout addMod = (LinearLayout) dialog.findViewById(R.id.add_modifier);
         LinearLayout itemWithMod = (LinearLayout) dialog.findViewById(R.id.item_with_mod);
         LinearLayout catWithMod = (LinearLayout) dialog.findViewById(R.id.cat_with_mod);
@@ -518,9 +515,6 @@ public class BackOfficeActivity extends AppCompatActivity {
         dialog.setContentView(R.layout.force_question_dialog);
         dialog.setCanceledOnTouchOutside(true);
 
-        Window window = dialog.getWindow();
-        window.setLayout(730, 330);
-
         LinearLayout addfq = (LinearLayout) dialog.findViewById(R.id.add_question);
         LinearLayout itemWithFq = (LinearLayout) dialog.findViewById(R.id.item_with_fq);
 
@@ -545,9 +539,6 @@ public class BackOfficeActivity extends AppCompatActivity {
         dialog.setCancelable(false);
         dialog.setContentView(R.layout.add_modifier_dialog);
         dialog.setCanceledOnTouchOutside(true);
-
-        Window window = dialog.getWindow();
-        window.setLayout(670, 300);
 
         final int Serial = mDHandler.getAllModifiers().size();
 
@@ -794,7 +785,7 @@ public class BackOfficeActivity extends AppCompatActivity {
         dialog.setCanceledOnTouchOutside(true);
 
         Window window = dialog.getWindow();
-        window.setLayout(950, 500);
+//        window.setLayout(950, 500);
 
         final Spinner paperSpinner = (Spinner) dialog.findViewById(R.id.items_list);
         final LinearLayout modifiersLinearLayout = (LinearLayout) dialog.findViewById(R.id.modifiers);

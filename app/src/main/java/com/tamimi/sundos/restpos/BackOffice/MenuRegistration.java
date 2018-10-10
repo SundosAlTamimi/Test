@@ -242,9 +242,6 @@ public class MenuRegistration extends AppCompatActivity {
         dialog.setContentView(R.layout.add_new_category_dialog);
         dialog.setCanceledOnTouchOutside(true);
 
-        Window window = dialog.getWindow();
-        window.setLayout(440, 415);
-
         final EditText catName = (EditText) dialog.findViewById(R.id.cat_name);
         final Spinner familyNameSpinner = (Spinner) dialog.findViewById(R.id.family_name);
         Button buttonAdd = (Button) dialog.findViewById(R.id.addFamily);
@@ -293,9 +290,6 @@ public class MenuRegistration extends AppCompatActivity {
         dialog.setContentView(R.layout.add_new_unit_dialog);
         dialog.setCanceledOnTouchOutside(true);
 
-        Window window = dialog.getWindow();
-        window.setLayout(460, 220);
-
         final EditText unitEditText = (EditText) dialog.findViewById(R.id.unit);
         Button buttonDone = (Button) dialog.findViewById(R.id.b_done);
 
@@ -326,9 +320,6 @@ public class MenuRegistration extends AppCompatActivity {
         dialog2.setContentView(R.layout.add_new_family_dialog);
         dialog2.setCanceledOnTouchOutside(true);
 
-        Window window = dialog2.getWindow();
-        window.setLayout(460, 220);
-
         final EditText familyEditText = (EditText) dialog2.findViewById(R.id.family);
         Button buttonDone = (Button) dialog2.findViewById(R.id.b_done);
 
@@ -358,9 +349,6 @@ public class MenuRegistration extends AppCompatActivity {
         dialog.setCancelable(true);
         dialog.setContentView(R.layout.add_recipe_dialog);
         dialog.setCanceledOnTouchOutside(true);
-
-        Window window = dialog.getWindow();
-        window.setLayout(650, 270);
 
         final EditText unit = (EditText) dialog.findViewById(R.id.unit);
         final EditText qty = (EditText) dialog.findViewById(R.id.qty);
@@ -416,9 +404,6 @@ public class MenuRegistration extends AppCompatActivity {
         dialog.setCancelable(true);
         dialog.setContentView(R.layout.add_picture_dialog);
         dialog.setCanceledOnTouchOutside(true);
-
-        Window window = dialog.getWindow();
-        window.setLayout(650, 410);
 
         items = mDbHandler.getAllItems();
 
