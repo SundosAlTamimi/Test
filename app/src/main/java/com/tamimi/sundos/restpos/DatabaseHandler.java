@@ -1360,6 +1360,28 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         return questions;
     }
 
+    public ArrayList<ForceQuestions> getRequestedForceQuestions(int questionNo) {
+        ArrayList<ForceQuestions> questions = new ArrayList<>();
+
+        String selectQuery = "SELECT * FROM " + FORCE_QUESTIONS + " where QUESTION_NO ='" + questionNo + "'";
+        db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+
+        if (cursor.moveToFirst()) {
+            do {
+                ForceQuestions question = new ForceQuestions();
+                question.setQuestionNo(Integer.parseInt(cursor.getString(0)));
+                question.setQuestionText(cursor.getString(1));
+                question.setMultipleAnswer(Integer.parseInt(cursor.getString(2)));
+                question.setAnswer(cursor.getString(3));
+
+                questions.add(question);
+
+            } while (cursor.moveToNext());
+        }
+        return questions;
+    }
+
     public ArrayList<ForceQuestions> getSomeForceQuestions() {
         ArrayList<ForceQuestions> questions = new ArrayList<>();
 
@@ -1447,7 +1469,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         return categoryModifiers;
     }
 
-    public ArrayList<ItemWithModifier> getAllItemWithModifiers(int itemBarcode) {
+    public ArrayList<ItemWithModifier> getItemWithModifiers(int itemBarcode) {
         ArrayList<ItemWithModifier> modifiers = new ArrayList<>();
 
         String selectQuery = "SELECT * FROM " + ITEM_WITH_MODIFIER + " where ITEM_CODE = '" + itemBarcode +"'";
@@ -1472,6 +1494,27 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         ArrayList<ItemWithFq> fqs = new ArrayList<>();
 
         String selectQuery = "SELECT * FROM " + ITEM_WITH_FQ;
+        db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+
+        if (cursor.moveToFirst()) {
+            do {
+                ItemWithFq fq = new ItemWithFq();
+                fq.setItemCode(Integer.parseInt(cursor.getString(0)));
+                fq.setQuestionNo(Integer.parseInt(cursor.getString(1)));
+                fq.setQuestionText(cursor.getString(2));
+
+                fqs.add(fq);
+
+            } while (cursor.moveToNext());
+        }
+        return fqs;
+    }
+
+    public ArrayList<ItemWithFq> getItemWithFqs( int itemBarcode) {
+        ArrayList<ItemWithFq> fqs = new ArrayList<>();
+
+        String selectQuery = "SELECT * FROM " + ITEM_WITH_FQ + " where ITEM_CODE = '" + itemBarcode +"'";
         db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
 

@@ -26,6 +26,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.tamimi.sundos.restpos.BackOffice.MenuRegistration;
+import com.tamimi.sundos.restpos.Models.ForceQuestions;
+import com.tamimi.sundos.restpos.Models.ItemWithFq;
 import com.tamimi.sundos.restpos.Models.ItemWithModifier;
 import com.tamimi.sundos.restpos.Models.Items;
 import com.tamimi.sundos.restpos.Models.Modifier;
@@ -301,9 +303,14 @@ public class Order extends AppCompatActivity {
                         }
 
                         if (!exist) {
-                            wantedItems.add(requestedItems.get(i));
-                            lineDiscount.add(0.0);
-                            insertItemRaw(requestedItems.get(i));
+                            ArrayList<ItemWithFq> questions = mDbHandler.getItemWithFqs(requestedItems.get(i).itemBarcode);
+                            if(questions.size()==0) {
+                                wantedItems.add(requestedItems.get(i));
+                                lineDiscount.add(0.0);
+                                insertItemRaw(requestedItems.get(i));
+                            } else{
+                                showForceQuestionDialog(requestedItems.get(i).itemBarcode);
+                            }
                         } else {
                             TableRow tableRow = (TableRow) tableLayout.getChildAt(index);
                             TextView textViewQty = (TextView) tableRow.getChildAt(0);
@@ -501,6 +508,39 @@ public class Order extends AppCompatActivity {
         }
     }
 
+    void showForceQuestionDialog(int itemBarcode){
+        dialog = new Dialog(Order.this);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setCancelable(false);
+        dialog.setContentView(R.layout.answer_force_question_dialog);
+        dialog.setCanceledOnTouchOutside(true);
+
+        final TextView qus = dialog.findViewById(R.id.question);
+        final Button extra = dialog.findViewById(R.id.extra);
+        final Button no = dialog.findViewById(R.id.no);
+        final Button little = dialog.findViewById(R.id.little);
+        final Button half = dialog.findViewById(R.id.half);
+        final Button save = dialog.findViewById(R.id.save);
+        final Button exit = dialog.findViewById(R.id.exit);
+        final Button previous = dialog.findViewById(R.id.previous);
+        final GridView gridView = dialog.findViewById(R.id.questions);
+
+        ArrayList<ItemWithFq> ItemWithFqs = mDbHandler.getItemWithFqs(itemBarcode);
+        qus.setText(ItemWithFqs.get(0).getQuestionText());
+
+        ArrayList<ForceQuestions> questions = mDbHandler.getRequestedForceQuestions(ItemWithFqs.get(0).getQuestionNo());
+        final ArrayList<String> answers = new ArrayList<>();
+
+        for (int i = 0; i < questions.size(); i++) {
+            answers.add( questions.get(i).getAnswer());
+        }
+
+        final ArrayAdapter<String> adapter = new ArrayAdapter<>(Order.this, R.layout.grid_style, answers);
+        gridView.setAdapter(adapter);
+
+        dialog.show();
+    }
+
     void showModifierDialog() {
 
         dialog = new Dialog(Order.this);
@@ -519,7 +559,7 @@ public class Order extends AppCompatActivity {
 
         int itemBarcode = wantedItems.get(Integer.parseInt(focused.getTag().toString())).getItemBarcode();
         Log.e("hi" , "********" + itemBarcode);
-        final ArrayList<ItemWithModifier> modifiers = mDbHandler.getAllItemWithModifiers(itemBarcode);
+        final ArrayList<ItemWithModifier> modifiers = mDbHandler.getItemWithModifiers(itemBarcode);
         final ArrayList<String> modifiersName = new ArrayList<>();
 
         for (int i = 0; i < modifiers.size(); i++) {

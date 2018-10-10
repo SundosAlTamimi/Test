@@ -575,8 +575,8 @@ public class BackOfficeActivity extends AppCompatActivity {
         dialog.setContentView(R.layout.add_force_question_dialog);
         dialog.setCanceledOnTouchOutside(true);
 
-        Window window = dialog.getWindow();
-        window.setLayout(950, 500);
+//        Window window = dialog.getWindow();
+//        window.setLayout(950, 500);
 
         final EditText serialText = (EditText) dialog.findViewById(R.id.question_no);
         final EditText questionText = (EditText) dialog.findViewById(R.id.question_text);
@@ -784,9 +784,6 @@ public class BackOfficeActivity extends AppCompatActivity {
         dialog.setContentView(R.layout.join_item_with_modifier_dialog);
         dialog.setCanceledOnTouchOutside(true);
 
-        Window window = dialog.getWindow();
-//        window.setLayout(950, 500);
-
         final Spinner paperSpinner = (Spinner) dialog.findViewById(R.id.items_list);
         final LinearLayout modifiersLinearLayout = (LinearLayout) dialog.findViewById(R.id.modifiers);
         final TableLayout itemsTableLayout = (TableLayout) dialog.findViewById(R.id.items);
@@ -892,8 +889,8 @@ public class BackOfficeActivity extends AppCompatActivity {
         dialog.setContentView(R.layout.join_item_with_fq_dialog);
         dialog.setCanceledOnTouchOutside(true);
 
-        Window window = dialog.getWindow();
-        window.setLayout(950, 500);
+//        Window window = dialog.getWindow();
+//        window.setLayout(950, 500);
 
         final Spinner paperSpinner = (Spinner) dialog.findViewById(R.id.items_list);
         final LinearLayout questionsLinearLayout = (LinearLayout) dialog.findViewById(R.id.questions);
