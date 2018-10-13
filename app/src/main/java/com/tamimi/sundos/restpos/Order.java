@@ -20,6 +20,7 @@ import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
@@ -67,6 +68,7 @@ public class Order extends AppCompatActivity {
     int voucherSerial;
     public static String OrderType, today, yearMonth, voucherNo;
 
+    View v = null;
     int tableNumber, sectionNumber;
     ArrayList<Items> wantedItems;
     List<UsedCategories> usedCategoriesList;
@@ -304,12 +306,15 @@ public class Order extends AppCompatActivity {
 
                         if (!exist) {
                             ArrayList<ItemWithFq> questions = mDbHandler.getItemWithFqs(requestedItems.get(i).itemBarcode);
-                            if(questions.size()==0) {
+                            if (questions.size() == 0) {
                                 wantedItems.add(requestedItems.get(i));
                                 lineDiscount.add(0.0);
                                 insertItemRaw(requestedItems.get(i));
-                            } else{
-                                showForceQuestionDialog(requestedItems.get(i).itemBarcode);
+                            } else {
+                                wantedItems.add(requestedItems.get(i));
+                                lineDiscount.add(0.0);
+                                insertItemRaw(requestedItems.get(i));
+                                showForceQuestionDialog(requestedItems.get(i).itemBarcode, 0);
                             }
                         } else {
                             TableRow tableRow = (TableRow) tableLayout.getChildAt(index);
@@ -363,7 +368,7 @@ public class Order extends AppCompatActivity {
             textView.setTextColor(ContextCompat.getColor(Order.this, R.color.text_color));
             textView.setGravity(Gravity.CENTER);
 
-            if(i != 4){
+            if (i != 4) {
                 TableRow.LayoutParams lp1 = new TableRow.LayoutParams(0, TableRow.LayoutParams.MATCH_PARENT, 1.0f);
                 textView.setLayoutParams(lp1);
             } else {
@@ -409,19 +414,19 @@ public class Order extends AppCompatActivity {
 
             switch (i) {
                 case 0:
-                    textView.setText("*");
+                    textView.setText("0");
                     break;
                 case 1:
                     textView.setText(modifierText);
                     break;
                 case 2:
-                    textView.setText("-");
+                    textView.setText("0");
                     break;
                 case 3:
-                    textView.setText("-");
+                    textView.setText("0");
                     break;
                 case 4:
-                    textView.setText(""); // line discount
+                    textView.setText("0"); // line discount
                     break;
             }
 
@@ -429,7 +434,7 @@ public class Order extends AppCompatActivity {
             textView.setGravity(Gravity.CENTER);
             textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 10);
 
-            if(i != 4){
+            if (i != 4) {
                 TableRow.LayoutParams lp1 = new TableRow.LayoutParams(0, TableRow.LayoutParams.MATCH_PARENT, 1.0f);
                 textView.setLayoutParams(lp1);
             } else {
@@ -457,7 +462,73 @@ public class Order extends AppCompatActivity {
                 }
             });
         }
-        tableLayout.addView(row , Integer.parseInt(focused.getTag().toString()) +1);
+        tableLayout.addView(row, Integer.parseInt(focused.getTag().toString()) + 1);
+        tableLayoutPosition++;
+        resetPosition();
+
+    }
+
+    void insertForceQuestionRaw(String forceQuestionText) {
+        final TableRow row = new TableRow(Order.this);
+
+        TableLayout.LayoutParams lp = new TableLayout.LayoutParams();
+        lp.setMargins(2, 0, 2, 0);
+        row.setLayoutParams(lp);
+
+        for (int i = 0; i < 5; i++) {
+            TextView textView = new TextView(Order.this);
+
+            switch (i) {
+                case 0:
+                    textView.setText("0");
+                    break;
+                case 1:
+                    textView.setText(forceQuestionText);
+                    break;
+                case 2:
+                    textView.setText("0");
+                    break;
+                case 3:
+                    textView.setText("0");
+                    break;
+                case 4:
+                    textView.setText("0"); // line discount
+                    break;
+            }
+
+            textView.setTextColor(ContextCompat.getColor(Order.this, R.color.exit));
+            textView.setGravity(Gravity.CENTER);
+            textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 10);
+
+            if (i != 4) {
+                TableRow.LayoutParams lp1 = new TableRow.LayoutParams(0, TableRow.LayoutParams.MATCH_PARENT, 1.0f);
+                textView.setLayoutParams(lp1);
+            } else {
+                TableRow.LayoutParams lp2 = new TableRow.LayoutParams(0, TableRow.LayoutParams.MATCH_PARENT, 0.00001f);
+                textView.setLayoutParams(lp2);
+            }
+
+            row.addView(textView);
+            row.setTag(tableLayoutPosition);
+
+            row.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    focused = row;
+                    setRawFocused(row);
+                }
+            });
+
+            row.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    focused = row;
+                    setRawFocused(row);
+                    return true;
+                }
+            });
+        }
+        tableLayout.addView(row);
         tableLayoutPosition++;
         resetPosition();
 
@@ -508,7 +579,7 @@ public class Order extends AppCompatActivity {
         }
     }
 
-    void showForceQuestionDialog(int itemBarcode){
+    void showForceQuestionDialog(final int itemBarcode, final int questionNo) {
         dialog = new Dialog(Order.this);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.setCancelable(false);
@@ -523,20 +594,204 @@ public class Order extends AppCompatActivity {
         final Button save = dialog.findViewById(R.id.save);
         final Button exit = dialog.findViewById(R.id.exit);
         final Button previous = dialog.findViewById(R.id.previous);
-        final GridView gridView = dialog.findViewById(R.id.questions);
+        final LinearLayout answersLinear = dialog.findViewById(R.id.answer);
 
         ArrayList<ItemWithFq> ItemWithFqs = mDbHandler.getItemWithFqs(itemBarcode);
-        qus.setText(ItemWithFqs.get(0).getQuestionText());
+        qus.setText(ItemWithFqs.get(questionNo).getQuestionText());
 
-        ArrayList<ForceQuestions> questions = mDbHandler.getRequestedForceQuestions(ItemWithFqs.get(0).getQuestionNo());
-        final ArrayList<String> answers = new ArrayList<>();
+        ArrayList<ForceQuestions> questions = mDbHandler.getRequestedForceQuestions(ItemWithFqs.get(questionNo).getQuestionNo());
 
-        for (int i = 0; i < questions.size(); i++) {
-            answers.add( questions.get(i).getAnswer());
-        }
+        if (questions.get(0).getMultipleAnswer() == 0) {
+            RadioGroup radioGroup = new RadioGroup(Order.this);
+            for (int i = 0; i < questions.size(); i++) {
+                final RadioButton radioButton = new RadioButton(Order.this);
+                radioButton.setText(questions.get(i).getAnswer());
+                radioButton.setTextColor(getResources().getColor(R.color.text_color));
+                radioButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        v = radioButton;
+                    }
+                });
+                radioGroup.addView(radioButton);
+            }
+            answersLinear.addView(radioGroup);
+        } else
+            for (int i = 0; i < questions.size(); i++) {
+                final CheckBox checkBox = new CheckBox(Order.this);
+                checkBox.setText(questions.get(i).getAnswer());
+                checkBox.setTextColor(getResources().getColor(R.color.text_color));
+                checkBox.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        v = checkBox;
+                    }
+                });
+                answersLinear.addView(checkBox);
+            }
 
-        final ArrayAdapter<String> adapter = new ArrayAdapter<>(Order.this, R.layout.grid_style, answers);
-        gridView.setAdapter(adapter);
+
+        extra.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (v != null) {
+                    if (v instanceof RadioButton) {
+                        RadioButton radioButton = (RadioButton) v;
+                        if (!radioButton.getText().toString().contains("*  Extra")) { // if contain the same string
+                            if (!radioButton.getText().toString().contains("*")) { // if contain another string
+                                radioButton.setText(radioButton.getText().toString() + "  *  Extra");
+                            } else { // if it has another string it will extract it and add the new one
+                                radioButton.setText(radioButton.getText().toString().substring(0, radioButton.getText().toString().indexOf('*') - 1) + " *  Extra");
+                            }
+                        }
+                    } else {
+                        CheckBox checkBox = (CheckBox) v;
+                        if (!checkBox.getText().toString().contains("*  Extra")) { // if contain the same string
+                            if (!checkBox.getText().toString().contains("*")) { // if contain another string
+                                checkBox.setText(checkBox.getText().toString() + "  *  Extra");
+                            } else { // if it has another string it will extract it and add the new one
+                                checkBox.setText(checkBox.getText().toString().substring(0, checkBox.getText().toString().indexOf('*') - 1) + " *  Extra");
+                            }
+                        }
+                    }
+                } else
+                    Toast.makeText(Order.this, "Please select answers ", Toast.LENGTH_SHORT).show();
+            }
+        });
+        no.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (v != null) {
+                    if (v instanceof RadioButton) {
+                        RadioButton radioButton = (RadioButton) v;
+                        if (!radioButton.getText().toString().contains("*  no")) { // if contain the same string
+                            if (!radioButton.getText().toString().contains("*")) { // if contain another string
+                                radioButton.setText(radioButton.getText().toString() + "  *  no");
+                            } else { // if it has another string it will extract it and add the new one
+                                radioButton.setText(radioButton.getText().toString().substring(0, radioButton.getText().toString().indexOf('*') - 1) + " *  no");
+                            }
+                        }
+                    } else {
+                        CheckBox checkBox = (CheckBox) v;
+                        if (!checkBox.getText().toString().contains("*  no")) { // if contain the same string
+                            if (!checkBox.getText().toString().contains("*")) { // if contain another string
+                                checkBox.setText(checkBox.getText().toString() + "  *  no");
+                            } else { // if it has another string it will extract it and add the new one
+                                checkBox.setText(checkBox.getText().toString().substring(0, checkBox.getText().toString().indexOf('*') - 1) + " *  no");
+                            }
+                        }
+                    }
+                } else
+                    Toast.makeText(Order.this, "Please select answers ", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        little.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (v != null) {
+                    if (v instanceof RadioButton) {
+                        RadioButton radioButton = (RadioButton) v;
+                        if (!radioButton.getText().toString().contains("*  little")) { // if contain the same string
+                            if (!radioButton.getText().toString().contains("*")) { // if contain another string
+                                radioButton.setText(radioButton.getText().toString() + "  *  little");
+                            } else { // if it has another string it will extract it and add the new one
+                                radioButton.setText(radioButton.getText().toString().substring(0, radioButton.getText().toString().indexOf('*') - 1) + " *  little");
+                            }
+                        }
+                    } else {
+                        CheckBox checkBox = (CheckBox) v;
+                        if (!checkBox.getText().toString().contains("*  little")) { // if contain the same string
+                            if (!checkBox.getText().toString().contains("*")) { // if contain another string
+                                checkBox.setText(checkBox.getText().toString() + "  *  little");
+                            } else { // if it has another string it will extract it and add the new one
+                                checkBox.setText(checkBox.getText().toString().substring(0, checkBox.getText().toString().indexOf('*') - 1) + " *  little");
+                            }
+                        }
+                    }
+                } else
+                    Toast.makeText(Order.this, "Please select answers ", Toast.LENGTH_SHORT).show();
+            }
+        });
+        half.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (v != null) {
+                    if (v instanceof RadioButton) {
+                        RadioButton radioButton = (RadioButton) v;
+                        if (!radioButton.getText().toString().contains("*  half")) { // if contain the same string
+                            if (!radioButton.getText().toString().contains("*")) { // if contain another string
+                                radioButton.setText(radioButton.getText().toString() + "  *  half");
+                            } else { // if it has another string it will extract it and add the new one
+                                radioButton.setText(radioButton.getText().toString().substring(0, radioButton.getText().toString().indexOf('*') - 1) + " *  half");
+                            }
+                        }
+                    } else {
+                        CheckBox checkBox = (CheckBox) v;
+                        if (!checkBox.getText().toString().contains("*  half")) { // if contain the same string
+                            if (!checkBox.getText().toString().contains("*")) { // if contain another string
+                                checkBox.setText(checkBox.getText().toString() + "  *  half");
+                            } else { // if it has another string it will extract it and add the new one
+                                checkBox.setText(checkBox.getText().toString().substring(0, checkBox.getText().toString().indexOf('*') - 1) + " *  half");
+                            }
+                        }
+                    }
+                } else
+                    Toast.makeText(Order.this, "Please select answers ", Toast.LENGTH_SHORT).show();
+            }
+        });
+        save.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (v != null) {
+                    if (v instanceof RadioButton) {
+                        RadioButton answer = (RadioButton) v;
+                        if (answer.getText().toString().contains("*")) {
+                            insertForceQuestionRaw(answer.getText().toString().substring(0, 10) + "..");
+                            wantedItems.add(new Items("force question", answer.getText().toString(), "", 0,
+                                    0, "", "", 0, 0, 0, "", 0,
+                                    0, 0, 0, "", "", 0, 0, 0, null));
+                            lineDiscount.add(0.0);
+                        } else {
+                            Toast.makeText(Order.this, "Please select quantity ", Toast.LENGTH_SHORT).show();
+                        }
+                        Log.e("here", "******" + answersLinear.getChildCount());
+                    } else {
+                        for (int i = 0; i < answersLinear.getChildCount(); i++) {
+                            CheckBox checkBox = (CheckBox) answersLinear.getChildAt(i);
+                            if (checkBox.isChecked()) {
+                                if (checkBox.getText().toString().contains("*")) {
+                                    insertForceQuestionRaw(checkBox.getText().toString().substring(0, 10) + "..");
+                                    wantedItems.add(new Items("force question", checkBox.getText().toString(), "", 0,
+                                            0, "", "", 0, 0, 0, "", 0,
+                                            0, 0, 0, "", "", 0, 0, 0, null));
+                                    lineDiscount.add(0.0);
+                                } else {
+                                    Toast.makeText(Order.this, "Please select quantity ", Toast.LENGTH_SHORT).show();
+                                }
+                                Log.e("here", "******" + answersLinear.getChildCount());
+                            }
+                        }
+                    }
+                }
+                v = null;
+                dialog.dismiss();
+
+                int nextQu = questionNo;
+                ArrayList<ItemWithFq> questions = mDbHandler.getItemWithFqs(itemBarcode);
+                if (questionNo < questions.size()-1) {
+                    nextQu = questionNo + 1;
+                    showForceQuestionDialog(itemBarcode, nextQu);
+                }
+            }
+        });
+        exit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                v = null;
+                dialog.dismiss();
+            }
+        });
 
         dialog.show();
     }
@@ -558,7 +813,7 @@ public class Order extends AppCompatActivity {
         final GridView gridView = dialog.findViewById(R.id.modifiers);
 
         int itemBarcode = wantedItems.get(Integer.parseInt(focused.getTag().toString())).getItemBarcode();
-        Log.e("hi" , "********" + itemBarcode);
+        Log.e("hi", "********" + itemBarcode);
         final ArrayList<ItemWithModifier> modifiers = mDbHandler.getItemWithModifiers(itemBarcode);
         final ArrayList<String> modifiersName = new ArrayList<>();
 
@@ -654,12 +909,12 @@ public class Order extends AppCompatActivity {
             public void onClick(View view) {
                 for (int i = 0; i < modifiersName.size(); i++) {
                     if (modifiersName.get(i).contains("*")) {
-                        insertModifierRaw( modifiersName.get(i).substring(modifiersName.get(selectedModifier).indexOf('-')+1,
-                                modifiersName.get(selectedModifier).indexOf('-')+10) + "..");
-                        wantedItems.add( Integer.parseInt(focused.getTag().toString()) +1 ,
-                                new Items("modifier",modifiers.get(i).getModifierText(),"",0,
-                                0,"","",0,0,0,"",0,
-                                0,0,0,"","",0,0,0,null));
+                        insertModifierRaw(modifiersName.get(i).substring(modifiersName.get(selectedModifier).indexOf('-') + 1,
+                                modifiersName.get(selectedModifier).indexOf('-') + 10) + "..");
+                        wantedItems.add(Integer.parseInt(focused.getTag().toString()) + 1,
+                                new Items("modifier", modifiers.get(i).getModifierText(), "", 0,
+                                        0, "", "", 0, 0, 0, "", 0,
+                                        0, 0, 0, "", "", 0, 0, 0, null));
                         lineDiscount.add(0.0);
                         focused.setBackgroundDrawable(null);
                     }
@@ -799,7 +1054,7 @@ public class Order extends AppCompatActivity {
             TextView textViewTotal = (TextView) tableRow.getChildAt(3);
             TextView firstText = (TextView) tableRow.getChildAt(0);
 
-            if(!firstText.getText().toString().contains("*")) {
+            if (!firstText.getText().toString().contains("*")) {
                 sum += Double.parseDouble(textViewTotal.getText().toString());
                 lineDisCountValue += lineDiscount.get(k);
 
