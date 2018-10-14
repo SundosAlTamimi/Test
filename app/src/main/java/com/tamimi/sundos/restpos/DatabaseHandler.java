@@ -12,6 +12,7 @@ import android.util.Log;
 import com.tamimi.sundos.restpos.Models.Cashier;
 import com.tamimi.sundos.restpos.Models.CategoryWithModifier;
 import com.tamimi.sundos.restpos.Models.Cheque;
+import com.tamimi.sundos.restpos.Models.ClockInClockOut;
 import com.tamimi.sundos.restpos.Models.CreditCard;
 import com.tamimi.sundos.restpos.Models.CustomerPayment;
 import com.tamimi.sundos.restpos.Models.ForceQuestions;
@@ -35,7 +36,7 @@ import java.util.Collections;
 import java.util.List;
 
 public class DatabaseHandler extends SQLiteOpenHelper {
-//hello
+//hellohjt
     // Database Version
     private static final int DATABASE_VERSION = 1;
 
@@ -283,6 +284,20 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     private static final String SHIFT_NUMBER3 = "SHIFT_NUMBER";
     private static final String SHIFT_NAME3 = "SHIFT_NAME";
     //__________________________________________________________________
+
+    private static final String CLOCK_IN_CLOCK_OUT = "CLOCK_IN_CLOCK_OUT";
+
+    private static final String POINT_OF_SALE_NUMBER4= "POINT_OF_SALE_NUMBER";
+    private static final String DATE4 = "DATE";
+    private static final String USER_NO4 = "USER_NO";
+    private static final String USER_NAME4 = "USER_NAME";
+    private static final String TRANS_TYPE4 = "TRANS_TYPE";
+    private static final String DATE_CARD4 = "DATE_CARD";
+    private static final String TIME_CARD4 = "TIME_CARD";
+    private static final String REMARK4 = "REMARK";
+    private static final String SHIFT_NUMBER4 = "SHIFT_NUMBER";
+    private static final String SHIFT_NAME4 = "SHIFT_NAME";
+    //__________________________________________________________________________________
 
     public DatabaseHandler(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -545,6 +560,20 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                 + SHIFT_NAME3 + " TEXT,"
                 + VALUE3 + " DOUBLE " + ")";
         db.execSQL(CREATE_TABLE_CUSTOMER_PAYMENT);
+        //_____________________________________________________________________________________
+
+        String CREATE_TABLE_CLOCK_IN_CLOCK_OUT = "CREATE TABLE " + CLOCK_IN_CLOCK_OUT + "("
+                + POINT_OF_SALE_NUMBER4 + " INTEGER ,"
+                + DATE4 + " TEXT,"
+                + USER_NO4 + " INTEGER,"
+                + USER_NAME4 + " TEXT,"
+                + TRANS_TYPE4 + " TEXT,"
+                + DATE_CARD4 + " TEXT,"
+                + TIME_CARD4 + " TEXT,"
+                + REMARK4 + " TEXT,"
+                + SHIFT_NUMBER4 + " INTEGER,"
+                + SHIFT_NAME4 + " TEXT " + ")";
+        db.execSQL(CREATE_TABLE_CLOCK_IN_CLOCK_OUT);
 
     }
 
@@ -569,7 +598,8 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS " + MODIFIER); //14
         db.execSQL("DROP TABLE IF EXISTS " + ITEM_WITH_MODIFIER); //15
         db.execSQL("DROP TABLE IF EXISTS " + ITEM_WITH_FQ); //16
-        db.execSQL("DROP TABLE IF EXISTS " + CATEGORY_WITH_MODIFIER); //16
+        db.execSQL("DROP TABLE IF EXISTS " + CATEGORY_WITH_MODIFIER); //17
+        db.execSQL("DROP TABLE IF EXISTS " + CLOCK_IN_CLOCK_OUT);//18
         // Create tables again
         onCreate(db);
     }
@@ -933,6 +963,56 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
         db.insert(CUSTOMER_PAYMENT, null, values);
         db.close();
+    }
+
+    public void addClockInClockOut(ClockInClockOut clockInClockOut) {
+        db = this.getReadableDatabase();
+        ContentValues values = new ContentValues();
+
+        values.put(POINT_OF_SALE_NUMBER4,clockInClockOut.getPointOfSaleNumber());
+        values.put(DATE4, clockInClockOut.getDate());
+        values.put(USER_NO4, clockInClockOut.getUserNO());
+        values.put(USER_NAME4, clockInClockOut.getUserName());
+        values.put(TRANS_TYPE4, clockInClockOut.getTranstype());
+        values.put(DATE_CARD4, clockInClockOut.getDateCard());
+        values.put(TIME_CARD4, clockInClockOut.getTimeCard());
+        values.put(REMARK4, clockInClockOut.getRemark());
+        values.put(SHIFT_NUMBER4, clockInClockOut.getShiftNo());
+        values.put(SHIFT_NAME4, clockInClockOut.getShiftName());
+
+        db.insert(CLOCK_IN_CLOCK_OUT, null, values);
+        db.close();
+
+    }
+
+    public ArrayList<ClockInClockOut> getAllExistingClockInClockOut() {
+        ArrayList<ClockInClockOut> clockInClockOuts = new ArrayList<ClockInClockOut>();
+
+        String selectQuery = "SELECT * FROM " + PAY_METHOD;
+        db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+
+        if (cursor.moveToFirst())
+            do {
+                ClockInClockOut clockInClockOut = new ClockInClockOut();
+
+                clockInClockOut.setPointOfSaleNumber(cursor.getInt(0));
+                clockInClockOut.setDate(cursor.getString(1));
+                clockInClockOut.setUserNO(cursor.getInt(2));
+                clockInClockOut.setUserName(cursor.getString(3));
+                clockInClockOut.setTranstype(cursor.getString(4));
+                clockInClockOut.setDateCard(cursor.getString(5));
+                clockInClockOut.setTimeCard(cursor.getString(6));
+                clockInClockOut.setRemark(cursor.getString(7));
+                clockInClockOut.setShiftNo(cursor.getInt(8));
+                clockInClockOut.setShiftName(cursor.getString(9));
+
+                clockInClockOuts.add(clockInClockOut);
+
+            } while (cursor.moveToNext());
+
+        return clockInClockOuts;
+
     }
 
     public List<Items> getAllItems() {

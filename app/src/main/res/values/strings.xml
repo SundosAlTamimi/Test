@@ -261,4 +261,14 @@
     <string name="little">Little</string>
     <string name="half">Half</string>
 
+    <string name="okay"> OK </string>
+    <string name="clockin"> Clock IN </string>
+    <string name="clock_out"> Clock Out </string>
+    <string name="Break_out"> Break Out </string>
+    <string name="Break_in"> Break IN </string>
+    <string name="Remark"> Remark  </string>
+    <string name="clockinsuccessful"> Clock In Successful  </string>
+    <string name="time_card_out">Time Card Out</string>
+    <string name="time_break_out">Time Break Out</string>
+
 </resources>

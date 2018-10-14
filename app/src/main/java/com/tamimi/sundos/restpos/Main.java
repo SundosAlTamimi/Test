@@ -1,9 +1,12 @@
 package com.tamimi.sundos.restpos;
 
 import android.annotation.SuppressLint;
+import android.annotation.TargetApi;
 import android.app.Dialog;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
@@ -14,11 +17,13 @@ import android.view.View.OnTouchListener;
 import android.widget.EditText;
 import android.widget.TableLayout;
 import android.widget.TableRow;
+import android.widget.TextClock;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.tamimi.sundos.restpos.BackOffice.BackOfficeActivity;
 import com.tamimi.sundos.restpos.Models.Cashier;
+import com.tamimi.sundos.restpos.Models.ClockInClockOut;
 import com.tamimi.sundos.restpos.Models.Money;
 import com.tamimi.sundos.restpos.Models.Pay;
 
@@ -105,7 +110,7 @@ public class Main extends AppCompatActivity {
                     break;
 
                 case R.id.time_card:
-                    showTimeCardDialog();
+                    showClockInClockOutDialog();
                     break;
 
                 case R.id.safe_mode:
@@ -453,7 +458,7 @@ public class Main extends AppCompatActivity {
 
     }
 
-    void showTimeCardDialog() {
+   /* void showTimeCardDialog() {
         dialog = new Dialog(Main.this);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.setCancelable(false);
@@ -466,7 +471,7 @@ public class Main extends AppCompatActivity {
 
         dialog.show();
 
-    }
+    }*/
 
     void showSafeModeDialog() {
         dialog = new Dialog(Main.this);
@@ -497,6 +502,375 @@ public class Main extends AppCompatActivity {
         dialog.show();
 
     }
+
+
+    void showClockInClockOutDialog() {
+        dialog = new Dialog(Main.this);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setCancelable(false);
+        dialog.setContentView(R.layout.clockin_clockout_dialog);
+        dialog.setCanceledOnTouchOutside(true);
+
+        Window window = dialog.getWindow();
+        window.setLayout(410, 510);
+
+        final TextView value = (TextView) dialog.findViewById(R.id.text);
+
+        focusedTextView = value;
+
+        Button b1, b2, b3, b4, b5, b6, b7, b8, b9, b0, clear, ok;
+        b1 = (Button) dialog.findViewById(R.id.b1);
+        b2 = (Button) dialog.findViewById(R.id.b2);
+        b3 = (Button) dialog.findViewById(R.id.b3);
+        b4 = (Button) dialog.findViewById(R.id.b4);
+        b5 = (Button) dialog.findViewById(R.id.b5);
+        b6 = (Button) dialog.findViewById(R.id.b6);
+        b7 = (Button) dialog.findViewById(R.id.b7);
+        b8 = (Button) dialog.findViewById(R.id.b8);
+        b9 = (Button) dialog.findViewById(R.id.b9);
+        b0 = (Button) dialog.findViewById(R.id.b0);
+        clear = (Button) dialog.findViewById(R.id.b_clear);
+        ok = (Button) dialog.findViewById(R.id.okay);
+
+
+        b1.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (focusedTextView != null)
+                    focusedTextView.setText(focusedTextView.getText().toString() + "1");
+            }
+        });
+        b2.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (focusedTextView != null)
+                    focusedTextView.setText(focusedTextView.getText().toString() + "2");
+            }
+        });
+        b3.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (focusedTextView != null)
+                    focusedTextView.setText(focusedTextView.getText().toString() + "3");
+            }
+        });
+        b4.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (focusedTextView != null)
+                    focusedTextView.setText(focusedTextView.getText().toString() + "4");
+            }
+        });
+        b5.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (focusedTextView != null)
+                    focusedTextView.setText(focusedTextView.getText().toString() + "5");
+            }
+        });
+        b6.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (focusedTextView != null)
+                    focusedTextView.setText(focusedTextView.getText().toString() + "6");
+            }
+        });
+        b7.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (focusedTextView != null)
+                    focusedTextView.setText(focusedTextView.getText().toString() + "7");
+            }
+        });
+        b8.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (focusedTextView != null)
+                    focusedTextView.setText(focusedTextView.getText().toString() + "8");
+            }
+        });
+        b9.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (focusedTextView != null)
+                    focusedTextView.setText(focusedTextView.getText().toString() + "9");
+            }
+        });
+        b0.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (focusedTextView != null)
+                    focusedTextView.setText(focusedTextView.getText().toString() + "0");
+            }
+        });
+        clear.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                focusedTextView.setText("");
+            }
+        });
+
+        ok.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (!focusedTextView.getText().toString().equals("")){
+                    if (Settings.password == Integer.parseInt(focusedTextView.getText().toString())) {
+                        switch (Settings.time_card) {
+                            case 0:
+                                dialog.dismiss();
+                                showTimeCardDialog();
+                                break;
+                            case 1:
+                                dialog.dismiss();
+                                clockTimeOut();
+                                break;
+                            case 2:
+                                dialog.dismiss();
+                                showBreakTimeOut();
+                                break;
+                        }
+                    } else {
+                        Toast.makeText(Main.this, " Please Insert Correct Password ", Toast.LENGTH_SHORT).show();
+                        focusedTextView.setText("");
+                    }} else {Toast.makeText(Main.this, " Please Enter Your Password ", Toast.LENGTH_SHORT).show();}
+            }
+        });
+
+        dialog.show();
+    }
+
+    @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR1)
+    void showTimeCardDialog() {
+        dialog = new Dialog(Main.this);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setCancelable(false);
+        dialog.setContentView(R.layout.time_card_dialog);
+        dialog.setCanceledOnTouchOutside(true);
+
+        Window window = dialog.getWindow();
+        window.setLayout(590, 390);
+
+
+        Button clockIn;
+        final TextView date, username;
+        final EditText remark;
+        clockIn = (Button) dialog.findViewById(R.id.clockin);
+
+        final TextClock time = (TextClock) dialog.findViewById(R.id.horas);
+        date = (TextView) dialog.findViewById(R.id.date1);
+        username = (TextView) dialog.findViewById(R.id.username);
+
+        remark = (EditText) dialog.findViewById(R.id.remark);
+
+        SystemClock.elapsedRealtime();
+
+        final Date currentTimeAndDate = Calendar.getInstance().getTime();
+        SimpleDateFormat df = new SimpleDateFormat("dd-MM-yyyy");
+        final String dates = df.format(currentTimeAndDate);
+        date.setText(dates);
+        username.setText(Settings.user_name);
+
+        clockIn.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+                final String times = time.getText().toString();
+                clockInSuccessful(times, dates);
+                Settings.time_card = 1;
+
+                ClockInClockOut clockInClockOut = new ClockInClockOut();
+
+                clockInClockOut.setPointOfSaleNumber(Settings.POS_number);
+                clockInClockOut.setDate(dates);
+                clockInClockOut.setUserNO(Settings.password);
+                clockInClockOut.setUserName(Settings.user_name);
+                clockInClockOut.setTranstype("ClockIN");
+                clockInClockOut.setDateCard(dates);
+                clockInClockOut.setTimeCard(times);
+                clockInClockOut.setRemark((remark.getText().toString()));
+                clockInClockOut.setShiftNo(Settings.shift_number);
+                clockInClockOut.setShiftName(Settings.shift_name);
+
+
+                mDHandler.addClockInClockOut(clockInClockOut);
+            }
+        });
+
+        dialog.show();
+    }
+
+    void clockInSuccessful(String times, String dates) {
+        dialog = new Dialog(Main.this);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setCancelable(false);
+        dialog.setContentView(R.layout.clockin_successful_dialog);
+        dialog.setCanceledOnTouchOutside(true);
+
+        Window window = dialog.getWindow();
+        window.setLayout(590, 290);
+
+        TextView masege, time, date;
+
+        masege = (TextView) dialog.findViewById(R.id.clockinsuccessfull);
+        time = (TextView) dialog.findViewById(R.id.time2);
+        date = (TextView) dialog.findViewById(R.id.date2);
+        masege.setText("Clock IN Successful   (" + Settings.user_name + ")");
+        Button ok = (Button) dialog.findViewById(R.id.ok1);
+
+        time.setText(times);
+        date.setText(dates);
+
+        ok.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+        dialog.show();
+
+    }
+
+    @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR1)
+    void clockTimeOut() {
+        dialog = new Dialog(Main.this);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setCancelable(false);
+        dialog.setContentView(R.layout.time_card_out_dialog);
+        dialog.setCanceledOnTouchOutside(true);
+
+        Window window = dialog.getWindow();
+        window.setLayout(590, 390);
+
+        Button clockOut, breakIN;
+        TextView userNameOut, date;
+        final TextClock time;
+        final EditText remarkOut;
+
+        clockOut = (Button) dialog.findViewById(R.id.clock_out);
+        breakIN = (Button) dialog.findViewById(R.id.break_in);
+        remarkOut = (EditText) dialog.findViewById(R.id.remark3);
+        userNameOut = (TextView) dialog.findViewById(R.id.username1);
+        userNameOut.setText(Settings.user_name);
+
+        time = (TextClock) dialog.findViewById(R.id.horas1);
+        date = (TextView) dialog.findViewById(R.id.date3);
+
+        final Date currentTimeAndDate = Calendar.getInstance().getTime();
+        SimpleDateFormat df = new SimpleDateFormat("dd-MM-yyyy");
+        final String dates = df.format(currentTimeAndDate);
+        date.setText(dates);
+
+
+        clockOut.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Settings.time_card = 0;
+                final String times = time.getText().toString();
+                ClockInClockOut clockInClockOut = new ClockInClockOut();
+
+                clockInClockOut.setPointOfSaleNumber(Settings.POS_number);
+                clockInClockOut.setDate(dates);
+                clockInClockOut.setUserNO(Settings.password);
+                clockInClockOut.setUserName(Settings.user_name);
+                clockInClockOut.setTranstype("ClockOut");
+                clockInClockOut.setDateCard(dates);
+                clockInClockOut.setTimeCard(times);
+                clockInClockOut.setRemark((remarkOut.getText().toString()));
+                clockInClockOut.setShiftNo(Settings.shift_number);
+                clockInClockOut.setShiftName(Settings.shift_name);
+
+
+                mDHandler.addClockInClockOut(clockInClockOut);
+                dialog.dismiss();
+
+            }
+        });
+        breakIN.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Settings.time_card = 2;
+                final String times = time.getText().toString();
+                ClockInClockOut clockInClockOut = new ClockInClockOut();
+
+                clockInClockOut.setPointOfSaleNumber(Settings.POS_number);
+                clockInClockOut.setDate(dates);
+                clockInClockOut.setUserNO(Settings.password);
+                clockInClockOut.setUserName(Settings.user_name);
+                clockInClockOut.setTranstype("BreakIN");
+                clockInClockOut.setDateCard(dates);
+                clockInClockOut.setTimeCard(times);
+                clockInClockOut.setRemark((remarkOut.getText().toString()));
+                clockInClockOut.setShiftNo(Settings.shift_number);
+                clockInClockOut.setShiftName(Settings.shift_name);
+
+                mDHandler.addClockInClockOut(clockInClockOut);
+
+                dialog.dismiss();
+            }
+        });
+
+        dialog.show();
+
+    }
+
+    @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR1)
+    void showBreakTimeOut() {
+        dialog = new Dialog(Main.this);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setCancelable(false);
+        dialog.setContentView(R.layout.time_break_out_dialog);
+        dialog.setCanceledOnTouchOutside(true);
+
+        Window window = dialog.getWindow();
+        window.setLayout(590, 390);
+
+        Button breakOut;
+        TextView date, username;
+        final TextClock time;
+        final EditText remark;
+        breakOut = (Button) dialog.findViewById(R.id.breaks_out);
+
+        time = (TextClock) dialog.findViewById(R.id.horas2);
+        date = (TextView) dialog.findViewById(R.id.date4);
+        username = (TextView) dialog.findViewById(R.id.username4);
+
+        remark = (EditText) dialog.findViewById(R.id.remark4);
+
+        Date currentTimeAndDate = Calendar.getInstance().getTime();
+        SimpleDateFormat df = new SimpleDateFormat("dd-MM-yyyy");
+        final String dates = df.format(currentTimeAndDate);
+        date.setText(dates);
+
+        username.setText(Settings.user_name);
+
+        breakOut.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+                final String times = time.getText().toString();
+                ClockInClockOut clockInClockOut = new ClockInClockOut();
+
+                clockInClockOut.setPointOfSaleNumber(Settings.POS_number);
+                clockInClockOut.setDate(dates);
+                clockInClockOut.setUserNO(Settings.password);
+                clockInClockOut.setUserName(Settings.user_name);
+                clockInClockOut.setTranstype("BreakOut");
+                clockInClockOut.setDateCard(dates);
+                clockInClockOut.setTimeCard(times);
+                clockInClockOut.setRemark((remark.getText().toString()));
+                clockInClockOut.setShiftNo(Settings.shift_number);
+                clockInClockOut.setShiftName(Settings.shift_name);
+
+                mDHandler.addClockInClockOut(clockInClockOut);
+
+                Settings.time_card = 1;
+            }
+        });
+
+
+        dialog.show();
+    }
+
 
     void showAouthorizingDialog() {
         dialog = new Dialog(Main.this);
