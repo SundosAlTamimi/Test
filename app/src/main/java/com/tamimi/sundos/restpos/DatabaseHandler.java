@@ -35,7 +35,7 @@ import java.util.Collections;
 import java.util.List;
 
 public class DatabaseHandler extends SQLiteOpenHelper {
-// hi
+//hi
     // Database Version
     private static final int DATABASE_VERSION = 1;
 
@@ -534,7 +534,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         String CREATE_TABLE_CUSTOMER_PAYMENT = "CREATE TABLE " + CUSTOMER_PAYMENT + "("
                 + POINT_OF_SALE_NUMBER3 + " INTEGER ,"
                 + USER_NO3 + " INTEGER,"
-                + USER_NAME + " TEXT,"
+                + USER_NAME3 + " TEXT,"
                 + CUSTOMER_NO3 + " INTEGER,"
                 + CUSTOMER_NAME3 + " TEXT,"
                 + CUSTOMER_BALANCE3 + " DOUBLE,"
