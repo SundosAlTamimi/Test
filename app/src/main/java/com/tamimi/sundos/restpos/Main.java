@@ -512,7 +512,7 @@ public class Main extends AppCompatActivity {
         dialog.setCanceledOnTouchOutside(true);
 
         Window window = dialog.getWindow();
-        window.setLayout(410, 510);
+        //window.setLayout(410, 510);
 
         final TextView value = (TextView) dialog.findViewById(R.id.text);
 
@@ -648,7 +648,7 @@ public class Main extends AppCompatActivity {
         dialog.setCanceledOnTouchOutside(true);
 
         Window window = dialog.getWindow();
-        window.setLayout(590, 390);
+        //window.setLayout(590, 390);
 
 
         Button clockIn;
@@ -707,7 +707,7 @@ public class Main extends AppCompatActivity {
         dialog.setCanceledOnTouchOutside(true);
 
         Window window = dialog.getWindow();
-        window.setLayout(590, 290);
+       // window.setLayout(590, 290);
 
         TextView masege, time, date;
 
@@ -739,7 +739,7 @@ public class Main extends AppCompatActivity {
         dialog.setCanceledOnTouchOutside(true);
 
         Window window = dialog.getWindow();
-        window.setLayout(590, 390);
+     //   window.setLayout(590, 390);
 
         Button clockOut, breakIN;
         TextView userNameOut, date;
@@ -822,7 +822,7 @@ public class Main extends AppCompatActivity {
         dialog.setCanceledOnTouchOutside(true);
 
         Window window = dialog.getWindow();
-        window.setLayout(590, 390);
+       // window.setLayout(590, 390);
 
         Button breakOut;
         TextView date, username;
