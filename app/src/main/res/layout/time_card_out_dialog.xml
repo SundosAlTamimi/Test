@@ -5,20 +5,22 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/layer3"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:padding="20dp">
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:text="@string/time_card_out"
-        android:textSize="30sp"
-        android:textColor="@color/text_color" />
-<TextView
-    android:layout_width="500dp"
-    android:layout_height="1dp"
-    android:layout_gravity="center"
-    android:background="@color/text_color"/>
+        android:textColor="@color/text_color"
+        android:textSize="30sp" />
+
+    <TextView
+        android:layout_width="500dp"
+        android:layout_height="1dp"
+        android:layout_gravity="center"
+        android:background="@color/text_color" />
 
     <TableLayout
         android:layout_width="match_parent"
@@ -42,17 +44,17 @@
                 android:layout_weight="1"
                 android:gravity="center"
                 android:textColor="@color/text_color"
-                android:textSize="18dp"/>
+                android:textSize="18dp" />
 
             <TextClock
                 android:id="@+id/horas1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:textSize="18dp"
-                android:textColor="@color/text_color"
-                android:gravity="center"
                 android:format12Hour="hh:mm:ss "
+                android:gravity="center"
+                android:textColor="@color/text_color"
+                android:textSize="18dp"
                 tools:targetApi="jelly_bean_mr1" />
         </TableRow>
 
@@ -72,7 +74,7 @@
             android:padding="5dp"
             android:text="@string/user_name"
             android:textColor="@color/text_color"
-            android:textSize="18dp"/>
+            android:textSize="18dp" />
 
         <TextView
             android:id="@+id/username1"
@@ -81,18 +83,18 @@
             android:layout_weight="1"
             android:padding="5dp"
             android:textColor="@color/text_color"
-            android:textSize="18dp"/>
+            android:textSize="18dp" />
     </TableRow>
 
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_gravity="center"
         android:layout_marginBottom="10dp"
         android:layout_marginLeft="20dp"
         android:layout_marginRight="20dp"
         android:layout_marginTop="10dp"
-        android:orientation="horizontal"
-        android:layout_gravity="center">
+        android:orientation="horizontal">
 
         <Button
             android:id="@+id/clock_out"
@@ -129,7 +131,7 @@
             android:layout_height="wrap_content"
             android:text="@string/Remark"
             android:textColor="@color/text_color"
-            android:textSize="18dp"/>
+            android:textSize="18dp" />
     </TableRow>
 
     <TableRow
@@ -147,6 +149,7 @@
             android:ems="10"
             android:gravity="top"
             android:inputType="textPersonName"
+            android:padding="10dp"
             android:textColor="@color/text_color"
             android:textSize="20sp" />
     </TableRow>
