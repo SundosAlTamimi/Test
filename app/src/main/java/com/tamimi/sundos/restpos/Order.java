@@ -63,6 +63,7 @@ public class Order extends AppCompatActivity {
     int tableLayoutPosition;
     Double lineDiscountValue;
     Double discountValue;
+    static double balance ;
     double totalItemsWithDiscount = 0.0;
 
     int voucherSerial;
@@ -1077,6 +1078,7 @@ public class Order extends AppCompatActivity {
         service.setText("" + serviceValue);
         tax.setText("" + taxValue);
         amountDue.setText("" + amountDueValue);
+        balance = amountDueValue ;
     }
 
     void saveInOrderTransaction() {
@@ -1139,6 +1141,10 @@ public class Order extends AppCompatActivity {
 //        category8.setBackgroundColor(getResources().getColor(R.color.dark_blue));
 //        category9.setBackgroundColor(getResources().getColor(R.color.dark_blue));
 //        category10.setBackgroundColor(getResources().getColor(R.color.dark_blue));
+    }
+
+    public double getBalance(){
+        return balance;
     }
 
     @SuppressLint("ClickableViewAccessibility")

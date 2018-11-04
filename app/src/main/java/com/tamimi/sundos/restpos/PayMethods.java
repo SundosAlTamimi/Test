@@ -82,8 +82,10 @@ public class PayMethods extends AppCompatActivity {
         tableNumber.setText(tableNumber.getText().toString() + " 1");
 
         focusedTextView = null;
+        Order obj = new Order();
+        balance.setText(obj.getBalance()+"");
         mainBalance = balance.getText().toString();
-        remainingBalance.setText("Remaining : " + mainBalance);
+        remainingBalance.setText("Remaining : " + obj.getBalance());
         mDHandler = new DatabaseHandler(PayMethods.this);
 
         cardNumbers = new ArrayList<String>();
