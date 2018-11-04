@@ -9,16 +9,21 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.util.Log;
 
+import com.tamimi.sundos.restpos.BackOffice.EmployeeRegistration;
 import com.tamimi.sundos.restpos.Models.Cashier;
 import com.tamimi.sundos.restpos.Models.CategoryWithModifier;
 import com.tamimi.sundos.restpos.Models.Cheque;
 import com.tamimi.sundos.restpos.Models.ClockInClockOut;
 import com.tamimi.sundos.restpos.Models.CreditCard;
 import com.tamimi.sundos.restpos.Models.CustomerPayment;
+import com.tamimi.sundos.restpos.Models.CustomerRegistrationModel;
+import com.tamimi.sundos.restpos.Models.EmployeeRegistrationModle;
 import com.tamimi.sundos.restpos.Models.ForceQuestions;
 import com.tamimi.sundos.restpos.Models.ItemWithFq;
 import com.tamimi.sundos.restpos.Models.ItemWithModifier;
 import com.tamimi.sundos.restpos.Models.Items;
+import com.tamimi.sundos.restpos.Models.JobGroup;
+import com.tamimi.sundos.restpos.Models.MemberShipGroup;
 import com.tamimi.sundos.restpos.Models.Modifier;
 import com.tamimi.sundos.restpos.Models.Money;
 import com.tamimi.sundos.restpos.Models.OrderHeader;
@@ -298,6 +303,71 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     private static final String SHIFT_NUMBER4 = "SHIFT_NUMBER";
     private static final String SHIFT_NAME4 = "SHIFT_NAME";
     //__________________________________________________________________________________
+    private static final String JOB_GROUP_TABLE = "JOB_GROUP_TABLE";
+
+    private static final String JOB_GROUP5 = "JOB_GROUP";
+    private static final String USER_NAME5 = "USER_NAME";
+    private static final String USER_NO5 = "USER_NO";
+    private static final String IN_DATE5 = "IN_DATE";
+    private static final String ACTIVE5 = "ACTIVE";
+    private static final String SHIFT_NO5 = "SHIFT_NO";
+    private static final String SHIFT_NAME5 ="SHIFT_NAME";
+    //____________________________________________________________________________________
+    private static final String MEMBER_SHIP_GROUP_MANAGEMENT_TABLE = "MEMBER_SHIP_GROUP_MANAGEMENT_TABLE";
+
+    private static final String MEMBER_SHIP_GROUP = "MEMBER_SHIP_GROUP";
+    private static final String USER_NAME6 = "USER_NAME";
+    private static final String USER_NO6 = "USER_NO";
+    private static final String IN_DATE6 = "IN_DATE";
+    private static final String SHIFT_NO6 = "SHIFT_NO";
+    private static final String SHIFT_NAME6 ="SHIFT_NAME";
+    private static final String ACTIVE6 ="ACTIVITY";
+
+    //________________________________________________________________________________________
+    private static final String EMPLOYEE_REGISTRATION_TABLE = "EMPLOYEE_REGISTRATION_TABLE";
+
+    private static final String JOB_GROUP7 = "JOB_GROUP";
+    private static final String EMPLOYEE_NAME7 = "EMPLOYEE_NAME";
+    private static final String EMPLOYEE_NO7 = "EMPLOYEE_NO";
+    private static final String MOBILE_NO7 = "MOBILE_NO";
+    private static final String SECURITY_LEVEL7 = "SECURITY_LEVEL";
+    private static final String USER_PASSWORD7 = "USER_PASSWORD";
+    private static final String ACTIVE7 = "ACTIVE";
+    private static final String HIRE_DATA7 = "HIRE_DATA";
+    private static final String TERMINATION_DATE7 = "TERMINATION_DATE";
+    private static final String PAY_BASIC7 = "PAY_BASIC";
+    private static final String PAY_RATE7 = "PAY_RATE";
+    private static final String HOLIDAY_PAY7 = "HOLIDAY_PAY";
+    private static final String SHIFT_NO7 = "SHIFT_NO";
+    private static final String SHIFT_NAME7 = "SHIFT_NAME";
+
+    //________________________________________________________________________________________
+    private static final String CUSTOMER_REGISTRATION_TABLE = "CUSTOMER_REGISTRATION_TABLE";
+
+    private static final String MEMBER_SHIP_GROUP8 = "MEMBER_SHIP_GROUP";
+    private static final String CUSTOMER_NAME8 = "CUSTOMER_NAME";
+    private static final String CUSTOMER_CODE8 = "CUSTOMER_CODE";
+    private static final String MEMBER_SHIP_CARD8 = "MEMBER_SHIP_CARD";
+    private static final String COENDER8 = "COENDER";
+    private static final String REMARK8 = "REMARK";
+    private static final String STREET_NO_NAME8 = "STREET_NO_NAME";
+    private static final String CITY8 = "CITY";
+    private static final String PHONE_NO8 = "PHONE_NO";
+    private static final String MOBILE_NO8 = "MOBILE_NO";
+    private static final String NAME_SHOW8 = "NAME_SHOW";
+    private static final String BIRTHDAY8 = "BIRTHDAY";
+    private static final String ANNIVERSARY8 = "ANNIVERSARY";
+    private static final String OCCUPATION8 = "OCCUPATION";
+    private static final String EMAIL8 = "EMAIL";
+    private static final String TOTAL_POINT8 = "TOTAL_POINT";
+    private static final String REDEEMED_POINT8 = "REDEEMED_POINT";
+    private static final String REMAINING_POINT8 = "REMAINING_POINT";
+    private static final String SHIFT_NO8 = "SHIFT_NO";
+    private static final String SHIFT_NAME8 = "SHIFT_NAME";
+
+
+    //____________________________________________________________________________________
+
 
     public DatabaseHandler(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -574,8 +644,74 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                 + SHIFT_NUMBER4 + " INTEGER,"
                 + SHIFT_NAME4 + " TEXT " + ")";
         db.execSQL(CREATE_TABLE_CLOCK_IN_CLOCK_OUT);
+        //___________________________________________________________________________________
+
+        String CREATE_JOB_GROUP_TABLES = "CREATE TABLE " + JOB_GROUP_TABLE + "("
+                + JOB_GROUP5 + " TEXT,"
+                + USER_NAME5 + " TEXT,"
+                + USER_NO5 + " INTEGER,"
+                + IN_DATE5 + " TEXT,"
+                + ACTIVE5 + " INTEGER,"
+                + SHIFT_NO5 + " INTEGER,"
+                + SHIFT_NAME5 + " TEXT" + ")";
+        db.execSQL(CREATE_JOB_GROUP_TABLES);
+        //___________________________________________________________________________________
+
+        String CREATE_MEMBER_SHIP_MANAGEMENT_GROUP_TABLES = "CREATE TABLE " + MEMBER_SHIP_GROUP_MANAGEMENT_TABLE + "("
+                + MEMBER_SHIP_GROUP + " TEXT,"
+                + USER_NAME6 + " TEXT,"
+                + USER_NO6 + " INTEGER,"
+                + IN_DATE6 + " TEXT,"
+                + ACTIVE6 + " INTEGER,"
+                + SHIFT_NO6 + " INTEGER,"
+                + SHIFT_NAME6 + " TEXT" + ")";
+        db.execSQL(CREATE_MEMBER_SHIP_MANAGEMENT_GROUP_TABLES);
+        //___________________________________________________________________________________
+
+        String CREATE_TABLE_EMPLOYEE_REGISTRATION_TABLE = "CREATE TABLE " + EMPLOYEE_REGISTRATION_TABLE + "("
+                + JOB_GROUP7 + " TEXT ,"
+                + EMPLOYEE_NAME7 + " TEXT ,"
+                + EMPLOYEE_NO7 + " INTEGER,"
+                + MOBILE_NO7 + " INTEGER,"
+                + SECURITY_LEVEL7 + " INTEGER,"
+                + USER_PASSWORD7 + " INTEGER,"
+                + ACTIVE7 + " TEXT,"
+                + HIRE_DATA7 + " INTEGER,"
+                + TERMINATION_DATE7 + " INTEGER,"
+                + PAY_BASIC7 + " INTEGER,"
+                + PAY_RATE7 + " INTEGER,"
+                + HOLIDAY_PAY7 + " INTEGER ,"
+                + SHIFT_NAME7 + " TEXT ,"
+                + SHIFT_NO7 + " INTEGER " + ")";
+        db.execSQL(CREATE_TABLE_EMPLOYEE_REGISTRATION_TABLE);
+
+        //___________________________________________________________________________________
+
+        String CREATE_TABLE_CUSTOMER_REGISTRATION_TABLE = "CREATE TABLE " + CUSTOMER_REGISTRATION_TABLE + "("
+                + MEMBER_SHIP_GROUP8 + " TEXT ,"
+                + CUSTOMER_NAME8 + " TEXT,"
+                + CUSTOMER_CODE8 + " TEXT,"
+                + MEMBER_SHIP_CARD8 + " TEXT,"
+                + COENDER8 + " TEXT,"
+                + REMARK8 + " TEXT,"
+                + STREET_NO_NAME8 + " TEXT,"
+                + CITY8 + " TEXT,"
+                + PHONE_NO8 + " INTEGER,"
+                + MOBILE_NO8 + " INTEGER,"
+                + NAME_SHOW8 + " TEXT ,"
+                + BIRTHDAY8 + " TEXT ,"
+                + ANNIVERSARY8 + " TEXT ,"
+                + OCCUPATION8 + " TEXT ,"
+                + EMAIL8 + " TEXT ,"
+                + TOTAL_POINT8 + " INTEGER ,"
+                + REDEEMED_POINT8 + " INTEGER ,"
+                + REMAINING_POINT8 + " INTEGER ,"
+                + SHIFT_NAME8 + " TEXT ,"
+                + SHIFT_NO8 + " INTEGER " + ")";
+        db.execSQL(CREATE_TABLE_CUSTOMER_REGISTRATION_TABLE);
 
     }
+
 
     // Upgrading database
     @Override
@@ -600,6 +736,9 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS " + ITEM_WITH_FQ); //16
         db.execSQL("DROP TABLE IF EXISTS " + CATEGORY_WITH_MODIFIER); //17
         db.execSQL("DROP TABLE IF EXISTS " + CLOCK_IN_CLOCK_OUT);//18
+        db.execSQL("DROP TABLE IF EXISTS " + JOB_GROUP_TABLE);//19
+        db.execSQL("DROP TABLE IF EXISTS " + EMPLOYEE_REGISTRATION_TABLE);//20
+        db.execSQL("DROP TABLE IF EXISTS " + CUSTOMER_REGISTRATION_TABLE);//21
         // Create tables again
         onCreate(db);
     }
@@ -984,6 +1123,96 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         db.close();
 
     }
+
+    public void addJobGroup(JobGroup jobGroup) {
+        db = this.getReadableDatabase();
+        ContentValues values = new ContentValues();
+
+        values.put(JOB_GROUP5, jobGroup.getJobGroup());
+        values.put(USER_NAME5, jobGroup.getUserName());
+        values.put(USER_NO5, jobGroup.getUserNo());
+        values.put(IN_DATE5,jobGroup.getInDate());
+        values.put(ACTIVE5, jobGroup.getActive());
+        values.put(SHIFT_NO5, jobGroup.getShiftNo());
+        values.put(SHIFT_NAME5, jobGroup.getShiftName());
+
+        db.insert(JOB_GROUP_TABLE, null, values);
+
+        db.close();
+    }
+
+    public void addMemberShipGroup(MemberShipGroup memberShipGroup) {
+        db = this.getReadableDatabase();
+        ContentValues values = new ContentValues();
+
+        values.put(MEMBER_SHIP_GROUP, memberShipGroup.getMemberShipGroup());
+        values.put(USER_NAME6, memberShipGroup.getUserName());
+        values.put(USER_NO6, memberShipGroup.getUserNo());
+        values.put(IN_DATE6,memberShipGroup.getInDate());
+        values.put(ACTIVE6, memberShipGroup.getActive());
+        values.put(SHIFT_NO6, memberShipGroup.getShiftNo());
+        values.put(SHIFT_NAME6, memberShipGroup.getShiftName());
+
+        db.insert(MEMBER_SHIP_GROUP_MANAGEMENT_TABLE, null, values);
+
+        db.close();
+    }
+
+    public void addEmployeeRegistration(EmployeeRegistrationModle employeeRegistrationModle) {
+        db = this.getReadableDatabase();
+        ContentValues values = new ContentValues();
+
+        values.put(JOB_GROUP7, employeeRegistrationModle.getJobGroup());
+        values.put(EMPLOYEE_NAME7, employeeRegistrationModle.getEmployeeName());
+        values.put(EMPLOYEE_NO7, employeeRegistrationModle.getEmployeeNO());
+        values.put(MOBILE_NO7, employeeRegistrationModle.getMobileNo());
+        values.put(SECURITY_LEVEL7,employeeRegistrationModle.getSecurityLevel());
+        values.put(USER_PASSWORD7, employeeRegistrationModle.getUserPassword());
+        values.put(ACTIVE7, employeeRegistrationModle.getActive());
+        values.put(HIRE_DATA7, employeeRegistrationModle.getHireDate());
+        values.put(TERMINATION_DATE7, employeeRegistrationModle.getTerminationDate());
+        values.put(PAY_BASIC7, employeeRegistrationModle.getPayBasic());
+        values.put(PAY_RATE7, employeeRegistrationModle.getPayRate());
+        values.put(HOLIDAY_PAY7, employeeRegistrationModle.getHolidayPay());
+        values.put(SHIFT_NO7, employeeRegistrationModle.getShiftNo());
+        values.put(SHIFT_NAME7, employeeRegistrationModle.getShiftName());
+
+        db.insert(EMPLOYEE_REGISTRATION_TABLE, null, values);
+
+        db.close();
+    }
+
+    public void addCustomerRegistration(CustomerRegistrationModel customerRegistrationModel) {
+        db = this.getReadableDatabase();
+        ContentValues values = new ContentValues();
+
+
+        values.put(MEMBER_SHIP_GROUP8, customerRegistrationModel.getMemberShipGroup());
+        values.put(CUSTOMER_NAME8, customerRegistrationModel.getCustomerName());
+        values.put(CUSTOMER_CODE8, customerRegistrationModel.getCustomerCode());
+        values.put(MEMBER_SHIP_CARD8,customerRegistrationModel.getMemberShipGroup());
+        values.put(COENDER8, customerRegistrationModel.getCoender());
+        values.put(REMARK8, customerRegistrationModel.getRemark());
+        values.put(STREET_NO_NAME8, customerRegistrationModel.getStreetNoName());
+        values.put(CITY8, customerRegistrationModel.getCity());
+        values.put(PHONE_NO8, customerRegistrationModel.getPhoneNo());
+        values.put(MOBILE_NO8, customerRegistrationModel.getMobileNo());
+        values.put(NAME_SHOW8, customerRegistrationModel.getNameShow());
+        values.put(BIRTHDAY8, customerRegistrationModel.getBirthday());
+        values.put(ANNIVERSARY8, customerRegistrationModel.getAnniversary());
+        values.put(OCCUPATION8, customerRegistrationModel.getOccupation());
+        values.put(EMAIL8, customerRegistrationModel.getEmail());
+        values.put(TOTAL_POINT8, customerRegistrationModel.getTotalPoint());
+        values.put(REDEEMED_POINT8, customerRegistrationModel.getRedeemedPoint());
+        values.put(REMAINING_POINT8, customerRegistrationModel.getRemainingPoint());
+        values.put(SHIFT_NO8, customerRegistrationModel.getShiftNO());
+        values.put(SHIFT_NAME8, customerRegistrationModel.getShiftName());
+
+        db.insert(CUSTOMER_REGISTRATION_TABLE, null, values);
+
+        db.close();
+    }
+
 
     public ArrayList<ClockInClockOut> getAllExistingClockInClockOut() {
         ArrayList<ClockInClockOut> clockInClockOuts = new ArrayList<ClockInClockOut>();
@@ -1610,6 +1839,130 @@ public class DatabaseHandler extends SQLiteOpenHelper {
             } while (cursor.moveToNext());
         }
         return fqs;
+    }
+
+    public ArrayList<JobGroup> getAllJobGroup() {
+        ArrayList<JobGroup> jobGroups = new ArrayList<>();
+
+        String selectQuery = "SELECT * FROM " + JOB_GROUP_TABLE;
+        db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+
+        if (cursor.moveToFirst()) {
+            do {
+                JobGroup jobGroup = new JobGroup();
+
+                jobGroup.setJobGroup(cursor.getString(0));
+                jobGroup.setUserName(cursor.getString(1));
+                jobGroup.setUserNo(Integer.parseInt(cursor.getString(2)));
+                jobGroup.setInDate(cursor.getString(3));
+                jobGroup.setActive(Integer.parseInt(cursor.getString(4)));
+                jobGroup.setShiftNo(Integer.parseInt(cursor.getString(5)));
+                jobGroup.setShiftName(cursor.getString(6));
+                jobGroups.add(jobGroup);
+
+            } while (cursor.moveToNext());
+        }
+        return jobGroups;
+    }
+
+    public ArrayList<MemberShipGroup> getAllMemberShipGroup() {
+        ArrayList<MemberShipGroup> memberShipGroups = new ArrayList<>();
+
+        String selectQuery = "SELECT * FROM " + MEMBER_SHIP_GROUP_MANAGEMENT_TABLE;
+        db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+
+        if (cursor.moveToFirst()) {
+            do {
+                MemberShipGroup memberShipGroup = new MemberShipGroup();
+
+                memberShipGroup.setMemberShipGroup(cursor.getString(0));
+                memberShipGroup.setUserName(cursor.getString(1));
+                memberShipGroup.setUserNo(Integer.parseInt(cursor.getString(2)));
+                memberShipGroup.setInDate(cursor.getString(3));
+                memberShipGroup.setActive(Integer.parseInt(cursor.getString(4)));
+                memberShipGroup.setShiftNo(Integer.parseInt(cursor.getString(5)));
+                memberShipGroup.setShiftName(cursor.getString(6));
+
+                memberShipGroups.add(memberShipGroup);
+
+            } while (cursor.moveToNext());
+        }
+        return memberShipGroups;
+    }
+
+
+    public ArrayList<CustomerRegistrationModel> getAllCustomerRegistration() {
+        ArrayList<CustomerRegistrationModel> customerRegistrationModels = new ArrayList<>();
+
+        String selectQuery = "SELECT  * FROM " + CUSTOMER_REGISTRATION_TABLE;
+        db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+
+        if (cursor.moveToFirst()) {
+            do {
+                CustomerRegistrationModel customerRegistrationModel = new CustomerRegistrationModel();
+
+                customerRegistrationModel.setMemberShipGroup(cursor.getString(0));
+                customerRegistrationModel.setCustomerName(cursor.getString(1));
+                customerRegistrationModel.setCustomerCode(cursor.getString(2));
+                customerRegistrationModel.setMemberShipCardNO(cursor.getInt(3));
+                customerRegistrationModel.setCustomerName(cursor.getString(4));
+                customerRegistrationModel.setCoender(cursor.getString(5));
+                customerRegistrationModel.setRemark(cursor.getString(6));
+                customerRegistrationModel.setStreetNoName(cursor.getString(7));
+                customerRegistrationModel.setCity(cursor.getString(8));
+                customerRegistrationModel.setPhoneNo(cursor.getInt(9));
+                customerRegistrationModel.setMobileNo(cursor.getInt(10));
+                customerRegistrationModel.setNameShow(cursor.getString(11));
+                customerRegistrationModel.setBirthday(cursor.getString(12));
+                customerRegistrationModel.setAnniversary(cursor.getString(13));
+                customerRegistrationModel.setOccupation(cursor.getString(14));
+                customerRegistrationModel.setEmail(cursor.getString(15));
+                customerRegistrationModel.setTotalPoint(cursor.getInt(16));
+                customerRegistrationModel.setRedeemedPoint(cursor.getInt(17));
+                customerRegistrationModel.setRemainingPoint(cursor.getInt(18));
+                customerRegistrationModel.setShiftNO(cursor.getInt(19));
+                customerRegistrationModel.setShiftName(cursor.getString(20));
+
+                customerRegistrationModels.add(customerRegistrationModel);
+            } while (cursor.moveToNext());
+        }
+        return customerRegistrationModels;
+    }
+
+
+    public ArrayList<EmployeeRegistrationModle> getAllEmployeeRegistration() {
+        ArrayList<EmployeeRegistrationModle> employeeRegistrationModels = new ArrayList<>();
+
+        String selectQuery = "SELECT  * FROM " + EMPLOYEE_REGISTRATION_TABLE;
+        db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+
+        if (cursor.moveToFirst()) {
+            do {
+                EmployeeRegistrationModle employeeRegistrationModels1 = new EmployeeRegistrationModle();
+
+                employeeRegistrationModels1.setJobGroup(cursor.getString(0));
+                employeeRegistrationModels1.setEmployeeName(cursor.getString(1));
+                employeeRegistrationModels1.setEmployeeNO(cursor.getInt(2));
+                employeeRegistrationModels1.setMobileNo(cursor.getInt(3));
+                employeeRegistrationModels1.setSecurityLevel(cursor.getString(4));
+                employeeRegistrationModels1.setUserPassword(cursor.getInt(5));
+                employeeRegistrationModels1.setActive(cursor.getInt(6));
+                employeeRegistrationModels1.setHireDate(cursor.getString(7));
+                employeeRegistrationModels1.setTerminationDate(cursor.getString(8));
+                employeeRegistrationModels1.setPayBasic(cursor.getString(9));
+                employeeRegistrationModels1.setPayRate(cursor.getString(10));
+                employeeRegistrationModels1.setHolidayPay(cursor.getString(11));
+                employeeRegistrationModels1.setShiftNo(cursor.getInt(12));
+                employeeRegistrationModels1.setShiftName(cursor.getString(13));
+
+                employeeRegistrationModels.add(employeeRegistrationModels1);
+            } while (cursor.moveToNext());
+        }
+        return employeeRegistrationModels;
     }
 
     //Updating single record

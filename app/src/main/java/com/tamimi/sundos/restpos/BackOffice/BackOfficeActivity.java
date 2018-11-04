@@ -1,8 +1,6 @@
 package com.tamimi.sundos.restpos.BackOffice;
 
-import android.app.AlertDialog;
 import android.app.Dialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
@@ -19,7 +17,6 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
@@ -35,10 +32,11 @@ import com.tamimi.sundos.restpos.Models.ForceQuestions;
 import com.tamimi.sundos.restpos.Models.ItemWithFq;
 import com.tamimi.sundos.restpos.Models.ItemWithModifier;
 import com.tamimi.sundos.restpos.Models.Items;
+import com.tamimi.sundos.restpos.Models.JobGroup;
+import com.tamimi.sundos.restpos.Models.MemberShipGroup;
 import com.tamimi.sundos.restpos.Models.Modifier;
 import com.tamimi.sundos.restpos.Models.Money;
 import com.tamimi.sundos.restpos.Models.PayMethod;
-import com.tamimi.sundos.restpos.PayMethods;
 import com.tamimi.sundos.restpos.R;
 import com.tamimi.sundos.restpos.Settings;
 
@@ -47,7 +45,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -57,9 +54,10 @@ public class BackOfficeActivity extends AppCompatActivity {
 
     LinearLayout lManagement, lSales, lCustomers, lEmployees, lMenu, lSettings;
 
+    TableLayout jobTable;
     Button butManagement, butSales, butCustomers, butEmployees, butMenu, butSettings;
     LinearLayout announcement, giftCard, employeeClockInOut, menuSearch;
-    LinearLayout membershipGroup, membership;
+    LinearLayout membershipGroup, membership, customerRegistration;
     LinearLayout jobGroup, employeeRegistration, employeeSchedule, payroll, vacation;
     LinearLayout menuCategory, menuRegistration, modifier, forceQuestion, menuLayout;
     LinearLayout store, storeOperation, users, moneyCategory;
@@ -67,6 +65,7 @@ public class BackOfficeActivity extends AppCompatActivity {
             salesReportForDay, salesByHours, salesVolumeByItem, topSalesItemReport, topGroupSalesReport, topFamilySalesReport,
             salesReportByCustomer, profitLossReport, detailSalesReport;
 
+    int count, count2;
     Dialog dialog;
     String today;
     DatabaseHandler mDHandler;
@@ -149,6 +148,11 @@ public class BackOfficeActivity extends AppCompatActivity {
                     break;
 
                 case R.id.membership_group:
+                    showMemberShipGroupDialog();
+                    break;
+                case R.id.customer_reg:
+                    Intent intentCustomerRegistration = new Intent(BackOfficeActivity.this, CustomerRegistration.class);
+                    startActivity(intentCustomerRegistration);
                     break;
 
                 case R.id.membership:
@@ -156,15 +160,20 @@ public class BackOfficeActivity extends AppCompatActivity {
                     break;
 
                 case R.id.job_group:
+                    showJobGroupDialog();
                     break;
 
                 case R.id.employee_registration:
+                    Intent intentEmployeeRegistration = new Intent(BackOfficeActivity.this, EmployeeRegistration.class);
+                    startActivity(intentEmployeeRegistration);
+
                     break;
 
                 case R.id.employee_schedule:
                     break;
 
                 case R.id.payroll:
+
                     break;
 
                 case R.id.vacation:
@@ -989,6 +998,174 @@ public class BackOfficeActivity extends AppCompatActivity {
         dialog.show();
     }
 
+    void showJobGroupDialog() {
+        dialog = new Dialog(BackOfficeActivity.this);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setCancelable(false);
+        dialog.setContentView(R.layout.job_group_dialog);
+        dialog.setCanceledOnTouchOutside(true);
+        Window window = dialog.getWindow();
+
+
+        count = 0;
+        final LinearLayout linearLayoutNo, linearLayoutJob;
+        final EditText jobGroupText;
+        Button newButton, saveButton, deleteButton;
+        final CheckBox jobCheck;
+        jobTable = (TableLayout) dialog.findViewById(R.id.job_group);
+        final ArrayList<String> jobGroup = new ArrayList<>();
+        final ArrayList<Integer> jobActive = new ArrayList<>();
+        jobGroupText = (EditText) dialog.findViewById(R.id.jobGroup);
+
+        newButton = (Button) dialog.findViewById(R.id.newButton1);
+        saveButton = (Button) dialog.findViewById(R.id.saveButton1);
+        deleteButton = (Button) dialog.findViewById(R.id.deleteButton1);
+        jobCheck = (CheckBox) dialog.findViewById(R.id.jobCheck);
+        Date currentTimeAndDate = Calendar.getInstance().getTime();
+        SimpleDateFormat df = new SimpleDateFormat("dd-MM-yyyy");
+        final String today1 = df.format(currentTimeAndDate);
+
+        saveButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (!jobGroup.isEmpty()) {
+                    for (int i = 0; i < jobGroup.size(); i++) {
+                        JobGroup jobGroups = new JobGroup();
+                        String text = jobGroup.get(i).toString();
+                        jobGroups.setJobGroup(text);
+                        jobGroups.setInDate(today1);
+                        jobGroups.setUserName(Settings.user_name);
+                        jobGroups.setUserNo(Settings.password);
+                        jobGroups.setShiftName(Settings.shift_name);
+                        jobGroups.setShiftNo(Settings.shift_number);
+                        jobGroups.setActive(jobActive.get(i));
+
+                        mDHandler.addJobGroup(jobGroups);
+                    }
+                    Toast.makeText(BackOfficeActivity.this, "Save Successful", Toast.LENGTH_SHORT).show();
+                    dialog.dismiss();
+                } else {
+                    Toast.makeText(BackOfficeActivity.this, "  Please Add Job Group Filled   ", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+        newButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String job = jobGroupText.getText().toString();
+                if (!job.equals("")) {
+                    jobGroup.add(job);
+                    if (jobCheck.isChecked()) {
+                        jobActive.add(1);
+                    } else {
+                        jobActive.add(0);
+                    }
+                    insertRaw3(count, job, jobTable);
+                    count++;
+                    jobGroupText.setText("");
+                } else {
+                    Toast.makeText(BackOfficeActivity.this, "  Please Enter Job Group Filled   ", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
+        deleteButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+
+        dialog.show();
+
+    }
+
+
+    void showMemberShipGroupDialog() {
+        dialog = new Dialog(BackOfficeActivity.this);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setCancelable(false);
+        dialog.setContentView(R.layout.member_ship_group_managment_dialog);
+        dialog.setCanceledOnTouchOutside(true);
+        Window window = dialog.getWindow();
+
+        count2 = 0;
+        final EditText memberGroupText;
+        Button newButton, saveButton, deleteButton;
+        final CheckBox active;
+        final ArrayList<String> memberGroup = new ArrayList<>();
+        final ArrayList<Integer> memberActive = new ArrayList<>();
+        final TableLayout tableLayoutMember;
+
+        memberGroupText = (EditText) dialog.findViewById(R.id.jobGroup2);
+        newButton = (Button) dialog.findViewById(R.id.newButton2);
+        saveButton = (Button) dialog.findViewById(R.id.saveButton2);
+        deleteButton = (Button) dialog.findViewById(R.id.deleteButton2);
+        active = (CheckBox) dialog.findViewById(R.id.memberCheck);
+        tableLayoutMember = (TableLayout) dialog.findViewById(R.id.member_table);
+
+
+        Date currentTimeAndDate = Calendar.getInstance().getTime();
+        SimpleDateFormat df = new SimpleDateFormat("dd-MM-yyyy");
+        final String today1 = df.format(currentTimeAndDate);
+
+        saveButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (!memberGroup.isEmpty()) {
+                    for (int i = 0; i < memberGroup.size(); i++) {
+                        MemberShipGroup memberShipGroup = new MemberShipGroup();
+                        String text = memberGroup.get(i).toString();
+                        memberShipGroup.setMemberShipGroup(text);
+                        memberShipGroup.setInDate(today1);
+                        memberShipGroup.setUserName(Settings.user_name);
+                        memberShipGroup.setUserNo(Settings.password);
+                        memberShipGroup.setShiftName(Settings.shift_name);
+                        memberShipGroup.setShiftNo(Settings.shift_number);
+                        memberShipGroup.setActive(memberActive.get(i));
+
+                        mDHandler.addMemberShipGroup(memberShipGroup);
+                    }
+                    Toast.makeText(BackOfficeActivity.this, "Save Successful", Toast.LENGTH_SHORT).show();
+                    dialog.dismiss();
+                } else {
+                    Toast.makeText(BackOfficeActivity.this, "  Please Add Member Ship Group   ", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+        newButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                String job = memberGroupText.getText().toString();
+                if (!job.equals("")) {
+                    memberGroup.add(job);
+                    if (active.isChecked()) {
+                        memberActive.add(1);
+                    } else {
+                        memberActive.add(0);
+                    }
+                    insertRaw3(count2, job, tableLayoutMember);
+                    count2++;
+                    memberGroupText.setText("");
+                } else {
+                    Toast.makeText(BackOfficeActivity.this, "  Please Enter Member Ship Group Filled   ", Toast.LENGTH_SHORT).show();
+                }
+
+            }
+        });
+
+        deleteButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+
+        dialog.show();
+
+    }
+
     void insertRaw(Items items, final TableLayout itemsTableLayout, String text) {
         final TableRow row = new TableRow(BackOfficeActivity.this);
 
@@ -1083,6 +1260,40 @@ public class BackOfficeActivity extends AppCompatActivity {
         rawPosition += 1;
     }
 
+    void insertRaw3(int number, String string, TableLayout tableLayout) {
+
+        if (true) {
+            final TableRow row = new TableRow(BackOfficeActivity.this);
+
+            TableRow.LayoutParams lp = new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT);
+            row.setLayoutParams(lp);
+
+            for (int i = 0; i < 2; i++) {
+                TextView textView = new TextView(BackOfficeActivity.this);
+
+                switch (i) {
+                    case 0:
+                        textView.setText("" + number);
+                        break;
+                    case 1:
+                        textView.setText(string);
+                        break;
+                }
+
+                textView.setTextColor(ContextCompat.getColor(BackOfficeActivity.this, R.color.text_color));
+                textView.setGravity(Gravity.CENTER);
+
+                TableRow.LayoutParams lp2 = new TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT, TableRow.LayoutParams.MATCH_PARENT, 1.0f);
+                textView.setLayoutParams(lp2);
+
+                row.addView(textView);
+
+            }
+
+            tableLayout.addView(row);
+        }
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -1140,6 +1351,7 @@ public class BackOfficeActivity extends AppCompatActivity {
         menuSearch = (LinearLayout) findViewById(R.id.menu_search);
         membershipGroup = (LinearLayout) findViewById(R.id.membership_group);
         membership = (LinearLayout) findViewById(R.id.membership);
+        customerRegistration = (LinearLayout) findViewById(R.id.customer_reg);
         jobGroup = (LinearLayout) findViewById(R.id.job_group);
         employeeRegistration = (LinearLayout) findViewById(R.id.employee_registration);
         employeeSchedule = (LinearLayout) findViewById(R.id.employee_schedule);
@@ -1170,6 +1382,7 @@ public class BackOfficeActivity extends AppCompatActivity {
         profitLossReport = (LinearLayout) findViewById(R.id.profit_loss_report);
         detailSalesReport = (LinearLayout) findViewById(R.id.detail_sales_report);
 
+
         butManagement.setOnClickListener(onClickListener);
         butSales.setOnClickListener(onClickListener);
         butCustomers.setOnClickListener(onClickListener);
@@ -1183,6 +1396,7 @@ public class BackOfficeActivity extends AppCompatActivity {
         menuSearch.setOnClickListener(onClickListener2);
         membershipGroup.setOnClickListener(onClickListener2);
         membership.setOnClickListener(onClickListener2);
+        customerRegistration.setOnClickListener(onClickListener2);
         jobGroup.setOnClickListener(onClickListener2);
         employeeRegistration.setOnClickListener(onClickListener2);
         employeeSchedule.setOnClickListener(onClickListener2);

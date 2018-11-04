@@ -234,7 +234,7 @@
     <string name="balance_after_use">Balance After Use</string>
     <string name="coupon_number">Coupon Number</string>
     <string name="member_name">Member Name</string>
-    <string name="mobile_number">Mobile Number</string>
+    <string name="mobile_number">Mobile NO</string>
     <string name="remaining_points">Remaining Points</string>
     <string name="final_point">Final Point</string>
     <string name="bank_name">Bank_name</string>
@@ -270,5 +270,45 @@
     <string name="clockinsuccessful"> Clock In Successful  </string>
     <string name="time_card_out">Time Card Out</string>
     <string name="time_break_out">Time Break Out</string>
+
+    <string name="number"> # </string>
+    <string name="job_group1"> Job Group </string>
+    <string name="member_ship_group"> Member Ship Group </string>
+
+    <string name="customer_code"> Customer Code </string>
+    <string name="member_ship_card"> Member Ship Card NO </string>
+    <string name="coender"> Coender </string>
+    <string name="Male"> Male </string>
+    <string name="Female"> Female </string>
+    <string name="city"> City </string>
+    <string name="phone"> Phone No </string>
+    <string name="mobile"> Mobile No </string>
+
+    <string name="Name_show"> Name Show </string>
+    <string name="birthday"> Birthday </string>
+    <string name="Anniversary"> Anniversary  </string>
+    <string name="occupation"> Occupation </string>
+
+    <string name="Email"> Email </string>
+    <string name="total_point"> Total Point </string>
+
+    <string name="Redeemed_point"> Redeemed Point </string>
+    <string name="Remaining_point"> Remaining Point </string>
+    <string name="Customer_Registration"> Customer Registration </string>
+    <string name="street_no_name"> Street  NO/Name </string>
+
+
+    <string name="Employee_Registration"> Employee Registration </string>
+    <string name="Employee_NO"> Employee NO </string>
+    <string name="Employee_Name"> Employee Name </string>
+    <string name="Security_level"> Security Level </string>
+    <string name="User_Password"> User Password </string>
+    <string name="Hire_Date"> Hire Date </string>
+    <string name="Termination_Date"> Termination  Date </string>
+    <string name="Pay_Basic"> Pay Basic </string>
+
+    <string name="Pay_Rate"> Pay Rate </string>
+    <string name="Holiday_Pay"> Holiday Pay </string>
+
 
 </resources>

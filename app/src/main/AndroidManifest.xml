@@ -15,7 +15,12 @@
             android:screenOrientation="landscape"
             android:theme="@style/Theme.AppCompat.NoActionBar">
 
+            <intent-filter>
 
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
 
 
         </activity>
@@ -37,9 +42,6 @@
             android:theme="@style/Theme.AppCompat.NoActionBar">
 
             <intent-filter>
-
-                <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -67,9 +69,21 @@
         <activity android:name=".PayMethods"
             android:screenOrientation="landscape"
             android:theme="@style/Theme.AppCompat.NoActionBar">
+        </activity>
+
+        <activity android:name=".BackOffice.CustomerRegistration"
+            android:screenOrientation="landscape"
+            android:theme="@style/Theme.AppCompat.NoActionBar">
 
 
         </activity>
+        <activity android:name=".BackOffice.EmployeeRegistration"
+            android:screenOrientation="landscape"
+            android:theme="@style/Theme.AppCompat.NoActionBar">
+
+
+        </activity>
+
 
     </application>
 

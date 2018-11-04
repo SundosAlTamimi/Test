@@ -1,0 +1,527 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/layer1"
+    android:gravity="center"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/textView31"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/employee_registration"
+        android:textColor="@color/text_color"
+        android:textSize="18sp" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/layer3"
+        android:orientation="vertical"
+        android:padding="20dp">
+
+        <TableRow
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp">
+
+            <TextView
+                android:id="@+id/textView32"
+                android:layout_width="123dp"
+                android:layout_height="wrap_content"
+                android:text="@string/job_group"
+                android:textColor="@color/text_color"
+                android:textSize="18sp" />
+
+            <Spinner
+                android:id="@+id/job_spinner"
+                android:layout_width="279dp"
+                android:layout_height="match_parent"
+                android:textColor="@color/text_color"
+                android:textSize="18sp" />
+        </TableRow>
+
+        <TextView
+            android:id="@+id/textView33"
+            android:layout_width="130dp"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="4dp"
+            android:text="@string/employees"
+            android:textColor="@color/text_color"
+            android:textSize="18sp" />
+
+        <TableLayout
+            android:layout_width="match_parent"
+            android:layout_height="120dp"
+            android:layout_marginTop="3dp"
+            android:background="@drawable/focused_table">
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="10dp"
+                android:layout_margin="1dp">
+
+                <TextView
+                    android:layout_width="100dp"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="1dp"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="@string/Employee_Name"
+                    android:textColor="@color/exit"
+                    android:textSize="13sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="100dp"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="1dp"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="@string/Employee_NO"
+                    android:textColor="@color/exit"
+                    android:textSize="12sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="100dp"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="1dp"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="@string/mobile_number"
+                    android:textColor="@color/exit"
+                    android:textSize="13sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="100dp"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="1dp"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="@string/Security_level"
+                    android:textColor="@color/exit"
+                    android:textSize="13sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="100dp"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="1dp"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="@string/User_Password"
+                    android:textColor="@color/exit"
+                    android:textSize="13sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="100dp"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="1dp"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="@string/Hire_Date"
+                    android:textColor="@color/exit"
+                    android:textSize="13sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="100dp"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="1dp"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="@string/Termination_Date"
+                    android:textColor="@color/exit"
+                    android:textSize="13sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="100dp"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="1dp"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="@string/Pay_Basic"
+                    android:textColor="@color/exit"
+                    android:textSize="13sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="100dp"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="1dp"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="@string/Pay_Rate"
+                    android:textColor="@color/exit"
+                    android:textSize="13sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="100dp"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="1dp"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="@string/Holiday_Pay"
+                    android:textColor="@color/exit"
+                    android:textSize="13sp"
+                    android:textStyle="bold" />
+
+
+
+            </TableRow>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="5dp"
+                android:layout_margin="1dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="1dp"
+                    android:layout_weight="1"
+                    android:background="@color/text_color"
+                    android:gravity="center" />
+
+            </TableRow>
+
+            <ScrollView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+                <TableLayout
+                    android:id="@+id/employee_reg"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="3dp">
+                </TableLayout>
+            </ScrollView>
+        </TableLayout>
+
+
+        <TextView
+            android:id="@+id/text"
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
+            android:background="@color/text_color" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TableLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="5dp">
+
+                <TableRow
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="3dp"
+                    android:padding="2dp">
+
+                    <TextView
+                        android:id="@+id/textView34"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:text="@string/Employee_NO"
+                        android:textColor="@color/text_color"
+                        android:textSize="18sp" />
+
+                    <EditText
+                        android:id="@+id/empNo"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:background="@color/layer1"
+                        android:ems="10"
+                        android:inputType="numberDecimal"
+                        android:textColor="@color/text_color"
+                        android:textSize="18sp" />
+                </TableRow>
+
+                <TableRow
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="3dp"
+                    android:padding="2dp">
+
+                    <TextView
+                        android:id="@+id/textView35"
+                        android:layout_width="172dp"
+                        android:layout_height="wrap_content"
+                        android:text="@string/Employee_Name"
+                        android:textColor="@color/text_color"
+                        android:textSize="18sp" />
+
+                    <EditText
+                        android:id="@+id/empName"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@color/layer1"
+                        android:ems="10"
+                        android:inputType="textPersonName"
+                        android:textColor="@color/text_color"
+                        android:textSize="18sp" />
+                </TableRow>
+
+                <TableRow
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="3dp"
+                    android:padding="2dp">
+
+                    <TextView
+                        android:id="@+id/textView36"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/mobile"
+                        android:textColor="@color/text_color"
+                        android:textSize="18sp" />
+
+                    <EditText
+                        android:id="@+id/mobileNo"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@color/layer1"
+                        android:ems="10"
+                        android:inputType="numberDecimal"
+                        android:textColor="@color/text_color"
+                        android:textSize="18sp" />
+                </TableRow>
+
+                <TableRow
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="3dp"
+                    android:padding="2dp">
+
+                    <TextView
+                        android:id="@+id/textView37"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/Security_level"
+                        android:textColor="@color/text_color"
+                        android:textSize="18sp" />
+
+                    <Spinner
+                        android:id="@+id/spinner_security"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+
+                </TableRow>
+
+                <TableRow
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="3dp"
+                    android:padding="2dp">
+
+                    <TextView
+                        android:id="@+id/textView38"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/User_Password"
+                        android:textColor="@color/text_color"
+                        android:textSize="18sp" />
+
+                    <EditText
+                        android:id="@+id/user_password8"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@color/layer1"
+                        android:ems="10"
+                        android:inputType="numberDecimal"
+                        android:textColor="@color/text_color"
+                        android:textSize="18sp" />
+                </TableRow>
+
+            </TableLayout>
+
+            <TableLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="50dp"
+                android:padding="5dp">
+
+                <TableRow
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="3dp"
+                    android:padding="2dp">
+
+                    <TextView
+                        android:id="@+id/textView39"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/Hire_Date"
+                        android:textColor="@color/text_color"
+                        android:textSize="18sp" />
+
+                    <EditText
+                        android:id="@+id/hire_date2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@color/layer1"
+                        android:ems="10"
+                        android:inputType="date"
+                        android:textColor="@color/text_color"
+                        android:textSize="18sp" />
+                </TableRow>
+
+                <TableRow
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="3dp"
+                    android:padding="2dp">
+
+                    <TextView
+                        android:id="@+id/textView40"
+                        android:layout_width="197dp"
+                        android:layout_height="wrap_content"
+                        android:text="@string/Termination_Date"
+                        android:textColor="@color/text_color"
+                        android:textSize="18sp" />
+
+                    <EditText
+                        android:id="@+id/termination"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@color/layer1"
+                        android:ems="10"
+                        android:inputType="date"
+                        android:textColor="@color/text_color"
+                        android:textSize="18sp" />
+                </TableRow>
+
+                <TableRow
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="3dp"
+                    android:padding="2dp">
+
+                    <TextView
+                        android:id="@+id/textView41"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/Pay_Basic"
+                        android:textColor="@color/text_color"
+                        android:textSize="18sp" />
+
+                    <Spinner
+                        android:id="@+id/pay_basic"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+
+                </TableRow>
+
+                <TableRow
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_margin="3dp"
+                    android:padding="2dp">
+
+                    <TextView
+                        android:id="@+id/textView42"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/Pay_Rate"
+                        android:textColor="@color/text_color"
+                        android:textSize="18sp" />
+
+                    <EditText
+                        android:id="@+id/pay_rate"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@color/layer1"
+                        android:ems="10"
+                        android:inputType="textPersonName"
+                        android:textColor="@color/text_color"
+                        android:textSize="18sp" />
+                </TableRow>
+
+                <TableRow
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_margin="3dp"
+                    android:padding="2dp">
+
+                    <TextView
+                        android:id="@+id/textView43"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/Holiday_Pay"
+                        android:textColor="@color/text_color"
+                        android:textSize="18sp" />
+
+                    <Spinner
+                        android:id="@+id/holiday_pay"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+
+                </TableRow>
+            </TableLayout>
+
+            <CheckBox
+                android:id="@+id/employeeCheck"
+                android:layout_width="133dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom"
+                android:layout_marginLeft="5dp"
+                android:checked="true"
+                android:padding="2dp"
+                android:text="@string/active"
+                android:textColor="@color/text_color"
+                android:textSize="18sp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginLeft="5dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginRight="5dp"
+            android:layout_marginBottom="5dp"
+            android:orientation="horizontal"
+            android:padding="5dp">
+
+            <Button
+                android:id="@+id/newButton5"
+                android:layout_width="115dp"
+                android:layout_height="40dp"
+                android:layout_margin="5dp"
+                android:background="@color/dark_blue"
+                android:text="@string/add"
+                android:textColor="@color/layer1"
+                android:textStyle="bold" />
+
+            <Button
+                android:id="@+id/saveButton5"
+                android:layout_width="115dp"
+                android:layout_height="40dp"
+                android:layout_margin="5dp"
+                android:background="@color/colorPrimaryLight"
+                android:text="@string/save"
+                android:textColor="@color/layer1"
+                android:textStyle="bold" />
+
+            <Button
+                android:id="@+id/deleteButton5"
+                android:layout_width="115dp"
+                android:layout_height="40dp"
+                android:layout_margin="5dp"
+                android:background="@color/exit"
+                android:text="@string/exit"
+                android:textColor="@color/layer1"
+                android:textStyle="bold" />
+        </LinearLayout>
+    </LinearLayout>
+</LinearLayout>
