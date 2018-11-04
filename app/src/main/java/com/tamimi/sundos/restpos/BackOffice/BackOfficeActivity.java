@@ -655,20 +655,13 @@ public class BackOfficeActivity extends AppCompatActivity {
             public void onClick(View view) {
                 final int multipleAnswer = multipleRadioButton.isChecked() ? 1 : 0;
                 if (!questionText.getText().toString().equals("") && selectedAnswers.getChildCount() != 0) {
-                    if (multipleRadioButton.isChecked()) {
-                        for (int i = 0; i < selectedAnswers.getChildCount(); i++) {
-                            CheckBox checkBox = (CheckBox) selectedAnswers.getChildAt(i);
-                            mDHandler.addForceQuestion(new ForceQuestions(Integer.parseInt(serialText.getText().toString()),
-                                    questionText.getText().toString(), multipleAnswer, checkBox.getText().toString()));
-                            dialog.dismiss();
-                        }
-                    } else {
-                        CheckBox checkBox = (CheckBox) selectedAnswers.getChildAt(0);
+
+                    for (int i = 0; i < selectedAnswers.getChildCount(); i++) {
+                        CheckBox checkBox = (CheckBox) selectedAnswers.getChildAt(i);
                         mDHandler.addForceQuestion(new ForceQuestions(Integer.parseInt(serialText.getText().toString()),
                                 questionText.getText().toString(), multipleAnswer, checkBox.getText().toString()));
                         dialog.dismiss();
                     }
-
                 } else
                     Toast.makeText(BackOfficeActivity.this, "Please insure your inputs", Toast.LENGTH_LONG).show();
             }

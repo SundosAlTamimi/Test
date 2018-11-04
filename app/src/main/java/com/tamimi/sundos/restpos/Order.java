@@ -753,6 +753,16 @@ public class Order extends AppCompatActivity {
                                     0, "", "", 0, 0, 0, "", 0,
                                     0, 0, 0, "", "", 0, 0, 0, null));
                             lineDiscount.add(0.0);
+
+                            v = null;
+                            dialog.dismiss();
+                            int nextQu = questionNo;
+                            ArrayList<ItemWithFq> questions = mDbHandler.getItemWithFqs(itemBarcode);
+                            if (questionNo < questions.size()-1) {
+                                nextQu = questionNo + 1;
+                                showForceQuestionDialog(itemBarcode, nextQu);
+                            }
+
                         } else {
                             Toast.makeText(Order.this, "Please select quantity ", Toast.LENGTH_SHORT).show();
                         }
@@ -767,6 +777,15 @@ public class Order extends AppCompatActivity {
                                             0, "", "", 0, 0, 0, "", 0,
                                             0, 0, 0, "", "", 0, 0, 0, null));
                                     lineDiscount.add(0.0);
+
+                                    v = null;
+                                    dialog.dismiss();
+                                    int nextQu = questionNo;
+                                    ArrayList<ItemWithFq> questions = mDbHandler.getItemWithFqs(itemBarcode);
+                                    if (questionNo < questions.size()-1) {
+                                        nextQu = questionNo + 1;
+                                        showForceQuestionDialog(itemBarcode, nextQu);
+                                    }
                                 } else {
                                     Toast.makeText(Order.this, "Please select quantity ", Toast.LENGTH_SHORT).show();
                                 }
@@ -775,15 +794,8 @@ public class Order extends AppCompatActivity {
                         }
                     }
                 }
-                v = null;
-                dialog.dismiss();
 
-                int nextQu = questionNo;
-                ArrayList<ItemWithFq> questions = mDbHandler.getItemWithFqs(itemBarcode);
-                if (questionNo < questions.size()-1) {
-                    nextQu = questionNo + 1;
-                    showForceQuestionDialog(itemBarcode, nextQu);
-                }
+
             }
         });
         exit.setOnClickListener(new View.OnClickListener() {
@@ -968,41 +980,44 @@ public class Order extends AppCompatActivity {
 
     void showLineDiscountDialog() {
 
-        if (wantedItems.get(Integer.parseInt(focused.getTag().toString())).discountAvailable == 1) {
-            dialog = new Dialog(Order.this);
-            dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-            dialog.setCancelable(false);
-            dialog.setContentView(R.layout.line_discount_dialog);
-            dialog.setCanceledOnTouchOutside(true);
+        if(focused != null) {
+            if (wantedItems.get(Integer.parseInt(focused.getTag().toString())).discountAvailable == 1) {
+                dialog = new Dialog(Order.this);
+                dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+                dialog.setCancelable(false);
+                dialog.setContentView(R.layout.line_discount_dialog);
+                dialog.setCanceledOnTouchOutside(true);
 
-            Window window = dialog.getWindow();
-            window.setLayout(470, 280);
+                Window window = dialog.getWindow();
+                window.setLayout(470, 280);
 
-            final EditText addLineDiscountEditText = (EditText) dialog.findViewById(R.id.add_line_discount);
-            Button buttonDone = (Button) dialog.findViewById(R.id.b_done);
-            final CheckBox radioButton = (CheckBox) dialog.findViewById(R.id.discount_perc);
+                final EditText addLineDiscountEditText = (EditText) dialog.findViewById(R.id.add_line_discount);
+                Button buttonDone = (Button) dialog.findViewById(R.id.b_done);
+                final CheckBox radioButton = (CheckBox) dialog.findViewById(R.id.discount_perc);
 
-            buttonDone.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    if (!addLineDiscountEditText.getText().toString().equals("")) {
-                        lineDiscountValue = Double.parseDouble(addLineDiscountEditText.getText().toString());
+                buttonDone.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        if (!addLineDiscountEditText.getText().toString().equals("")) {
+                            lineDiscountValue = Double.parseDouble(addLineDiscountEditText.getText().toString());
 
-                        if (radioButton.isChecked()) {
-                            lineDiscountValue = (Double.parseDouble(addLineDiscountEditText.getText().toString())) *
-                                    (Double.parseDouble(total.getText().toString())) / 100;
+                            if (radioButton.isChecked()) {
+                                lineDiscountValue = (Double.parseDouble(addLineDiscountEditText.getText().toString())) *
+                                        (Double.parseDouble(total.getText().toString())) / 100;
+                            }
+                            lineDiscount.set(Integer.parseInt(focused.getTag().toString()), lineDiscountValue);
+                            calculateTotal();
+                            dialog.dismiss();
+                        } else {
+                            Toast.makeText(Order.this, "Please Enter Line Discount", Toast.LENGTH_SHORT).show();
                         }
-                        lineDiscount.set(Integer.parseInt(focused.getTag().toString()), Double.parseDouble(addLineDiscountEditText.getText().toString()));
-                        calculateTotal();
-                        dialog.dismiss();
-                    } else {
-                        Toast.makeText(Order.this, "Please Enter Line Discount", Toast.LENGTH_SHORT).show();
                     }
-                }
-            });
-            dialog.show();
+                });
+                dialog.show();
+            } else
+                Toast.makeText(Order.this, "Discount is not available for this item", Toast.LENGTH_SHORT).show();
         } else
-            Toast.makeText(Order.this, "Discount is not available for this item", Toast.LENGTH_SHORT).show();
+            Toast.makeText(Order.this, "Please choose item to add line discount", Toast.LENGTH_SHORT).show();
     }
 
     void showDiscountDialog() {
@@ -1030,8 +1045,7 @@ public class Order extends AppCompatActivity {
                         discountValue = (Double.parseDouble(addDiscountEditText.getText().toString())) *
                                 (Double.parseDouble(total.getText().toString())) / 100;
                     }
-
-                    disCount.setText(addDiscountEditText.getText().toString());
+                    disCount.setText(discountValue+"");
                     calculateTotal();
                     dialog.dismiss();
                 } else {
