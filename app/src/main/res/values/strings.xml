@@ -302,6 +302,7 @@
     <string name="Employee_NO"> Employee NO </string>
     <string name="Employee_Name"> Employee Name </string>
     <string name="Security_level"> Security Level </string>
+    <string name="Employee_type"> Employee Type </string>
     <string name="User_Password"> User Password </string>
     <string name="Hire_Date"> Hire Date </string>
     <string name="Termination_Date"> Termination  Date </string>
