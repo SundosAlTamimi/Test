@@ -89,8 +89,13 @@ public class Main extends AppCompatActivity {
                     break;
 
                 case R.id.dine_in:
-                    Intent intent = new Intent(Main.this, DineIn.class);
-                    startActivity(intent);
+                    if(Settings.table_edit_authorized) {
+                        Intent intent = new Intent(Main.this, DineInLayout.class);
+                        startActivity(intent);
+                    } else {
+                        Intent intent = new Intent(Main.this, DineIn.class);
+                        startActivity(intent);
+                    }
                     break;
 
                 case R.id.cashier_in:

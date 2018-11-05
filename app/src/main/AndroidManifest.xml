@@ -37,6 +37,12 @@
 
         </activity>
 
+        <activity android:name=".DineInLayout"
+            android:screenOrientation="landscape"
+            android:theme="@style/Theme.AppCompat.NoActionBar">
+
+        </activity>
+
         <activity android:name=".Order"
             android:screenOrientation="landscape"
             android:theme="@style/Theme.AppCompat.NoActionBar">

@@ -63,8 +63,11 @@ public class Order extends AppCompatActivity {
     int tableLayoutPosition;
     Double lineDiscountValue;
     Double discountValue;
-    static double balance ;
+    static double balance;
     double totalItemsWithDiscount = 0.0;
+
+    static OrderTransactions OrderTransactionsObj;
+    static OrderHeader OrderHeaderObj;
 
     int voucherSerial;
     public static String OrderType, today, yearMonth, voucherNo;
@@ -114,13 +117,24 @@ public class Order extends AppCompatActivity {
         public void onClick(View view) {
             switch (view.getId()) {
                 case R.id.pay:
-                    Intent intentPay = new Intent(Order.this, PayMethods.class);
-                    startActivity(intentPay);
+                    if(orderTypeFlag == 0) {
+                        if (!amountDue.getText().toString().equals("0.00")) {
+                            saveInOrderTransactionObj();
+                            saveInOrderHeaderObj();
+                            Intent intentPay = new Intent(Order.this, PayMethods.class);
+                            startActivity(intentPay);
+                        } else
+                            Toast.makeText(Order.this, "your Amount Due is 0.00 !", Toast.LENGTH_SHORT).show();
+                    }
                     break;
 
                 case R.id.order:
-                    saveInOrderTransaction();
-                    saveInOrderHeader();
+                    if(orderTypeFlag == 1) {
+                        if (!amountDue.getText().toString().equals("0.00")) {
+
+                        } else
+                            Toast.makeText(Order.this, "your Amount Due is 0.00 !", Toast.LENGTH_SHORT).show();
+                    }
                     break;
 
                 case R.id.modifier:
@@ -758,7 +772,7 @@ public class Order extends AppCompatActivity {
                             dialog.dismiss();
                             int nextQu = questionNo;
                             ArrayList<ItemWithFq> questions = mDbHandler.getItemWithFqs(itemBarcode);
-                            if (questionNo < questions.size()-1) {
+                            if (questionNo < questions.size() - 1) {
                                 nextQu = questionNo + 1;
                                 showForceQuestionDialog(itemBarcode, nextQu);
                             }
@@ -782,7 +796,7 @@ public class Order extends AppCompatActivity {
                                     dialog.dismiss();
                                     int nextQu = questionNo;
                                     ArrayList<ItemWithFq> questions = mDbHandler.getItemWithFqs(itemBarcode);
-                                    if (questionNo < questions.size()-1) {
+                                    if (questionNo < questions.size() - 1) {
                                         nextQu = questionNo + 1;
                                         showForceQuestionDialog(itemBarcode, nextQu);
                                     }
@@ -980,7 +994,7 @@ public class Order extends AppCompatActivity {
 
     void showLineDiscountDialog() {
 
-        if(focused != null) {
+        if (focused != null) {
             if (wantedItems.get(Integer.parseInt(focused.getTag().toString())).discountAvailable == 1) {
                 dialog = new Dialog(Order.this);
                 dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -1045,7 +1059,7 @@ public class Order extends AppCompatActivity {
                         discountValue = (Double.parseDouble(addDiscountEditText.getText().toString())) *
                                 (Double.parseDouble(total.getText().toString())) / 100;
                     }
-                    disCount.setText(discountValue+"");
+                    disCount.setText(discountValue + "");
                     calculateTotal();
                     dialog.dismiss();
                 } else {
@@ -1092,10 +1106,10 @@ public class Order extends AppCompatActivity {
         service.setText("" + serviceValue);
         tax.setText("" + taxValue);
         amountDue.setText("" + amountDueValue);
-        balance = amountDueValue ;
+        balance = amountDueValue;
     }
 
-    void saveInOrderTransaction() {
+    void saveInOrderTransactionObj() {
         for (int k = 0; k < tableLayout.getChildCount(); k++) {
             TableRow tableRow = (TableRow) tableLayout.getChildAt(k);
             TextView textViewQty = (TextView) tableRow.getChildAt(0);
@@ -1114,28 +1128,38 @@ public class Order extends AppCompatActivity {
 
             Log.e("here", "******" + disc + "/" + totalItemsWithDiscount + "*" + totalLine + "-" + lineDiscount_);
 
-            mDbHandler.addOrderTransaction(new OrderTransactions(orderTypeFlag, 0, today, Settings.POS_number, Settings.store_number,
+//            mDbHandler.addOrderTransaction(
+            OrderTransactionsObj = new OrderTransactions(orderTypeFlag, 0, today, Settings.POS_number, Settings.store_number,
                     voucherNo, voucherSerial, "" + wantedItems.get(k).getItemBarcode(), wantedItems.get(k).getMenuName(),
                     wantedItems.get(k).getSecondaryName(), wantedItems.get(k).getKitchenAlias(), wantedItems.get(k).getMenuCategory(),
                     wantedItems.get(k).getFamilyName(), Integer.parseInt(textViewQty.getText().toString()), wantedItems.get(k).getPrice(),
                     totalLine, discount, lineDiscount_, discount + lineDiscount_, taxValue,
                     wantedItems.get(k).getTax(), 0, Double.parseDouble(service.getText().toString()), serviceTax,
-                    tableNumber, sectionNumber, Settings.shift_number, Settings.shift_name));
+                    tableNumber, sectionNumber, Settings.shift_number, Settings.shift_name);
         }
     }
 
-    void saveInOrderHeader() {
+    void saveInOrderHeaderObj() {
 
         double disc = Double.parseDouble(disCount.getText().toString());
         double ldisc = Double.parseDouble(lineDisCount.getText().toString());
         double serviceTax = Double.parseDouble(service.getText().toString()) * Settings.service_tax;
 
-        mDbHandler.addOrderHeader(new OrderHeader(orderTypeFlag, 0, today, Settings.POS_number, Settings.store_number,
+//        mDbHandler.addOrderHeader(
+          OrderHeaderObj =new OrderHeader(orderTypeFlag, 0, today, Settings.POS_number, Settings.store_number,
                 voucherNo, voucherSerial, Double.parseDouble(total.getText().toString()), ldisc, disc, disc + ldisc,
                 Settings.service_value, Double.parseDouble((tax.getText().toString())), serviceTax, Double.parseDouble((subTotal.getText().toString())),
                 Double.parseDouble(amountDue.getText().toString()), Double.parseDouble(deliveryCharge.getText().toString()), tableNumber,
                 sectionNumber, PayMethods.cashValue, PayMethods.creditCardValue, PayMethods.chequeValue, PayMethods.creditValue,
-                PayMethods.giftCardValue, PayMethods.pointValue, Settings.shift_name, Settings.shift_number));
+                PayMethods.giftCardValue, PayMethods.pointValue, Settings.shift_name, Settings.shift_number);
+    }
+
+    public OrderTransactions getOrderTransactionObj (){
+        return OrderTransactionsObj;
+    }
+
+    public OrderHeader getOrderHeaderObj (){
+        return OrderHeaderObj;
     }
 
     void changeClickedButtonBackground(View view) {
@@ -1157,7 +1181,7 @@ public class Order extends AppCompatActivity {
 //        category10.setBackgroundColor(getResources().getColor(R.color.dark_blue));
     }
 
-    public double getBalance(){
+    public double getBalance() {
         return balance;
     }
 

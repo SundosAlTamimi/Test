@@ -53,6 +53,7 @@ public class PayMethods extends AppCompatActivity {
             resiveCredit, resivePoint, resiveGift, resiveCheque;
     int position, countCridit = 0, countCheque = 0, countGift = 0, countCoupon = 0, countPoint = 0;
 
+    Order obj;
 
     ArrayList chequeListName;
     ArrayAdapter<String> adapter2;
@@ -82,7 +83,7 @@ public class PayMethods extends AppCompatActivity {
         tableNumber.setText(tableNumber.getText().toString() + " 1");
 
         focusedTextView = null;
-        Order obj = new Order();
+        obj = new Order();
         balance.setText(obj.getBalance()+"");
         mainBalance = balance.getText().toString();
         remainingBalance.setText("Remaining : " + obj.getBalance());
@@ -1404,9 +1405,13 @@ public class PayMethods extends AppCompatActivity {
             pointCardNumber.clear();
             resivePoint.clear();
         }
+
+        //getting the data from order activity and save it in database.
+        mDHandler.addOrderTransaction(obj.getOrderTransactionObj());
+        mDHandler.addOrderHeader(obj.getOrderHeaderObj());
+
         Toast.makeText(this, "Saved Successfully", Toast.LENGTH_SHORT).show();
-        Intent intent = new Intent(PayMethods.this, Order.class);
-        startActivity(intent);
+        finish();
     }
 
     void initialize() {
