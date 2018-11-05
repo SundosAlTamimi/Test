@@ -7,9 +7,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.util.Log;
 
-import com.tamimi.sundos.restpos.BackOffice.EmployeeRegistration;
 import com.tamimi.sundos.restpos.Models.Cashier;
 import com.tamimi.sundos.restpos.Models.CategoryWithModifier;
 import com.tamimi.sundos.restpos.Models.Cheque;
@@ -338,6 +336,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     private static final String PAY_BASIC7 = "PAY_BASIC";
     private static final String PAY_RATE7 = "PAY_RATE";
     private static final String HOLIDAY_PAY7 = "HOLIDAY_PAY";
+    private static final String EMPLOYEE_TYPE7 = "EMPLOYEE_TYPE";
     private static final String SHIFT_NO7 = "SHIFT_NO";
     private static final String SHIFT_NAME7 = "SHIFT_NAME";
 
@@ -348,7 +347,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     private static final String CUSTOMER_NAME8 = "CUSTOMER_NAME";
     private static final String CUSTOMER_CODE8 = "CUSTOMER_CODE";
     private static final String MEMBER_SHIP_CARD8 = "MEMBER_SHIP_CARD";
-    private static final String COENDER8 = "COENDER";
+    private static final String GENDER8 = "GENDER";
     private static final String REMARK8 = "REMARK";
     private static final String STREET_NO_NAME8 = "STREET_NO_NAME";
     private static final String CITY8 = "CITY";
@@ -681,6 +680,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                 + PAY_BASIC7 + " INTEGER,"
                 + PAY_RATE7 + " INTEGER,"
                 + HOLIDAY_PAY7 + " INTEGER ,"
+                + EMPLOYEE_TYPE7 + " INTEGER ,"
                 + SHIFT_NAME7 + " TEXT ,"
                 + SHIFT_NO7 + " INTEGER " + ")";
         db.execSQL(CREATE_TABLE_EMPLOYEE_REGISTRATION_TABLE);
@@ -692,7 +692,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                 + CUSTOMER_NAME8 + " TEXT,"
                 + CUSTOMER_CODE8 + " TEXT,"
                 + MEMBER_SHIP_CARD8 + " TEXT,"
-                + COENDER8 + " TEXT,"
+                + GENDER8 + " TEXT,"
                 + REMARK8 + " TEXT,"
                 + STREET_NO_NAME8 + " TEXT,"
                 + CITY8 + " TEXT,"
@@ -1174,6 +1174,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         values.put(PAY_BASIC7, employeeRegistrationModle.getPayBasic());
         values.put(PAY_RATE7, employeeRegistrationModle.getPayRate());
         values.put(HOLIDAY_PAY7, employeeRegistrationModle.getHolidayPay());
+        values.put(EMPLOYEE_TYPE7, employeeRegistrationModle.getEmployeeType());
         values.put(SHIFT_NO7, employeeRegistrationModle.getShiftNo());
         values.put(SHIFT_NAME7, employeeRegistrationModle.getShiftName());
 
@@ -1191,7 +1192,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         values.put(CUSTOMER_NAME8, customerRegistrationModel.getCustomerName());
         values.put(CUSTOMER_CODE8, customerRegistrationModel.getCustomerCode());
         values.put(MEMBER_SHIP_CARD8,customerRegistrationModel.getMemberShipGroup());
-        values.put(COENDER8, customerRegistrationModel.getCoender());
+        values.put(GENDER8, customerRegistrationModel.getCoender());
         values.put(REMARK8, customerRegistrationModel.getRemark());
         values.put(STREET_NO_NAME8, customerRegistrationModel.getStreetNoName());
         values.put(CITY8, customerRegistrationModel.getCity());
@@ -1956,8 +1957,9 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                 employeeRegistrationModels1.setPayBasic(cursor.getString(9));
                 employeeRegistrationModels1.setPayRate(cursor.getString(10));
                 employeeRegistrationModels1.setHolidayPay(cursor.getString(11));
-                employeeRegistrationModels1.setShiftNo(cursor.getInt(12));
-                employeeRegistrationModels1.setShiftName(cursor.getString(13));
+                employeeRegistrationModels1.setEmployeeType(cursor.getInt(12));
+                employeeRegistrationModels1.setShiftNo(cursor.getInt(13));
+                employeeRegistrationModels1.setShiftName(cursor.getString(14));
 
                 employeeRegistrationModels.add(employeeRegistrationModels1);
             } while (cursor.moveToNext());

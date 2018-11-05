@@ -1,7 +1,5 @@
 package com.tamimi.sundos.restpos.BackOffice;
 
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
@@ -11,8 +9,6 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
-import android.widget.RadioButton;
-import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.TableLayout;
 import android.widget.TableRow;
@@ -21,7 +17,6 @@ import android.widget.Toast;
 
 import com.tamimi.sundos.restpos.DatabaseHandler;
 import com.tamimi.sundos.restpos.Models.EmployeeRegistrationModle;
-import com.tamimi.sundos.restpos.Models.Items;
 import com.tamimi.sundos.restpos.Models.JobGroup;
 import com.tamimi.sundos.restpos.R;
 import com.tamimi.sundos.restpos.Settings;
@@ -36,10 +31,10 @@ public class EmployeeRegistration extends AppCompatActivity {
     TableLayout tableEmployee;
     EditText empNo, empName, mobileNo, userPassword, hireDate, termination, payRate;
     Button newButton, saveButton, exitButton;
-    Spinner securityLevel, payBasic, holidayPay, jobGroup;
+    Spinner securityLevel, payBasic, holidayPay, jobGroup, employeeType;
     CheckBox active;
     DatabaseHandler mDHandler;
-    ArrayAdapter<String> jobSpinner, holidayPaySpinner, securityLevelSpinner, payBasicSpinner;
+    ArrayAdapter<String> jobSpinner, holidayPaySpinner, securityLevelSpinner, payBasicSpinner, employeeTypeSpinner;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,16 +54,22 @@ public class EmployeeRegistration extends AppCompatActivity {
         final ArrayList<String> payBasicList = new ArrayList<>();
         final ArrayList<String> payRateList = new ArrayList<>();
         final ArrayList<String> holidayList = new ArrayList<>();
+        final ArrayList<Integer> empTypeList = new ArrayList<>();
         ArrayList<JobGroup> jopGroupListForSpinner = new ArrayList<>();
-        ArrayList<String> jopGroupSpinner = new ArrayList<>();
+        final ArrayList<String> jopGroupSpinner = new ArrayList<>();
         ArrayList<String> payBasicListSpinner = new ArrayList<>();
         ArrayList<String> holidayPayListSpinner = new ArrayList<>();
         ArrayList<String> securityLevelListSpinner = new ArrayList<>();
+        ArrayList<String> employeeTypeListSpinner = new ArrayList<>();
 
         payBasicListSpinner.add("hourly pau");
         holidayPayListSpinner.add("over Time");
         securityLevelListSpinner.add("ip");
         securityLevelListSpinner.add("https");
+
+        employeeTypeListSpinner.add("Cashier");
+        employeeTypeListSpinner.add("waiter");
+        employeeTypeListSpinner.add("Employee");
 
         Initialization();
         mDHandler = new DatabaseHandler(EmployeeRegistration.this);
@@ -91,6 +92,10 @@ public class EmployeeRegistration extends AppCompatActivity {
         holidayPaySpinner = new ArrayAdapter<String>(EmployeeRegistration.this, R.layout.spinner_style, holidayPayListSpinner);
         holidayPay.setAdapter(holidayPaySpinner);
 
+        employeeTypeSpinner = new ArrayAdapter<String>(EmployeeRegistration.this, R.layout.spinner_style, employeeTypeListSpinner);
+        employeeType.setAdapter(employeeTypeSpinner);
+
+
         saveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -110,6 +115,7 @@ public class EmployeeRegistration extends AppCompatActivity {
                         employeeRegistrationModle.setPayBasic(payBasicList.get(i).toString());
                         employeeRegistrationModle.setPayRate(payRateList.get(i).toString());
                         employeeRegistrationModle.setHolidayPay(holidayList.get(i).toString());
+                        employeeRegistrationModle.setEmployeeType(empTypeList.get(i));
                         employeeRegistrationModle.setShiftNo(Settings.shift_number);
                         employeeRegistrationModle.setShiftName(Settings.shift_name);
 
@@ -126,44 +132,57 @@ public class EmployeeRegistration extends AppCompatActivity {
         newButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (!empName.getText().toString().equals("") && !empNo.getText().toString().equals("") && !mobileNo.getText().toString().equals("") && !hireDate.getText().toString().equals("") &&
-                        !termination.getText().toString().equals("") && !payRate.getText().toString().equals("")) {
-                    String pass = userPassword.getText().toString();
-                    jobList.add(jobGroup.getSelectedItem().toString());
-                    Log.e("test--", "*** " + jobGroup.getSelectedItem().toString());
-                    empNameList.add(empName.getText().toString());
-                    empNOList.add(Integer.parseInt(empNo.getText().toString()));
-                    mobileList.add(Integer.parseInt(mobileNo.getText().toString()));
-                    securityList.add(securityLevel.getSelectedItem().toString());
-                    userPassList.add(Integer.parseInt(pass));
-                    if (active.isChecked()) {
-                        ActiveList.add(1);
+                if (!jopGroupSpinner.isEmpty()) {
+                    if (!empName.getText().toString().equals("") && !empNo.getText().toString().equals("") && !mobileNo.getText().toString().equals("") && !hireDate.getText().toString().equals("") &&
+                            !termination.getText().toString().equals("") && !payRate.getText().toString().equals("")) {
+                        String pass = userPassword.getText().toString();
+                        jobList.add(jobGroup.getSelectedItem().toString());
+                        empNameList.add(empName.getText().toString());
+                        empNOList.add(Integer.parseInt(empNo.getText().toString()));
+                        mobileList.add(Integer.parseInt(mobileNo.getText().toString()));
+                        securityList.add(securityLevel.getSelectedItem().toString());
+                        userPassList.add(Integer.parseInt(pass));
+                        if (active.isChecked()) {
+                            ActiveList.add(1);
+                        } else {
+                            ActiveList.add(0);
+                        }
+                        hireDateList.add(hireDate.getText().toString());
+                        terminationList.add(termination.getText().toString());
+                        payBasicList.add(payBasic.getSelectedItem().toString());
+                        payRateList.add(payRate.getText().toString());
+                        holidayList.add(holidayPay.getSelectedItem().toString());
+                        switch (employeeType.getSelectedItem().toString()) {
+                            case "Cashier":
+                                empTypeList.add(0);
+                                break;
+                            case "waiter":
+                                empTypeList.add(1);
+                                break;
+                            case "Employee":
+                                empTypeList.add(2);
+                                break;
+                        }
+
+                        Toast.makeText(EmployeeRegistration.this, "OK ", Toast.LENGTH_SHORT).show();
+
+                        insertRaw3(empName.getText().toString(), Integer.parseInt(empNo.getText().toString()), Integer.parseInt(mobileNo.getText().toString()),
+                                securityLevel.getSelectedItem().toString(), Integer.parseInt(pass), hireDate.getText().toString(), termination.getText().toString()
+                                , payBasic.getSelectedItem().toString(), payRate.getText().toString(), holidayPay.getSelectedItem().toString(), employeeType.getSelectedItem().toString(), tableEmployee);
+
+                        empName.setText("");
+                        empNo.setText("");
+                        mobileNo.setText("");
+                        userPassword.setText("");
+                        hireDate.setText("");
+                        termination.setText("");
+                        payRate.setText("");
+
                     } else {
-                        ActiveList.add(0);
+                        Toast.makeText(EmployeeRegistration.this, "Please Insert data ", Toast.LENGTH_SHORT).show();
                     }
-                    hireDateList.add(hireDate.getText().toString());
-                    terminationList.add(termination.getText().toString());
-                    payBasicList.add(payBasic.getSelectedItem().toString());
-                    payRateList.add(payRate.getText().toString());
-                    holidayList.add(holidayPay.getSelectedItem().toString());
-                    Toast.makeText(EmployeeRegistration.this, "OK ", Toast.LENGTH_SHORT).show();
-
-                    insertRaw3(empName.getText().toString(), Integer.parseInt(empNo.getText().toString()), Integer.parseInt(mobileNo.getText().toString()),
-                            securityLevel.getSelectedItem().toString(), Integer.parseInt(pass), hireDate.getText().toString(), termination.getText().toString()
-                            , payBasic.getSelectedItem().toString(), payRate.getText().toString(), holidayPay.getSelectedItem().toString(), tableEmployee);
-
-
-                    empName.setText("");
-                    empNo.setText("");
-                    mobileNo.setText("");
-                    userPassword.setText("");
-                    hireDate.setText("");
-                    termination.setText("");
-                    payRate.setText("");
-
-
                 } else {
-                    Toast.makeText(EmployeeRegistration.this, "Please Insert data ", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(EmployeeRegistration.this, "Please Add Job Group Before Adding new Employee ", Toast.LENGTH_SHORT).show();
                 }
 
             }
@@ -181,7 +200,7 @@ public class EmployeeRegistration extends AppCompatActivity {
 
     void insertRaw3(String EmpName, int empNo, int mobileNo, String
             securityLevel, int userPassword, String hireDate
-            , String terminationDate, String payBasic, String payRate, String holidayPay, TableLayout tableLayout) {
+            , String terminationDate, String payBasic, String payRate, String holidayPay, String EmployeeType, TableLayout tableLayout) {
 
         if (true) {
             final TableRow row = new TableRow(EmployeeRegistration.this);
@@ -189,7 +208,7 @@ public class EmployeeRegistration extends AppCompatActivity {
             TableRow.LayoutParams lp = new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT);
             row.setLayoutParams(lp);
 
-            for (int i = 0; i < 10; i++) {
+            for (int i = 0; i < 11; i++) {
                 TextView textView = new TextView(EmployeeRegistration.this);
                 switch (i) {
                     case 0:
@@ -224,7 +243,9 @@ public class EmployeeRegistration extends AppCompatActivity {
                     case 9:
                         textView.setText("  " + holidayPay);
                         break;
-
+                    case 10:
+                        textView.setText("  " + EmployeeType);
+                        break;
                 }
 
                 textView.setTextColor(ContextCompat.getColor(EmployeeRegistration.this, R.color.text_color));
@@ -260,6 +281,7 @@ public class EmployeeRegistration extends AppCompatActivity {
             payBasic = (Spinner) findViewById(R.id.pay_basic);
             holidayPay = (Spinner) findViewById(R.id.holiday_pay);
             jobGroup = (Spinner) findViewById(R.id.job_spinner);
+            employeeType = (Spinner) findViewById(R.id.spinner_employee_type);
             active = (CheckBox) findViewById(R.id.employeeCheck);
 
             tableEmployee = (TableLayout) findViewById(R.id.employee_reg);

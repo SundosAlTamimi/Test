@@ -13,13 +13,14 @@ public class EmployeeRegistrationModle {
     private String payBasic;
     private String payRate;
     private String HolidayPay;
+    private int employeeType;
     private int shiftNo;
     private String shiftName;
 
     public EmployeeRegistrationModle() {
     }
 
-    public EmployeeRegistrationModle(String jobGroup, int employeeNO, String employeeName, int mobileNo, String securityLevel, int userPassword, int active, String hireDate, String terminationDate, String payBasic, String payRate, String holidayPay, int shiftNo, String shiftName) {
+    public EmployeeRegistrationModle(String jobGroup, int employeeNO, String employeeName, int mobileNo, String securityLevel, int userPassword, int active, String hireDate, String terminationDate, String payBasic, String payRate, String holidayPay, int employeeType, int shiftNo, String shiftName) {
         this.jobGroup = jobGroup;
         this.employeeNO = employeeNO;
         this.employeeName = employeeName;
@@ -31,9 +32,14 @@ public class EmployeeRegistrationModle {
         this.terminationDate = terminationDate;
         this.payBasic = payBasic;
         this.payRate = payRate;
-        HolidayPay = holidayPay;
+        this.HolidayPay = holidayPay;
+        this.employeeType = employeeType;
         this.shiftNo = shiftNo;
         this.shiftName = shiftName;
+    }
+
+    public void setEmployeeType(int employeeType) {
+        this.employeeType = employeeType;
     }
 
     public void setJobGroup(String jobGroup) {
@@ -146,5 +152,9 @@ public class EmployeeRegistrationModle {
 
     public String getJobGroup() {
         return jobGroup;
+    }
+
+    public int getEmployeeType() {
+        return employeeType;
     }
 }
