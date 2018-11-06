@@ -1,7 +1,7 @@
 package com.tamimi.sundos.restpos;
 
 public class Settings {
-    public static boolean table_edit_authorized = true;
+    public static boolean table_edit_authorized = false;
     public static String user_name = "no user";
     public static int password = -1;
     public static int POS_number = 0;

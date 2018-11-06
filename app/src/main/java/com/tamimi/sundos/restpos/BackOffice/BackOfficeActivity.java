@@ -26,6 +26,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.tamimi.sundos.restpos.DatabaseHandler;
+import com.tamimi.sundos.restpos.Main;
 import com.tamimi.sundos.restpos.Models.CategoryWithModifier;
 import com.tamimi.sundos.restpos.Models.CustomerPayment;
 import com.tamimi.sundos.restpos.Models.ForceQuestions;
@@ -58,7 +59,7 @@ public class BackOfficeActivity extends AppCompatActivity {
     Button butManagement, butSales, butCustomers, butEmployees, butMenu, butSettings;
     LinearLayout announcement, giftCard, employeeClockInOut, menuSearch;
     LinearLayout membershipGroup, membership, customerRegistration;
-    LinearLayout jobGroup, employeeRegistration, employeeSchedule, payroll, vacation;
+    LinearLayout jobGroup, employeeRegistration, employeeSchedule, payroll, vacation , editTables;
     LinearLayout menuCategory, menuRegistration, modifier, forceQuestion, menuLayout;
     LinearLayout store, storeOperation, users, moneyCategory;
     LinearLayout salesTotal, cashierInOut, canceledOrderHistory, dailyCashOut, salesByEmployee, salesByServers,
@@ -166,7 +167,6 @@ public class BackOfficeActivity extends AppCompatActivity {
                 case R.id.employee_registration:
                     Intent intentEmployeeRegistration = new Intent(BackOfficeActivity.this, EmployeeRegistration.class);
                     startActivity(intentEmployeeRegistration);
-
                     break;
 
                 case R.id.employee_schedule:
@@ -177,6 +177,10 @@ public class BackOfficeActivity extends AppCompatActivity {
                     break;
 
                 case R.id.vacation:
+                    break;
+
+                case R.id.edit_tables_outhorization:
+                    showEditTablesAuthorizationDialog();
                     break;
 
                 case R.id.menu_category:
@@ -1073,7 +1077,6 @@ public class BackOfficeActivity extends AppCompatActivity {
 
     }
 
-
     void showMemberShipGroupDialog() {
         dialog = new Dialog(BackOfficeActivity.this);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -1152,6 +1155,38 @@ public class BackOfficeActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 dialog.dismiss();
+            }
+        });
+
+        dialog.show();
+
+    }
+
+    void showEditTablesAuthorizationDialog() {
+        dialog = new Dialog(BackOfficeActivity.this);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setCancelable(false);
+        dialog.setContentView(R.layout.table_edit_outhorization_dialog);
+        dialog.setCanceledOnTouchOutside(true);
+
+        final EditText editText = (EditText) dialog.findViewById(R.id.password);
+        Button buttonDone = (Button) dialog.findViewById(R.id.b_done);
+
+        buttonDone.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (!editText.getText().toString().equals("")) {
+                    if (Integer.parseInt(editText.getText().toString()) == 4444) {
+                        Settings settings = new Settings();
+                        settings.table_edit_authorized = true;
+                        Toast.makeText(BackOfficeActivity.this, "Your'r authorized to edit tables ", Toast.LENGTH_SHORT).show();
+                        dialog.dismiss();
+                    } else {
+                        Settings settings = new Settings();
+                        settings.table_edit_authorized = false;
+                        Toast.makeText(BackOfficeActivity.this, "Your authorization number is incorrect", Toast.LENGTH_SHORT).show();
+                    }
+                }
             }
         });
 
@@ -1350,6 +1385,7 @@ public class BackOfficeActivity extends AppCompatActivity {
         employeeSchedule = (LinearLayout) findViewById(R.id.employee_schedule);
         payroll = (LinearLayout) findViewById(R.id.payroll);
         vacation = (LinearLayout) findViewById(R.id.vacation);
+        editTables = (LinearLayout) findViewById(R.id.edit_tables_outhorization);
         menuCategory = (LinearLayout) findViewById(R.id.menu_category);
         menuRegistration = (LinearLayout) findViewById(R.id.menu_registration);
         modifier = (LinearLayout) findViewById(R.id.modifier);
@@ -1395,6 +1431,7 @@ public class BackOfficeActivity extends AppCompatActivity {
         employeeSchedule.setOnClickListener(onClickListener2);
         payroll.setOnClickListener(onClickListener2);
         vacation.setOnClickListener(onClickListener2);
+        editTables.setOnClickListener(onClickListener2);
         menuCategory.setOnClickListener(onClickListener2);
         menuRegistration.setOnClickListener(onClickListener2);
         modifier.setOnClickListener(onClickListener2);
