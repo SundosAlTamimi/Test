@@ -14,14 +14,20 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.view.animation.TranslateAnimation;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.tamimi.sundos.restpos.BackOffice.BackOfficeActivity;
+import com.tamimi.sundos.restpos.BackOffice.EmployeeRegistration;
+import com.tamimi.sundos.restpos.Models.EmployeeRegistrationModle;
 import com.tamimi.sundos.restpos.Models.Tables;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -32,21 +38,16 @@ public class DineIn extends AppCompatActivity {
     ArrayList<Tables> currentList, list0, list1, list2, list3, list4, list5;
 
     Dialog dialog;
-    Button addIcon ,addSquaredTable, addCircledTable;
     Button save;
     Button mainF, firstF, secondF, thirdF, fourthF, fifthF;
     LinearLayout add, rightBorder;
     ViewGroup land;
-    int xDelta;
-    int yDelta;
-    GestureDetector gestureDetector;
-    int visibleAdd = 0;
-    int visibleEdit = 0;
-    boolean clicked = false;
 
-    LinearLayout focused;
+    GestureDetector gestureDetector;
+
     int tableNumber = 1;
     int current = 0;
+    String waiter ;
 
     DatabaseHandler mHandler;
 
@@ -59,7 +60,6 @@ public class DineIn extends AppCompatActivity {
 
         mHandler = new DatabaseHandler(DineIn.this);
         gestureDetector = new GestureDetector(this, new SingleTapConfirm());
-        focused = new LinearLayout(DineIn.this);
 
         initialize();
 
@@ -175,14 +175,53 @@ public class DineIn extends AppCompatActivity {
     OnClickListener onTableClickListener = new OnClickListener() {
         @Override
         public void onClick(View view) {
-            if (!clicked) {
-                focused = (LinearLayout) view;
-                view.setBackgroundResource(R.drawable.green_light);
-                clicked = true;
-            } else {
-                view.setBackgroundDrawable(null);
-                clicked = false;
+
+            dialog = new Dialog(DineIn.this);
+            dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+            dialog.setCancelable(false);
+            dialog.setContentView(R.layout.pick_waiter_dialog);
+            dialog.setCanceledOnTouchOutside(true);
+
+            LinearLayout linearLayout = dialog.findViewById(R.id.linear);
+            Button done = dialog.findViewById(R.id.b_done);
+
+            ArrayList<EmployeeRegistrationModle> employees = mHandler.getAllEmployeeRegistration();
+
+            for(int i=0 ; i<employees.size() ; i++){
+                if(employees.get(i).getEmployeeType() == 1){
+
+                    final TextView textView = new TextView(DineIn.this);
+                    textView.setText(employees.get(i).getEmployeeName());
+                    textView.setTextColor(getResources().getColor(R.color.text_color));
+                    textView.setTextSize(22);
+                    textView.setOnClickListener(new OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            waiter = textView.getText().toString();
+                        }
+                    });
+                    linearLayout.addView(textView);
+                }
             }
+
+            done.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    
+                }
+            });
+
+            dialog.show();
+
+
+//            if (!clicked) {
+//                focused = (LinearLayout) view;
+//                view.setBackgroundResource(R.drawable.green_light);
+//                clicked = true;
+//            } else {
+//                view.setBackgroundDrawable(null);
+//                clicked = false;
+//            }
         }
     };
 
@@ -287,8 +326,7 @@ public class DineIn extends AppCompatActivity {
         }
     }
 
-    void initialize(){
-        addIcon = (Button) findViewById(R.id.add_icon);
+    void initialize() {
         save = (Button) findViewById(R.id.save);
         mainF = (Button) findViewById(R.id.main);
         firstF = (Button) findViewById(R.id.first_f);
@@ -296,15 +334,11 @@ public class DineIn extends AppCompatActivity {
         thirdF = (Button) findViewById(R.id.third_f);
         fourthF = (Button) findViewById(R.id.fourth_f);
         fifthF = (Button) findViewById(R.id.fifth_f);
-        addSquaredTable = (Button) findViewById(R.id.add_squared_table);
-        addCircledTable = (Button) findViewById(R.id.add_circled_table);
         add = (LinearLayout) findViewById(R.id.add_table_list);
         rightBorder = (LinearLayout) findViewById(R.id.rightBorder);
         land = (ViewGroup) findViewById(R.id.land);
 
-        addIcon.bringToFront();
         add.setVisibility(View.INVISIBLE);
-        addIcon.setVisibility(View.INVISIBLE);
 
         mainF.setOnClickListener(onFloorClickListener);
         firstF.setOnClickListener(onFloorClickListener);
