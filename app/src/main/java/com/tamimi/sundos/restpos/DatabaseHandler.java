@@ -157,6 +157,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
     //___________________________________________________________________________________
     private static final String ORDER_TRANSACTIONS = "ORDER_TRANSACTIONS";
+    private static final String ORDER_TRANSACTIONS_TEMP = "ORDER_TRANSACTIONS_TEMP";
 
     private static final String ORDER_TYPE1 = "ORDER_TYPE";
     private static final String ORDER_KIND1 = "ORDER_KIND";
@@ -206,6 +207,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
     //________________________________________________________________________________________
     private static final String ORDER_HEADER = "ORDER_HEADER";
+    private static final String ORDER_HEADER_TEMP = "ORDER_HEADER_TEMP";
 
     private static final String ORDER_TYPE2 = "ORDER_TYPE";
     private static final String ORDER_KIND2 = "ORDER_KIND";
@@ -234,6 +236,8 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     private static final String POINT_VALUE2 = "POINT_VALUE";
     private static final String SHIFT_NO2 = "SHIFT_NUMBER";
     private static final String SHIFT_NAME2 = "SHIFT_NAME";
+    private static final String WAITER2 = "WAITER";
+    private static final String SEATS_NUMBER2 = "SEATS_NUMBER";
 
     //___________________________________________________________________________________
     private static final String FORCE_QUESTIONS = "FORCE_QUESTIONS";
@@ -528,6 +532,39 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                 + SHIFT_NAME1 + " INTEGER" + ")";
         db.execSQL(CREATE_TABLE_ORDER_TRANSACTIONS);
 
+        //_______________________________________________________________________________
+
+        String CREATE_TABLE_ORDER_TRANSACTIONS_TEMP = "CREATE TABLE " + ORDER_TRANSACTIONS_TEMP + "("
+                + ORDER_TYPE1 + " INTEGER,"
+                + ORDER_KIND1 + " INTEGER,"
+                + VOUCHER_DATE1 + " TEXT,"
+                + POS_NO1 + " INTEGER,"
+                + STORE_NO1 + " INTEGER,"
+                + VOUCHER_NO1 + " TEXT,"
+                + VOUCHER_SERIAL1 + " TEXT,"
+                + ITEM_BARCODE1 + " TEXT,"
+                + ITEM_NAME1 + " TEXT,"
+                + SECONDARY_NAME1 + " TEXT,"
+                + KITCHEN_ALIAS1 + " TEXT,"
+                + ITEM_CATEGORY1 + " TEXT,"
+                + ITEM_FAMILY1 + " TEXT,"
+                + QTY1 + " INTEGER,"
+                + PRICE1 + " INTEGER,"
+                + TOTAL1 + " INTEGER,"
+                + DISCOUNT1 + " INTEGER,"
+                + L_DISCOUNT1 + " INTEGER,"
+                + TOTAL_DISCOUNT1 + " INTEGER,"
+                + TAX_VLUE1 + " INTEGER,"
+                + TAX_PERC1 + " INTEGER,"
+                + TAX_KIND1 + " INTEGER,"
+                + SERVICE1 + " INTEGER,"
+                + SERVICE_TAX1 + " INTEGER,"
+                + TABLE_NO1 + " INTEGER,"
+                + SECTION_NO1 + " INTEGER,"
+                + SHIFT_NO1 + " INTEGER,"
+                + SHIFT_NAME1 + " INTEGER" + ")";
+        db.execSQL(CREATE_TABLE_ORDER_TRANSACTIONS_TEMP);
+
         //___________________________________________________________________________________
 
         String CREATE_TABLE_PAYMETHOD = "CREATE TABLE " + PAY_METHOD + "("
@@ -575,8 +612,43 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                 + GIFT_VALUE2 + " INTEGER ,"
                 + POINT_VALUE2 + " INTEGER ,"
                 + SHIFT_NAME2 + " TEXT ,"
-                + SHIFT_NO2 + " INTEGER " + ")";
+                + SHIFT_NO2 + " INTEGER ,"
+                + WAITER2 + " TEXT ,"
+                + SEATS_NUMBER2 + " INTEGER " + ")";
         db.execSQL(CREATE_TABLE_ORDER_HEADER);
+
+        //_______________________________________________________________________________________
+        String CREATE_TABLE_ORDER_HEADER_TEMP = "CREATE TABLE " + ORDER_HEADER_TEMP + "("
+                + ORDER_TYPE2 + " INTEGER ,"
+                + ORDER_KIND2 + " INTEGER,"
+                + VOUCHER_DATE2 + " TEXT,"
+                + POINT_OF_SALE_NUMBER2 + " INTEGER,"
+                + STORE_NUMBER2 + " INTEGER,"
+                + VOUCHER_NUMBER2 + " TEXT,"
+                + VOUCHER_SERIAL2 + " INTEGER,"
+                + TOTAL2 + " INTEGER,"
+                + TOTAL_DISCOUNT2 + " INTEGER,"
+                + TOTAL_LINE_DISCOUNT2 + " INTEGER,"
+                + ALL_DISCOUNT2 + " INTEGER ,"
+                + TOTAL_SERVICES2 + " INTEGER ,"
+                + TOTAL_TAX2 + " INTEGER ,"
+                + TOTAL_SERVICES_TAX2 + " INTEGER ,"
+                + SUB_TOTAL2 + " INTEGER ,"
+                + AMOUNT_DUE2 + " INTEGER ,"
+                + DELIVERY_CHARGE2 + " INTEGER ,"
+                + TABLE_NUMBER2 + " INTEGER ,"
+                + SECTION_NUMBER2 + " INTEGER ,"
+                + CASH_VALUE2 + " INTEGER ,"
+                + CARDS_VALUE2 + " INTEGER ,"
+                + CHEQUE_VALUE2 + " INTEGER ,"
+                + COUPON_VALUE2 + " INTEGER ,"
+                + GIFT_VALUE2 + " INTEGER ,"
+                + POINT_VALUE2 + " INTEGER ,"
+                + SHIFT_NAME2 + " TEXT ,"
+                + SHIFT_NO2 + " INTEGER ,"
+                + WAITER2 + " TEXT ,"
+                + SEATS_NUMBER2 + " INTEGER " + ")";
+        db.execSQL(CREATE_TABLE_ORDER_HEADER_TEMP);
 
         //_______________________________________________________________________________
         String CREATE_TABLE_FORCE_QUESTIONS = "CREATE TABLE " + FORCE_QUESTIONS + "("
@@ -739,6 +811,8 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS " + JOB_GROUP_TABLE);//19
         db.execSQL("DROP TABLE IF EXISTS " + EMPLOYEE_REGISTRATION_TABLE);//20
         db.execSQL("DROP TABLE IF EXISTS " + CUSTOMER_REGISTRATION_TABLE);//21
+        db.execSQL("DROP TABLE IF EXISTS " + ORDER_TRANSACTIONS_TEMP);  //22
+        db.execSQL("DROP TABLE IF EXISTS " + ORDER_HEADER_TEMP); //22
         // Create tables again
         onCreate(db);
     }
@@ -964,6 +1038,43 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         db.close();
     }
 
+    public void addOrderTransactionTemp(OrderTransactions items) {
+        db = this.getReadableDatabase();
+        ContentValues values = new ContentValues();
+
+        values.put(ORDER_TYPE1, items.getOrderType());
+        values.put(ORDER_KIND1, items.getOrderKind());
+        values.put(VOUCHER_DATE1, items.getVoucherDate());
+        values.put(POS_NO1, items.getPosNo());
+        values.put(STORE_NO1, items.getStoreNo());
+        values.put(VOUCHER_NO1, items.getVoucherNo());
+        values.put(VOUCHER_SERIAL1, items.getVoucherSerial());
+        values.put(ITEM_BARCODE1, items.getItemBarcode());
+        values.put(ITEM_NAME1, items.getItemName());
+        values.put(SECONDARY_NAME1, items.getSecondaryName());
+        values.put(KITCHEN_ALIAS1, items.getKitchenAlias());
+        values.put(QTY1, items.getQty());
+        values.put(PRICE1, items.getPrice());
+        values.put(TOTAL1, items.getTotal());
+        values.put(DISCOUNT1, items.getDiscount());
+        values.put(L_DISCOUNT1, items.getlDiscount());
+        values.put(TOTAL_DISCOUNT1, items.getTotalDiscount());
+        values.put(TAX_VLUE1, items.getTaxValue());
+        values.put(TAX_PERC1, items.getTaxPerc());
+        values.put(TAX_KIND1, items.getTaxKind());
+        values.put(SERVICE1, items.getService());
+        values.put(SERVICE_TAX1, items.getServiceTax());
+        values.put(ITEM_CATEGORY1, items.getItemCategory());
+        values.put(ITEM_FAMILY1, items.getItemFamily());
+        values.put(TABLE_NO1, items.getTableNo());
+        values.put(SECTION_NO1, items.getSectionNo());
+        values.put(SHIFT_NO1, items.getShiftNo());
+        values.put(SHIFT_NAME1, items.getShiftName());
+
+        db.insert(ORDER_TRANSACTIONS_TEMP, null, values);
+        db.close();
+    }
+
     public void addAllPayMethodItem(PayMethod payMethod) {
         db = this.getReadableDatabase();
         ContentValues values = new ContentValues();
@@ -1018,8 +1129,48 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         values.put(POINT_VALUE2, orderHeader.getPointValue());
         values.put(SHIFT_NAME2, orderHeader.getShiftName());
         values.put(SHIFT_NO2, orderHeader.getShiftNumber());
+        values.put(WAITER2, orderHeader.getWaiter());
+        values.put(SEATS_NUMBER2, orderHeader.getSeatsNumber());
 
         db.insert(ORDER_HEADER, null, values);
+        db.close();
+    }
+
+    public void addOrderHeaderTemp(OrderHeader orderHeader) {
+        db = this.getReadableDatabase();
+        ContentValues values = new ContentValues();
+
+        values.put(ORDER_TYPE2, orderHeader.getOrderType());
+        values.put(ORDER_KIND2, orderHeader.getOrderKind());
+        values.put(VOUCHER_DATE2, orderHeader.getVoucherDate());
+        values.put(POINT_OF_SALE_NUMBER2, orderHeader.getPointOfSaleNumber());
+        values.put(STORE_NUMBER2, orderHeader.getStoreNumber());
+        values.put(VOUCHER_NUMBER2, orderHeader.getVoucherNumber());
+        values.put(VOUCHER_SERIAL2, orderHeader.getVoucherSerial());
+        values.put(TOTAL2, orderHeader.getTotal());
+        values.put(TOTAL_DISCOUNT2, orderHeader.getTotalDiscount());
+        values.put(TOTAL_LINE_DISCOUNT2, orderHeader.getTotalLineDiscount());
+        values.put(ALL_DISCOUNT2, orderHeader.getAllDiscount());
+        values.put(TOTAL_SERVICES2, orderHeader.getTotalService());
+        values.put(TOTAL_TAX2, orderHeader.getTotalTax());
+        values.put(SUB_TOTAL2, orderHeader.getSubTotal());
+        values.put(TOTAL_SERVICES_TAX2, orderHeader.getTotalServiceTax());
+        values.put(AMOUNT_DUE2, orderHeader.getAmountDue());
+        values.put(DELIVERY_CHARGE2, orderHeader.getDeliveryCharge());
+        values.put(TABLE_NUMBER2, orderHeader.getTableNO());
+        values.put(SECTION_NUMBER2, orderHeader.getSectionNO());
+        values.put(CASH_VALUE2, orderHeader.getCashValue());
+        values.put(CARDS_VALUE2, orderHeader.getCardsValue());
+        values.put(CHEQUE_VALUE2, orderHeader.getChequeValue());
+        values.put(COUPON_VALUE2, orderHeader.getCouponValue());
+        values.put(GIFT_VALUE2, orderHeader.getGiftValue());
+        values.put(POINT_VALUE2, orderHeader.getPointValue());
+        values.put(SHIFT_NAME2, orderHeader.getShiftName());
+        values.put(SHIFT_NO2, orderHeader.getShiftNumber());
+        values.put(WAITER2, orderHeader.getWaiter());
+        values.put(SEATS_NUMBER2, orderHeader.getSeatsNumber());
+
+        db.insert(ORDER_HEADER_TEMP, null, values);
         db.close();
     }
 
@@ -1550,6 +1701,113 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         return items;
     }
 
+    public List<OrderTransactions> getAllOrderTransactionsTemp() {
+        List<OrderTransactions> items = new ArrayList<>();
+
+        String selectQuery = "SELECT  * FROM " + ORDER_TRANSACTIONS_TEMP;
+        db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+
+        if (cursor.moveToFirst()) {
+            do {
+                OrderTransactions item = new OrderTransactions();
+
+                item.setOrderType(Integer.parseInt(cursor.getString(0)));
+                item.setOrderKind(Integer.parseInt(cursor.getString(1)));
+                item.setVoucherDate(cursor.getString(2));
+                item.setPosNo(Integer.parseInt(cursor.getString(3)));
+                item.setStoreNo(Integer.parseInt(cursor.getString(4)));
+                item.setVoucherNo(cursor.getString(5));
+                item.setVoucherSerial(Integer.parseInt(cursor.getString(6)));
+                item.setItemBarcode(cursor.getString(7));
+                item.setItemName(cursor.getString(8));
+                item.setSecondaryName(cursor.getString(9));
+                item.setKitchenAlias(cursor.getString(10));
+                item.setItemCategory(cursor.getString(11));
+                item.setItemFamily(cursor.getString(12));
+                item.setQty(Integer.parseInt(cursor.getString(13)));
+                item.setPrice(Double.parseDouble(cursor.getString(14)));
+                item.setTotal(Double.parseDouble(cursor.getString(15)));
+                item.setDiscount(Double.parseDouble(cursor.getString(16)));
+                item.setlDiscount(Double.parseDouble(cursor.getString(17)));
+                item.setTotalDiscount(Double.parseDouble(cursor.getString(18)));
+                item.setTaxValue(Double.parseDouble(cursor.getString(19)));
+                item.setTaxPerc(Double.parseDouble(cursor.getString(20)));
+                item.setTaxKind(Integer.parseInt(cursor.getString(21)));
+                item.setService(Integer.parseInt(cursor.getString(22)));
+                item.setServiceTax(Double.parseDouble(cursor.getString(23)));
+                item.setTableNo(Integer.parseInt(cursor.getString(24)));
+                item.setSectionNo(Integer.parseInt(cursor.getString(25)));
+                item.setShiftNo(Integer.parseInt(cursor.getString(26)));
+                item.setShiftName(cursor.getString(27));
+
+                items.add(item);
+            } while (cursor.moveToNext());
+        }
+        return items;
+    }
+
+    public List<OrderTransactions> getOrderTransactionsTemp(String sectionNo , String tableNo) {
+        List<OrderTransactions> items = new ArrayList<>();
+
+        String selectQuery = "SELECT * FROM " + ORDER_TRANSACTIONS_TEMP + " WHERE SECTION_NO = '" +sectionNo+ "' and TABLE_NO = '" +tableNo+ "'";
+        db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+
+        if (cursor.moveToFirst()) {
+            do {
+                OrderTransactions item = new OrderTransactions();
+
+                item.setOrderType(Integer.parseInt(cursor.getString(0)));
+                item.setOrderKind(Integer.parseInt(cursor.getString(1)));
+                item.setVoucherDate(cursor.getString(2));
+                item.setPosNo(Integer.parseInt(cursor.getString(3)));
+                item.setStoreNo(Integer.parseInt(cursor.getString(4)));
+                item.setVoucherNo(cursor.getString(5));
+                item.setVoucherSerial(Integer.parseInt(cursor.getString(6)));
+                item.setItemBarcode(cursor.getString(7));
+                item.setItemName(cursor.getString(8));
+                item.setSecondaryName(cursor.getString(9));
+                item.setKitchenAlias(cursor.getString(10));
+                item.setItemCategory(cursor.getString(11));
+                item.setItemFamily(cursor.getString(12));
+                item.setQty(Integer.parseInt(cursor.getString(13)));
+                item.setPrice(Double.parseDouble(cursor.getString(14)));
+                item.setTotal(Double.parseDouble(cursor.getString(15)));
+                item.setDiscount(Double.parseDouble(cursor.getString(16)));
+                item.setlDiscount(Double.parseDouble(cursor.getString(17)));
+                item.setTotalDiscount(Double.parseDouble(cursor.getString(18)));
+                item.setTaxValue(Double.parseDouble(cursor.getString(19)));
+                item.setTaxPerc(Double.parseDouble(cursor.getString(20)));
+                item.setTaxKind(Integer.parseInt(cursor.getString(21)));
+                item.setService(Integer.parseInt(cursor.getString(22)));
+                item.setServiceTax(Double.parseDouble(cursor.getString(23)));
+                item.setTableNo(Integer.parseInt(cursor.getString(24)));
+                item.setSectionNo(Integer.parseInt(cursor.getString(25)));
+                item.setShiftNo(Integer.parseInt(cursor.getString(26)));
+                item.setShiftName(cursor.getString(27));
+
+                items.add(item);
+            } while (cursor.moveToNext());
+        }
+        return items;
+    }
+
+    public List<String> getAllOrderedTables(int sectionNo) {
+        List<String> tables = new ArrayList<>();
+
+        String selectQuery = "SELECT  DISTINCT TABLE_NO FROM " + ORDER_TRANSACTIONS_TEMP + " WHERE SECTION_NO = '" +sectionNo+ "'" ;
+        db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+
+        if (cursor.moveToFirst()) {
+            do {
+                tables.add(cursor.getString(0));
+            } while (cursor.moveToNext());
+        }
+        return tables;
+    }
+
     public ArrayList<PayMethod> getAllExistingPay() {
         ArrayList<PayMethod> payMethodsList = new ArrayList<PayMethod>();
 
@@ -1602,9 +1860,55 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         return max;
     }
 
-    public ArrayList<OrderHeader> getAllExistingOrderHeader() {
+    public ArrayList<OrderHeader> getAllOrderHeader() {
         ArrayList<OrderHeader> orderHeaders = new ArrayList<>();
         String selectQuery = "SELECT * FROM " + ORDER_HEADER;
+        db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+
+        if (cursor.moveToFirst())
+            do {
+                OrderHeader order_header = new OrderHeader();
+
+                order_header.setOrderType(cursor.getInt(0));
+                order_header.setOrderKind(cursor.getInt(1));
+                order_header.setVoucherDate(cursor.getString(2));
+                order_header.setPointOfSaleNumber(cursor.getInt(3));
+                order_header.setStoreNumber(cursor.getInt(4));
+                order_header.setVoucherNumber(cursor.getString(5));
+                order_header.setVoucherSerial(cursor.getInt(6));
+                order_header.setTotal(cursor.getDouble(7));
+                order_header.setTotalLineDiscount(cursor.getDouble(8));
+                order_header.setTotalDiscount(cursor.getDouble(9));
+                order_header.setAllDiscount(cursor.getDouble(10));
+                order_header.setTotalService(cursor.getDouble(11));
+                order_header.setTotalTax(cursor.getDouble(12));
+                order_header.setTotalServiceTax(cursor.getDouble(13));
+                order_header.setSubTotal(cursor.getDouble(14));
+                order_header.setAmountDue(cursor.getDouble(15));
+                order_header.setDeliveryCharge(cursor.getDouble(16));
+                order_header.setTableNO(cursor.getInt(17));
+                order_header.setSectionNO(cursor.getInt(18));
+                order_header.setCashValue(cursor.getDouble(19));
+                order_header.setCardsValue(cursor.getDouble(20));
+                order_header.setChequeValue(cursor.getDouble(21));
+                order_header.setCouponValue(cursor.getDouble(22));
+                order_header.setGiftValue(cursor.getDouble(23));
+                order_header.setPointValue(cursor.getDouble(24));
+                order_header.setShiftNumber(cursor.getInt(25));
+                order_header.setShiftName(cursor.getString(26));
+
+                orderHeaders.add(order_header);
+
+            } while (cursor.moveToNext());
+        return orderHeaders;
+
+
+    }
+
+    public ArrayList<OrderHeader> getOrderHeaderTemp(String sectionNo , String tableNo) {
+        ArrayList<OrderHeader> orderHeaders = new ArrayList<>();
+        String selectQuery = "SELECT * FROM " + ORDER_HEADER_TEMP + " WHERE SECTION_NUMBER = '" +sectionNo+ "' and TABLE_NUMBER = '" +tableNo+ "'";
         db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
 
@@ -1996,9 +2300,30 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         db.close();
     }
 
+    public void deleteFromOrderHeaderTemp(String sectionNo , String tableNo){
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.execSQL("delete from ORDER_HEADER_TEMP WHERE SECTION_NUMBER = '" +sectionNo+ "' and TABLE_NUMBER = '" +tableNo+ "'" );
+        db.close();
+    }
+
+    public void deleteFromOrderTransactionTemp(String sectionNo , String tableNo){
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.execSQL("delete from ORDER_TRANSACTIONS_TEMP WHERE SECTION_NO = '" +sectionNo+ "' and TABLE_NO = '" +tableNo+ "'" );
+        db.close();
+    }
+
     public void deleteAllTables() {
         SQLiteDatabase db = this.getWritableDatabase();
         db.execSQL("delete from " + TABLES);
+        db.close();
+    }
+
+    public void deleteAllOrders() {
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.execSQL("delete from " + ORDER_HEADER_TEMP);
+        db.execSQL("delete from " + ORDER_TRANSACTIONS_TEMP);
+        db.execSQL("delete from " + ORDER_HEADER);
+        db.execSQL("delete from " + ORDER_TRANSACTIONS);
         db.close();
     }
 

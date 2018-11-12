@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_width="450dp"
+    android:layout_height="270dp"
     android:background="@color/layer3"
     android:orientation="vertical"
     android:padding="20dp">
@@ -29,13 +29,18 @@
                 android:textColor="@color/text_color"
                 android:textSize="18sp" />
 
-            <TextView
-                android:id="@+id/textView44"
-                android:layout_width="227dp"
+            <EditText
+                android:id="@+id/seatsNo"
+                android:layout_width="100dp"
                 android:layout_height="wrap_content"
+                android:layout_marginHorizontal="10dp"
+                android:layout_weight="1"
                 android:background="@color/layer2"
+                android:ems="10"
+                android:text="1"
                 android:gravity="center"
-                android:padding="2dp" />
+                android:inputType="numberDecimal"
+                android:textColor="@color/text_color" />
 
         </LinearLayout>
 
@@ -50,13 +55,14 @@
                 android:orientation="vertical">
 
                 <EditText
-                    android:id="@+id/editText2"
-                    android:layout_width="154dp"
+                    android:id="@+id/male"
+                    android:layout_width="100dp"
                     android:layout_height="wrap_content"
                     android:layout_margin="10dp"
                     android:layout_weight="1"
                     android:background="@color/layer2"
                     android:ems="10"
+                    android:text="1"
                     android:gravity="center"
                     android:inputType="numberDecimal"
                     android:textColor="@color/text_color" />
@@ -79,13 +85,14 @@
                 android:orientation="vertical">
 
                 <EditText
-                    android:id="@+id/editText3"
-                    android:layout_width="154dp"
+                    android:id="@+id/female"
+                    android:layout_width="100dp"
                     android:layout_height="wrap_content"
                     android:layout_margin="10dp"
                     android:layout_weight="1"
                     android:background="@color/layer2"
                     android:ems="10"
+                    android:text="0"
                     android:gravity="center"
                     android:inputType="numberDecimal"
                     android:textColor="@color/text_color" />
@@ -107,13 +114,14 @@
                 android:orientation="vertical">
 
                 <EditText
-                    android:id="@+id/editText4"
-                    android:layout_width="154dp"
+                    android:id="@+id/children"
+                    android:layout_width="100dp"
                     android:layout_height="wrap_content"
                     android:layout_margin="10dp"
                     android:layout_weight="1"
                     android:background="@color/layer2"
                     android:ems="10"
+                    android:text="0"
                     android:gravity="center"
                     android:inputType="numberDecimal"
                     android:textColor="@color/text_color" />
@@ -136,7 +144,7 @@
             android:layout_width="150dp"
             android:layout_height="50dp"
             android:layout_gravity="center"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="25dp"
             android:background="@drawable/done_buttons"
             android:text="@string/okay"
             android:textColor="@color/text_color"

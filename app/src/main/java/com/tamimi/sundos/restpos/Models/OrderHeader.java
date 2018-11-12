@@ -29,6 +29,8 @@ public class OrderHeader {
     private double pointValue;
     private String shiftName;
     private int shiftNumber;
+    private String waiter;
+    private int seatsNumber;
 
     public OrderHeader() {
 
@@ -37,8 +39,9 @@ public class OrderHeader {
     public OrderHeader(int orderType, int orderKind, String voucherDate, int pointOfSaleNumber, int storeNumber, String voucherNumber,
                        int voucherSerial, double total, double totalLineDiscount, double totalDiscount, double allDiscount,
                        double totalService, double totalTax, double totalServiceTax, double subTotal, double amountDue,
-                       double deliveryCharge, int sectionNO, int tableNO, double cashValue, double cardsValue, double chequeValue,
-                       double couponValue, double giftValue, double pointValue, String shiftName, int shiftNumber) {
+                       double deliveryCharge, int tableNO, int sectionNO, double cashValue, double cardsValue, double chequeValue,
+                       double couponValue, double giftValue, double pointValue, String shiftName, int shiftNumber, String waiter,
+                       int seatsNumber) {
         this.orderType = orderType;
         this.orderKind = orderKind;
         this.voucherDate = voucherDate;
@@ -66,6 +69,8 @@ public class OrderHeader {
         this.pointValue = pointValue;
         this.shiftName = shiftName;
         this.shiftNumber = shiftNumber;
+        this.waiter = waiter;
+        this.seatsNumber = seatsNumber;
     }
 
 
@@ -283,5 +288,21 @@ public class OrderHeader {
 
     public int getShiftNumber() {
         return shiftNumber;
+    }
+
+    public String getWaiter() {
+        return waiter;
+    }
+
+    public void setWaiter(String waiter) {
+        this.waiter = waiter;
+    }
+
+    public int getSeatsNumber() {
+        return seatsNumber;
+    }
+
+    public void setSeatsNumber(int seatsNumber) {
+        this.seatsNumber = seatsNumber;
     }
 }

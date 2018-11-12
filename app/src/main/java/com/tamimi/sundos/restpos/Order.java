@@ -52,7 +52,7 @@ public class Order extends AppCompatActivity {
     Button modifier, void_, delivery, discount, lDiscount, split, priceChange;
     TextView total, lineDisCount, disCount, deliveryCharge, subTotal, service, tax, amountDue;
     Button pay, order;
-    TextView orderType, tableNo, check, date, user;
+    TextView orderType, tableNo, check, date, user, seats;
     LinearLayout categoriesLinearLayout;
     TableLayout tableLayout;
     GridView gv;
@@ -73,11 +73,13 @@ public class Order extends AppCompatActivity {
     public static String OrderType, today, yearMonth, voucherNo;
 
     View v = null;
-    int tableNumber, sectionNumber;
+    String waiter;
+    int tableNumber, sectionNumber, seatNo;
     ArrayList<Items> wantedItems;
     List<UsedCategories> usedCategoriesList;
     List<Items> items = new ArrayList<>();
     ArrayList<Double> lineDiscount;
+    ArrayList<Items> requestedItems;
 
     TableRow focused = null;
     int selectedModifier = -1;
@@ -91,25 +93,36 @@ public class Order extends AppCompatActivity {
         this.requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.order);
 
+        initialize();
+
         mDbHandler = new DatabaseHandler(Order.this);
         items = mDbHandler.getAllItems();
         wantedItems = new ArrayList<>();
         usedCategoriesList = new ArrayList<>();
         lineDiscount = new ArrayList<Double>();
 
-        orderTypeFlag = 0;
-        tableLayoutPosition = 0;
-        currentColor = ContextCompat.getColor(this, R.color.layer2);
-
-        initialize();
-
         setDateAndVoucherNumber();
-
-        setOrder(orderTypeFlag);
 
         fillCategories();
 
+        Bundle extras = getIntent().getExtras();
+        if (extras != null) {
+            orderTypeFlag = Integer.parseInt(extras.getString("flag"));
+            tableNumber = extras.getInt("tableNo");
+            sectionNumber = extras.getInt("sectionNo");
+            waiter = extras.getString("waiter");
+            seatNo = extras.getInt("seatNo");
+
+        }
+        setOrder(orderTypeFlag);
+
+        tableLayoutPosition = 0;
+        currentColor = ContextCompat.getColor(this, R.color.layer2);
+
         OrderType = orderType.getText().toString();
+
+        if (mDbHandler.getOrderTransactionsTemp("" + sectionNumber, "" + tableNumber).size() != 0)
+            fillPreviousOrder();
     }
 
     View.OnClickListener onClickListener = new View.OnClickListener() {
@@ -117,7 +130,7 @@ public class Order extends AppCompatActivity {
         public void onClick(View view) {
             switch (view.getId()) {
                 case R.id.pay:
-                    if(orderTypeFlag == 0) {
+                    if (orderTypeFlag == 0) {
                         if (!amountDue.getText().toString().equals("0.00")) {
                             saveInOrderTransactionObj();
                             saveInOrderHeaderObj();
@@ -129,9 +142,13 @@ public class Order extends AppCompatActivity {
                     break;
 
                 case R.id.order:
-                    if(orderTypeFlag == 1) {
+                    if (orderTypeFlag == 1) {
                         if (!amountDue.getText().toString().equals("0.00")) {
+                            saveInOrderTransactionTemp();
+                            saveInOrderHeaderTemp();
 
+                            Intent intent = new Intent(Order.this , DineIn.class);
+                            startActivity(intent);
                         } else
                             Toast.makeText(Order.this, "your Amount Due is 0.00 !", Toast.LENGTH_SHORT).show();
                     }
@@ -207,21 +224,25 @@ public class Order extends AppCompatActivity {
         }
     };
 
+    @SuppressLint("SetTextI18n")
     void setOrder(int flag) {
         if (flag == 0) {
             orderType.setText("Take Away");
             tableNo.setText("Table:  " + "-");
+            check.setText("Check:  " + "-");
+            user.setText("no waiter");
+            seats.setText("0");
             tableNumber = -1;
             sectionNumber = -1;
         } else {
             orderType.setText("Dine In");
-            tableNo.setText("Table:  " + 0);
-            tableNumber = 0;
-            sectionNumber = 0;
+            tableNo.setText("Table:  " + tableNumber);
+            check.setText("Check:  " + sectionNumber);
+//            user.setText(waiter);
+//            seats.setText("" + seatNo);
         }
 
         date.setText(today);
-        user.setText(Settings.user_name);
     }
 
     void setDateAndVoucherNumber() {
@@ -279,7 +300,7 @@ public class Order extends AppCompatActivity {
 
         if (subList.size() != 0) {
             List<Items> items = mDbHandler.getAllItems();
-            final ArrayList<Items> requestedItems = new ArrayList<>();
+            requestedItems = new ArrayList<>();
 
             for (int i = 0; i < subList.size(); i++) {
                 if (Character.isDigit(subList.get(i).getitemName().charAt(0))) { // no data in this position
@@ -1146,19 +1167,67 @@ public class Order extends AppCompatActivity {
         double serviceTax = Double.parseDouble(service.getText().toString()) * Settings.service_tax;
 
 //        mDbHandler.addOrderHeader(
-          OrderHeaderObj =new OrderHeader(orderTypeFlag, 0, today, Settings.POS_number, Settings.store_number,
+        OrderHeaderObj = new OrderHeader(orderTypeFlag, 0, today, Settings.POS_number, Settings.store_number,
                 voucherNo, voucherSerial, Double.parseDouble(total.getText().toString()), ldisc, disc, disc + ldisc,
                 Settings.service_value, Double.parseDouble((tax.getText().toString())), serviceTax, Double.parseDouble((subTotal.getText().toString())),
                 Double.parseDouble(amountDue.getText().toString()), Double.parseDouble(deliveryCharge.getText().toString()), tableNumber,
                 sectionNumber, PayMethods.cashValue, PayMethods.creditCardValue, PayMethods.chequeValue, PayMethods.creditValue,
-                PayMethods.giftCardValue, PayMethods.pointValue, Settings.shift_name, Settings.shift_number);
+                PayMethods.giftCardValue, PayMethods.pointValue, Settings.shift_name, Settings.shift_number, "No Waiter", 0);
     }
 
-    public OrderTransactions getOrderTransactionObj (){
+    void saveInOrderTransactionTemp() {
+
+        if(mDbHandler.getOrderTransactionsTemp("" + sectionNumber, "" + tableNumber).size() != 0)
+            mDbHandler.deleteFromOrderTransactionTemp("" + sectionNumber, "" + tableNumber);
+
+        for (int k = 0; k < tableLayout.getChildCount(); k++) {
+            TableRow tableRow = (TableRow) tableLayout.getChildAt(k);
+            TextView textViewQty = (TextView) tableRow.getChildAt(0);
+            TextView textViewTotal = (TextView) tableRow.getChildAt(3);
+            TextView textLineDiscount = (TextView) tableRow.getChildAt(4);
+
+            double totalLine = Double.parseDouble(textViewTotal.getText().toString());
+            double lineDiscount_ = lineDiscount.get(k);
+            double taxValue = wantedItems.get(k).getPrice() * wantedItems.get(k).getTax();
+            double disc = Double.parseDouble(disCount.getText().toString());
+            double serviceTax = Double.parseDouble(service.getText().toString()) * Settings.service_tax;
+
+            double discount = 0.0;
+            if(wantedItems.get(k).getDiscountAvailable() == 1)
+                discount = (disc / totalItemsWithDiscount) * (totalLine - lineDiscount_);
+
+            mDbHandler.addOrderTransactionTemp(new OrderTransactions(orderTypeFlag, 0, today, Settings.POS_number, Settings.store_number,
+                    voucherNo, voucherSerial, "" + wantedItems.get(k).getItemBarcode(), wantedItems.get(k).getMenuName(),
+                    wantedItems.get(k).getSecondaryName(), wantedItems.get(k).getKitchenAlias(), wantedItems.get(k).getMenuCategory(),
+                    wantedItems.get(k).getFamilyName(), Integer.parseInt(textViewQty.getText().toString()), wantedItems.get(k).getPrice(),
+                    totalLine, discount, lineDiscount_, discount + lineDiscount_, taxValue,
+                    wantedItems.get(k).getTax(), 0, Double.parseDouble(service.getText().toString()), serviceTax,
+                    tableNumber, sectionNumber, Settings.shift_number, Settings.shift_name));
+        }
+    }
+
+    void saveInOrderHeaderTemp() {
+
+        if(mDbHandler.getOrderHeaderTemp("" + sectionNumber, "" + tableNumber).size() != 0)
+            mDbHandler.deleteFromOrderHeaderTemp("" + sectionNumber, "" + tableNumber);
+
+        double disc = Double.parseDouble(disCount.getText().toString());
+        double ldisc = Double.parseDouble(lineDisCount.getText().toString());
+        double serviceTax = Double.parseDouble(service.getText().toString()) * Settings.service_tax;
+
+        mDbHandler.addOrderHeaderTemp(new OrderHeader(orderTypeFlag, 0, today, Settings.POS_number, Settings.store_number,
+                voucherNo, voucherSerial, Double.parseDouble(total.getText().toString()), ldisc, disc, disc + ldisc,
+                Settings.service_value, Double.parseDouble((tax.getText().toString())), serviceTax, Double.parseDouble((subTotal.getText().toString())),
+                Double.parseDouble(amountDue.getText().toString()), Double.parseDouble(deliveryCharge.getText().toString()), tableNumber,
+                sectionNumber, PayMethods.cashValue, PayMethods.creditCardValue, PayMethods.chequeValue, PayMethods.creditValue,
+                PayMethods.giftCardValue, PayMethods.pointValue, Settings.shift_name, Settings.shift_number, waiter, seatNo));
+    }
+
+    public OrderTransactions getOrderTransactionObj() {
         return OrderTransactionsObj;
     }
 
-    public OrderHeader getOrderHeaderObj (){
+    public OrderHeader getOrderHeaderObj() {
         return OrderHeaderObj;
     }
 
@@ -1181,6 +1250,103 @@ public class Order extends AppCompatActivity {
 //        category10.setBackgroundColor(getResources().getColor(R.color.dark_blue));
     }
 
+    @SuppressLint("SetTextI18n")
+    void fillPreviousOrder() {
+        ArrayList<OrderHeader> orderHeaders = mDbHandler.getOrderHeaderTemp("" + sectionNumber, "" + tableNumber);
+        List<OrderTransactions> orderTransactions = mDbHandler.getOrderTransactionsTemp("" + sectionNumber, "" + tableNumber);
+
+        for (int k = 0; k < orderTransactions.size(); k++) {
+
+            lineDiscount.add(orderTransactions.get(k).getlDiscount());
+            wantedItems.add(new Items(orderTransactions.get(k).getItemCategory(),orderTransactions.get(k).getItemName(),
+                    orderTransactions.get(k).getItemFamily(), orderTransactions.get(k).getTaxValue(),
+                    orderTransactions.get(k).getTaxKind(), orderTransactions.get(k).getSecondaryName(),
+                    orderTransactions.get(k).getKitchenAlias(), Integer.parseInt(orderTransactions.get(k).getItemBarcode()),
+                    1, 0, "",0, 1, 0,0, "",
+                    "", orderTransactions.get(k).getPrice(),1, 1, null, 0,0, 0));
+
+            final TableRow row = new TableRow(Order.this);
+
+            TableLayout.LayoutParams lp = new TableLayout.LayoutParams();
+            lp.setMargins(2, 0, 2, 0);
+            row.setLayoutParams(lp);
+
+            for (int i = 0; i < 5; i++) {
+                TextView textView = new TextView(Order.this);
+
+                switch (i) {
+                    case 0:
+                        textView.setText("" + orderTransactions.get(k).getQty());
+                        break;
+                    case 1:
+                        textView.setText(orderTransactions.get(k).getItemName());
+                        break;
+                    case 2:
+                        textView.setText("" + orderTransactions.get(k).getPrice());
+                        break;
+                    case 3:
+                        textView.setText("" + orderTransactions.get(k).getTotal());
+                        break;
+                    case 4:
+                        textView.setText("" + orderTransactions.get(k).getlDiscount()); // line discount
+                        break;
+                }
+
+                if (orderTransactions.get(k).getQty() == 0) {
+                    textView.setTextColor(ContextCompat.getColor(Order.this, R.color.exit));
+                    textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 10);
+                    textView.setGravity(Gravity.CENTER);
+                } else {
+                    textView.setTextColor(ContextCompat.getColor(Order.this, R.color.text_color));
+                    textView.setGravity(Gravity.CENTER);
+                }
+
+                if (i != 4) {
+                    TableRow.LayoutParams lp1 = new TableRow.LayoutParams(0, TableRow.LayoutParams.MATCH_PARENT, 1.0f);
+                    textView.setLayoutParams(lp1);
+                } else {
+                    TableRow.LayoutParams lp2 = new TableRow.LayoutParams(0, TableRow.LayoutParams.MATCH_PARENT, 0.00001f);
+                    textView.setLayoutParams(lp2);
+                }
+
+                row.addView(textView);
+                row.setTag(tableLayoutPosition);
+
+                row.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        focused = row;
+                        setRawFocused(row);
+                    }
+                });
+
+                row.setOnLongClickListener(new View.OnLongClickListener() {
+                    @Override
+                    public boolean onLongClick(View v) {
+                        focused = row;
+                        setRawFocused(row);
+                        return true;
+                    }
+                });
+            }
+            tableLayout.addView(row);
+            tableLayoutPosition++;
+        }
+
+        //_________________________________________________________________________
+
+        user.setText(orderHeaders.get(0).getWaiter());
+        seats.setText("" + orderHeaders.get(0).getSeatsNumber());
+        total.setText("" + orderHeaders.get(0).getTotal());
+        disCount.setText("" + orderHeaders.get(0).getTotalDiscount());
+        lineDisCount.setText("" + orderHeaders.get(0).getTotalLineDiscount());
+        deliveryCharge.setText("" + orderHeaders.get(0).getDeliveryCharge());
+        subTotal.setText("" + orderHeaders.get(0).getSubTotal());
+        tax.setText("" + orderHeaders.get(0).getTotalTax());
+        service.setText("" + orderHeaders.get(0).getTotalService());
+        amountDue.setText("" + orderHeaders.get(0).getAmountDue());
+    }
+
     public double getBalance() {
         return balance;
     }
@@ -1196,6 +1362,7 @@ public class Order extends AppCompatActivity {
         check = (TextView) findViewById(R.id.checkNumber);
         date = (TextView) findViewById(R.id.date);
         user = (TextView) findViewById(R.id.user);
+        seats = (TextView) findViewById(R.id.seat_number);
 
         pay = (Button) findViewById(R.id.pay);
         order = (Button) findViewById(R.id.order);

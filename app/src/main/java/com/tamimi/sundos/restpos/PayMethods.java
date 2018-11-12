@@ -24,12 +24,15 @@ import android.widget.Toast;
 import com.tamimi.sundos.restpos.Models.Cheque;
 import com.tamimi.sundos.restpos.Models.CreditCard;
 import com.tamimi.sundos.restpos.Models.Money;
+import com.tamimi.sundos.restpos.Models.OrderHeader;
+import com.tamimi.sundos.restpos.Models.OrderTransactions;
 import com.tamimi.sundos.restpos.Models.PayMethod;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
@@ -38,7 +41,7 @@ public class PayMethods extends AppCompatActivity {
 
     ImageView print;
     Button cash, creditCard, cheque, giftCard, credit, point, save;
-    TextView tableNumber, check, date, remainingBalance, server, orderAmount, discount, subCahrge, subTotal, tax, amountDue, deliveryCharge,
+    TextView tableNumber, check, date, remainingBalance, server, orderAmount, discount, subCharge, subTotal, tax, amountDue, deliveryCharge,
             totalDue, totalReceived, balance;
 
     DatabaseHandler mDHandler;
@@ -54,6 +57,11 @@ public class PayMethods extends AppCompatActivity {
     int position, countCridit = 0, countCheque = 0, countGift = 0, countCoupon = 0, countPoint = 0;
 
     Order obj;
+    String orderType = "TakeAway";
+
+    List<OrderTransactions> orderTransTemp = null;
+    List<OrderHeader> orderHeaderTemp = null;
+    String sectionNo , tableNo;
 
     ArrayList chequeListName;
     ArrayAdapter<String> adapter2;
@@ -66,6 +74,7 @@ public class PayMethods extends AppCompatActivity {
     public static double creditValue = 0.00;
     public static double pointValue = 0.00;
 
+    @SuppressLint("SetTextI18n")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -79,15 +88,34 @@ public class PayMethods extends AppCompatActivity {
         String today = df.format(currentTimeAndDate);
 
         date.setText(date.getText().toString() + " " + today);
-        check.setText(check.getText().toString() + " 5");
-        tableNumber.setText(tableNumber.getText().toString() + " 1");
+        mDHandler = new DatabaseHandler(PayMethods.this);
 
         focusedTextView = null;
         obj = new Order();
-        balance.setText(obj.getBalance()+"");
-        mainBalance = balance.getText().toString();
-        remainingBalance.setText("Remaining : " + obj.getBalance());
-        mDHandler = new DatabaseHandler(PayMethods.this);
+
+        Bundle extras = getIntent().getExtras();
+        if(extras != null) { // pay from dine in
+            sectionNo = extras.getString("sectionNo");
+            tableNo = extras.getString("tableNo");
+            Log.e("lll" , ""+ sectionNo + " "+  tableNo);
+
+            orderTransTemp = mDHandler.getOrderTransactionsTemp(sectionNo , tableNo);
+            orderHeaderTemp = mDHandler.getOrderHeaderTemp(sectionNo , tableNo);
+
+            balance.setText(orderHeaderTemp.get(0).getAmountDue()+"");
+            mainBalance = balance.getText().toString();
+            remainingBalance.setText("Remaining : " + balance.getText().toString());
+            check.setText(check.getText().toString() + " " + orderHeaderTemp.get(0).getSectionNO());
+            tableNumber.setText(tableNumber.getText().toString() + " " + orderHeaderTemp.get(0).getTableNO());
+            orderType = "Dine In";
+
+        } else {  // pay from takeaway
+            balance.setText(obj.getBalance() + "");
+            mainBalance = balance.getText().toString();
+            remainingBalance.setText("Remaining : " + balance.getText().toString());
+            check.setText(check.getText().toString() + " -");
+            tableNumber.setText(tableNumber.getText().toString() + " -");
+        }
 
         cardNumbers = new ArrayList<String>();
         cardName = new ArrayList<String>();
@@ -1306,8 +1334,6 @@ public class PayMethods extends AppCompatActivity {
 
         double cashValues = 0, cardValues = 0, chequeValues = 0, giftValues = 0, couponValues = 0, pointValues = 0;
 
-        String orderType = Order.OrderType;
-
         PayMethod payMethod = new PayMethod();
 
         payMethod.setOrderType(orderType.equals("Take Away") ? 0 : 1);
@@ -1406,9 +1432,22 @@ public class PayMethods extends AppCompatActivity {
             resivePoint.clear();
         }
 
-        //getting the data from order activity and save it in database.
-        mDHandler.addOrderTransaction(obj.getOrderTransactionObj());
-        mDHandler.addOrderHeader(obj.getOrderHeaderObj());
+        if(orderHeaderTemp == null) {
+            //getting the data from order activity and save it in database.
+            mDHandler.addOrderTransaction(obj.getOrderTransactionObj());
+            mDHandler.addOrderHeader(obj.getOrderHeaderObj());
+        } else {
+
+            mDHandler.addOrderHeader(orderHeaderTemp.get(0));
+            for (int i = 0; i < orderTransTemp.size(); i++) {
+                mDHandler.addOrderTransaction(orderTransTemp.get(i));
+            }
+            mDHandler.deleteFromOrderHeaderTemp(sectionNo , tableNo);
+            mDHandler.deleteFromOrderTransactionTemp(sectionNo , tableNo);
+
+            Intent intent = new Intent(PayMethods.this , DineIn.class);
+            startActivity(intent);
+        }
 
         Toast.makeText(this, "Saved Successfully", Toast.LENGTH_SHORT).show();
         finish();
@@ -1433,7 +1472,7 @@ public class PayMethods extends AppCompatActivity {
         server = (TextView) findViewById(R.id.server);
         orderAmount = (TextView) findViewById(R.id.order_amount);
         discount = (TextView) findViewById(R.id.discount);
-        subCahrge = (TextView) findViewById(R.id.sub_charge);
+        subCharge = (TextView) findViewById(R.id.sub_charge);
         subTotal = (TextView) findViewById(R.id.sub_total);
         tax = (TextView) findViewById(R.id.tax);
         amountDue = (TextView) findViewById(R.id.amount_due);

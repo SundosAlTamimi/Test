@@ -132,6 +132,7 @@
                 android:src="@drawable/guests" />
 
             <TextView
+                android:id="@+id/seat_number"
                 android:layout_width="match_parent"
                 android:layout_height="30dp"
                 android:layout_gravity="bottom"

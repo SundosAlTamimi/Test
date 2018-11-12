@@ -225,7 +225,7 @@
 
 
             <TextView
-                android:id="@+id/cashier_in"
+                android:id="@+id/move"
                 android:layout_width="match_parent"
                 android:layout_height="45dp"
                 android:gravity="center"
@@ -242,7 +242,7 @@
 
 
             <TextView
-                android:id="@+id/cashier_out"
+                android:id="@+id/merge"
                 android:layout_width="match_parent"
                 android:layout_height="45dp"
                 android:gravity="center"
@@ -258,7 +258,7 @@
                 android:gravity="center" />
 
             <TextView
-                android:id="@+id/pay_in"
+                android:id="@+id/reservation"
                 android:layout_width="match_parent"
                 android:layout_height="45dp"
                 android:gravity="center"
@@ -274,7 +274,7 @@
                 android:gravity="center" />
 
             <TextView
-                android:id="@+id/pay_ouy"
+                android:id="@+id/takeAway"
                 android:layout_width="match_parent"
                 android:layout_height="45dp"
                 android:gravity="center"
@@ -290,7 +290,7 @@
                 android:gravity="center" />
 
             <TextView
-                android:id="@+id/time_card"
+                android:id="@+id/close"
                 android:layout_width="match_parent"
                 android:layout_height="45dp"
                 android:gravity="center"
@@ -306,7 +306,7 @@
                 android:gravity="center" />
 
             <TextView
-                android:id="@+id/safe_mode"
+                android:id="@+id/cashDrawer"
                 android:layout_width="match_parent"
                 android:layout_height="45dp"
                 android:gravity="center"
@@ -322,7 +322,7 @@
                 android:gravity="center" />
 
             <TextView
-                android:id="@+id/cash_drawer"
+                android:id="@+id/refund"
                 android:layout_width="match_parent"
                 android:layout_height="45dp"
                 android:gravity="center"
@@ -338,11 +338,11 @@
                 android:gravity="center" />
 
             <TextView
-                android:id="@+id/cleek_out"
+                android:id="@+id/checkOut"
                 android:layout_width="match_parent"
                 android:layout_height="45dp"
                 android:gravity="center"
-                android:text="@string/cleek_out"
+                android:text="@string/check_out"
                 android:textColor="@color/text_color"
                 android:textSize="15sp" />
 
@@ -354,7 +354,7 @@
                 android:gravity="center" />
 
             <TextView
-                android:id="@+id/re_print"
+                android:id="@+id/reprint"
                 android:layout_width="match_parent"
                 android:layout_height="45dp"
                 android:gravity="center"
