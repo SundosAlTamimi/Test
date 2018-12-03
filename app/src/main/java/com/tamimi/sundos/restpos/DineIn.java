@@ -2,59 +2,49 @@ package com.tamimi.sundos.restpos;
 
 import android.annotation.SuppressLint;
 import android.app.Dialog;
-import android.content.ClipData;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.GestureDetector;
 import android.view.Gravity;
-import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.View.OnTouchListener;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.animation.TranslateAnimation;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
-import android.widget.TableLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.tamimi.sundos.restpos.BackOffice.BackOfficeActivity;
-import com.tamimi.sundos.restpos.BackOffice.EmployeeRegistration;
-import com.tamimi.sundos.restpos.BackOffice.MenuRegistration;
 import com.tamimi.sundos.restpos.Models.EmployeeRegistrationModle;
 import com.tamimi.sundos.restpos.Models.OrderTransactions;
-import com.tamimi.sundos.restpos.Models.PayMethod;
 import com.tamimi.sundos.restpos.Models.Tables;
-
-import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-
 public class DineIn extends AppCompatActivity {
-
-
     ArrayList<Tables> currentList, list0, list1, list2, list3, list4, list5;
 
     Dialog dialog;
-    Button addIcon , save;
+    Button addIcon, save;
     Button mainF, firstF, secondF, thirdF, fourthF, fifthF;
-    TextView move , merge , reservation , takeAway , close , cashDrawer , refund , checkOut , reprint;
+    TextView move, merge, reservation, takeAway, close, cashDrawer, refund, checkOut, reprint;
     LinearLayout add, rightBorder;
     ViewGroup land;
 
@@ -64,6 +54,11 @@ public class DineIn extends AppCompatActivity {
     int tableNumber;
     int current = 0;
     String waiter;
+
+    int fromSection, toSection;
+    List<String> tablesNoLeft, tablesNoRight;
+    int focusedLeft = -1, focusedRight = -1;
+    ImageView movingTable;
 
     List<OrderTransactions> greenTables;
     DatabaseHandler mHandler;
@@ -116,9 +111,11 @@ public class DineIn extends AppCompatActivity {
             switch (view.getId()) {
 
                 case R.id.move:
+                    openMoveDialog();
                     break;
 
                 case R.id.merge:
+                    openMergeDialog();
                     break;
 
                 case R.id.reservation:
@@ -220,7 +217,7 @@ public class DineIn extends AppCompatActivity {
                 linearLayout.setX(currentList.get(i).getMarginLeft());
                 linearLayout.setY(currentList.get(i).getMarginTop());
                 linearLayout.setLayoutParams(params);
-                if(checkGreen(textView.getText().toString() , current)){
+                if (checkGreen(textView.getText().toString(), current)) {
                     linearLayout.setBackgroundDrawable(getResources().getDrawable(R.drawable.green_light));
                 }
                 land.addView(linearLayout);
@@ -231,9 +228,9 @@ public class DineIn extends AppCompatActivity {
 
     };
 
-    boolean checkGreen(String tableNo , int section){
+    boolean checkGreen(String tableNo, int section) {
         for (int i = 0; i < greenTables.size(); i++)
-            if(greenTables.get(i).getSectionNo() == section && greenTables.get(i).getTableNo() == Integer.parseInt(tableNo))
+            if (greenTables.get(i).getSectionNo() == section && greenTables.get(i).getTableNo() == Integer.parseInt(tableNo))
                 return true;
 
         return false;
@@ -243,7 +240,7 @@ public class DineIn extends AppCompatActivity {
         @Override
         public void onClick(View view) {
 
-            if(view.getBackground() == null) { // not green
+            if (view.getBackground() == null) { // not green
                 dialog = new Dialog(DineIn.this);
                 dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
                 dialog.setCancelable(false);
@@ -258,7 +255,7 @@ public class DineIn extends AppCompatActivity {
                 for (int i = 0; i < employees.size(); i++) {
                     if (employees.get(i).getEmployeeType() == 1) {
 
-                        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT , 40);
+                        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 40);
 
                         final TextView textView = new TextView(DineIn.this);
                         textView.setText(" " + employees.get(i).getEmployeeName());
@@ -267,7 +264,7 @@ public class DineIn extends AppCompatActivity {
                         textView.setGravity(Gravity.BOTTOM);
                         textView.setLayoutParams(lp);
 
-                        LinearLayout.LayoutParams lp2 = new LinearLayout.LayoutParams(50 , 40);
+                        LinearLayout.LayoutParams lp2 = new LinearLayout.LayoutParams(50, 40);
                         lp2.setMargins(3, 5, 7, 5);
 
                         final ImageView imageView = new ImageView(DineIn.this);
@@ -335,14 +332,14 @@ public class DineIn extends AppCompatActivity {
 
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                String males = ((male.getText().toString().equals(""))? "0" : male.getText().toString());
-                String females = ((female.getText().toString().equals(""))? "0" : female.getText().toString());
-                String childrens = ((children.getText().toString().equals(""))? "0" : children.getText().toString());
+                String males = ((male.getText().toString().equals("")) ? "0" : male.getText().toString());
+                String females = ((female.getText().toString().equals("")) ? "0" : female.getText().toString());
+                String childrens = ((children.getText().toString().equals("")) ? "0" : children.getText().toString());
 
-                int sum =(int) Double.parseDouble(males) +
+                int sum = (int) Double.parseDouble(males) +
                         (int) Double.parseDouble(females) +
                         (int) Double.parseDouble(childrens);
-                seatsNo.setText(""+sum);
+                seatsNo.setText("" + sum);
             }
 
             @Override
@@ -387,6 +384,422 @@ public class DineIn extends AppCompatActivity {
         dialog.show();
     }
 
+    public void openMoveDialog() {
+        dialog = new Dialog(DineIn.this);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setCancelable(false);
+        dialog.setContentView(R.layout.move_table_dialog);
+        dialog.setCanceledOnTouchOutside(true);
+
+        LinearLayout linearLayoutLeft = dialog.findViewById(R.id.linearButtonsLeft);
+        LinearLayout linearLayoutRight = dialog.findViewById(R.id.linearButtonsRight);
+        GridView gridViewLeft = dialog.findViewById(R.id.GridViewLeft);
+        final GridView gridViewRight = dialog.findViewById(R.id.GridViewRight);
+        final Button mainL = dialog.findViewById(R.id.b_main1);
+        final Button firstL = dialog.findViewById(R.id.b_f1);
+        final Button secondL = dialog.findViewById(R.id.b_s1);
+        final Button thirdL = dialog.findViewById(R.id.b_t1);
+        final Button fourthL = dialog.findViewById(R.id.b_fo1);
+        final Button fifthL = dialog.findViewById(R.id.b_fi1);
+        final Button mainR = dialog.findViewById(R.id.b_main2);
+        final Button firstR = dialog.findViewById(R.id.b_f2);
+        final Button secondR = dialog.findViewById(R.id.b_s2);
+        final Button thirdR = dialog.findViewById(R.id.b_t2);
+        final Button fourthR = dialog.findViewById(R.id.b_fo2);
+        final Button fifthR = dialog.findViewById(R.id.b_fi2);
+
+        Button move = dialog.findViewById(R.id.move);
+        tablesNoRight = new ArrayList<>();
+
+        for (int i = 0; i < linearLayoutLeft.getChildCount(); i++) {
+            if (current == i) {
+                Button buttonL = (Button) linearLayoutLeft.getChildAt(i);
+                Button buttonR = (Button) linearLayoutRight.getChildAt(i);
+                buttonL.setBackgroundColor(getResources().getColor(R.color.dark_blue));
+                buttonR.setBackgroundColor(getResources().getColor(R.color.dark_blue));
+                fromSection = i;
+                toSection = i;
+            }
+        }
+        tablesNoLeft = mHandler.getAllOrderedTables(fromSection);
+        final TablesMoveMergeAdapter adapter = new TablesMoveMergeAdapter(DineIn.this, tablesNoLeft);
+        gridViewLeft.setAdapter(adapter);
+        gridViewLeft.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                for (int n = 0; n < adapterView.getChildCount(); n++) {
+                    adapterView.getChildAt(n).setBackgroundDrawable(null);
+                }
+                view.setBackgroundDrawable(getResources().getDrawable(R.drawable.focused_table));
+                focusedLeft = Integer.parseInt(tablesNoLeft.get(i));
+            }
+        });
+        final ArrayList<Tables> currentListTemp = mHandler.getRequestedTables(toSection);
+        List<String> orderedTables = new ArrayList<>(mHandler.getAllOrderedTables(toSection));
+        for (int i = 0; i < currentListTemp.size(); i++) {
+            boolean exist = false;
+            for (int k = 0; k < orderedTables.size(); k++) {
+                if (currentListTemp.get(i).getTableNumber() == Integer.parseInt(orderedTables.get(k)))
+                    exist = true;
+            }
+            if (!exist)
+                tablesNoRight.add("" + currentListTemp.get(i).getTableNumber());
+        }
+        final TablesMoveMergeAdapter adapter2 = new TablesMoveMergeAdapter(DineIn.this, tablesNoRight);
+        gridViewRight.setAdapter(adapter2);
+        gridViewRight.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+
+                for (int n = 0; n < adapterView.getChildCount(); n++) {
+                    adapterView.getChildAt(n).setBackgroundDrawable(null);
+                }
+                view.setBackgroundDrawable(getResources().getDrawable(R.drawable.focused_table));
+                focusedRight = Integer.parseInt(tablesNoRight.get(i));
+            }
+        });
+
+        OnClickListener onClickListenerLeft = new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mainL.setBackgroundColor(getResources().getColor(R.color.gray));
+                firstL.setBackgroundColor(getResources().getColor(R.color.gray));
+                secondL.setBackgroundColor(getResources().getColor(R.color.gray));
+                thirdL.setBackgroundColor(getResources().getColor(R.color.gray));
+                fourthL.setBackgroundColor(getResources().getColor(R.color.gray));
+                fifthL.setBackgroundColor(getResources().getColor(R.color.gray));
+                view.setBackgroundColor(getResources().getColor(R.color.dark_blue));
+
+                focusedLeft = -1;
+                switch (view.getId()) {
+                    case R.id.b_main1:
+                        fromSection = 0;
+                        break;
+                    case R.id.b_f1:
+                        fromSection = 1;
+                        break;
+                    case R.id.b_s1:
+                        fromSection = 2;
+                        break;
+                    case R.id.b_t1:
+                        fromSection = 3;
+                        break;
+                    case R.id.b_fo1:
+                        fromSection = 4;
+                        break;
+                    case R.id.b_fi1:
+                        fromSection = 5;
+                        break;
+                }
+                tablesNoLeft.clear();
+                tablesNoLeft.addAll(mHandler.getAllOrderedTables(fromSection));
+                adapter.notifyDataSetChanged();
+            }
+        };
+
+        mainL.setOnClickListener(onClickListenerLeft);
+        firstL.setOnClickListener(onClickListenerLeft);
+        secondL.setOnClickListener(onClickListenerLeft);
+        thirdL.setOnClickListener(onClickListenerLeft);
+        fourthL.setOnClickListener(onClickListenerLeft);
+        fifthL.setOnClickListener(onClickListenerLeft);
+
+        OnClickListener onClickListenerRight = new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mainR.setBackgroundColor(getResources().getColor(R.color.gray));
+                firstR.setBackgroundColor(getResources().getColor(R.color.gray));
+                secondR.setBackgroundColor(getResources().getColor(R.color.gray));
+                thirdR.setBackgroundColor(getResources().getColor(R.color.gray));
+                fourthR.setBackgroundColor(getResources().getColor(R.color.gray));
+                fifthR.setBackgroundColor(getResources().getColor(R.color.gray));
+                view.setBackgroundColor(getResources().getColor(R.color.dark_blue));
+
+                focusedRight = -1;
+                currentListTemp.clear();
+
+                switch (view.getId()) {
+                    case R.id.b_main2:
+                        toSection = 0;
+                        break;
+                    case R.id.b_f2:
+                        toSection = 1;
+                        break;
+                    case R.id.b_s2:
+                        toSection = 2;
+                        break;
+                    case R.id.b_t2:
+                        toSection = 3;
+                        break;
+                    case R.id.b_fo2:
+                        toSection = 4;
+                        break;
+                    case R.id.b_fi2:
+                        toSection = 5;
+                        break;
+                }
+                currentListTemp.addAll(mHandler.getRequestedTables(toSection));
+                List<String> orderedTables = new ArrayList<>(mHandler.getAllOrderedTables(toSection));
+
+                tablesNoRight.clear();
+                for (int i = 0; i < currentListTemp.size(); i++) {
+                    boolean exist = false;
+                    for (int k = 0; k < orderedTables.size(); k++) {
+                        if (currentListTemp.get(i).getTableNumber() == Integer.parseInt(orderedTables.get(k)))
+                            exist = true;
+                    }
+                    if (!exist)
+                        tablesNoRight.add("" + currentListTemp.get(i).getTableNumber());
+                }
+                adapter2.notifyDataSetChanged();
+            }
+        };
+
+        mainR.setOnClickListener(onClickListenerRight);
+        firstR.setOnClickListener(onClickListenerRight);
+        secondR.setOnClickListener(onClickListenerRight);
+        thirdR.setOnClickListener(onClickListenerRight);
+        fourthR.setOnClickListener(onClickListenerRight);
+        fifthR.setOnClickListener(onClickListenerRight);
+
+        move.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                Log.e("here", "*****" + focusedLeft + "" + focusedRight + "" + fromSection + "" + toSection);
+                if (focusedLeft != -1 && focusedRight != -1) {
+                    if (focusedLeft == focusedRight && fromSection == toSection) {
+                        Toast.makeText(DineIn.this, "Ops, it's the same table !", Toast.LENGTH_SHORT).show();
+                    } else {
+                        // update on tables temp
+                        mHandler.moveTablesTemp(fromSection, focusedLeft, toSection, focusedRight);
+                        dialog.dismiss();
+
+                        final Dialog dialog2 = new Dialog(DineIn.this);
+                        dialog2.requestWindowFeature(Window.FEATURE_NO_TITLE);
+                        dialog2.setCancelable(false);
+                        dialog2.setContentView(R.layout.move_table_dialog_smal);
+                        dialog2.setCanceledOnTouchOutside(true);
+
+                        final ImageView movingTable = dialog2.findViewById(R.id.imageViewt);
+
+                        slideRight(movingTable);
+
+                        Handler handler = new Handler();
+                        handler.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                dialog2.dismiss();
+                                DineIn.this.recreate();
+                            }
+                        }, 2000);
+
+                        dialog2.show();
+                    }
+                } else
+                    Toast.makeText(DineIn.this, "Please choose tables from both two lists", Toast.LENGTH_SHORT).show();
+            }
+        });
+        dialog.show();
+    }
+
+    public void openMergeDialog() {
+        dialog = new Dialog(DineIn.this);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setCancelable(false);
+        dialog.setContentView(R.layout.merge_table_dialog);
+        dialog.setCanceledOnTouchOutside(true);
+
+        LinearLayout linearLayoutLeft = dialog.findViewById(R.id.linearButtonsLeft);
+        LinearLayout linearLayoutRight = dialog.findViewById(R.id.linearButtonsRight);
+        GridView gridViewLeft = dialog.findViewById(R.id.GridViewLeft);
+        final GridView gridViewRight = dialog.findViewById(R.id.GridViewRight);
+        final Button mainL = dialog.findViewById(R.id.b_main1);
+        final Button firstL = dialog.findViewById(R.id.b_f1);
+        final Button secondL = dialog.findViewById(R.id.b_s1);
+        final Button thirdL = dialog.findViewById(R.id.b_t1);
+        final Button fourthL = dialog.findViewById(R.id.b_fo1);
+        final Button fifthL = dialog.findViewById(R.id.b_fi1);
+        final Button mainR = dialog.findViewById(R.id.b_main2);
+        final Button firstR = dialog.findViewById(R.id.b_f2);
+        final Button secondR = dialog.findViewById(R.id.b_s2);
+        final Button thirdR = dialog.findViewById(R.id.b_t2);
+        final Button fourthR = dialog.findViewById(R.id.b_fo2);
+        final Button fifthR = dialog.findViewById(R.id.b_fi2);
+
+        Button merge = dialog.findViewById(R.id.merge);
+
+        for (int i = 0; i < linearLayoutLeft.getChildCount(); i++) {
+            if (current == i) {
+                Button buttonL = (Button) linearLayoutLeft.getChildAt(i);
+                Button buttonR = (Button) linearLayoutRight.getChildAt(i);
+                buttonL.setBackgroundColor(getResources().getColor(R.color.dark_blue));
+                buttonR.setBackgroundColor(getResources().getColor(R.color.dark_blue));
+                fromSection = i;
+                toSection = i;
+            }
+        }
+        tablesNoLeft = mHandler.getAllOrderedTables(fromSection);
+        tablesNoRight = mHandler.getAllOrderedTables(fromSection);
+        final TablesMoveMergeAdapter adapter = new TablesMoveMergeAdapter(DineIn.this, tablesNoLeft);
+        gridViewLeft.setAdapter(adapter);
+        gridViewLeft.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                for (int n = 0; n < adapterView.getChildCount(); n++) {
+                    adapterView.getChildAt(n).setBackgroundDrawable(null);
+                }
+                view.setBackgroundDrawable(getResources().getDrawable(R.drawable.focused_table));
+                focusedLeft = Integer.parseInt(tablesNoLeft.get(i));
+            }
+        });
+
+        final TablesMoveMergeAdapter adapter2 = new TablesMoveMergeAdapter(DineIn.this, tablesNoRight);
+        gridViewRight.setAdapter(adapter2);
+        gridViewRight.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+
+                for (int n = 0; n < adapterView.getChildCount(); n++) {
+                    adapterView.getChildAt(n).setBackgroundDrawable(null);
+                }
+                view.setBackgroundDrawable(getResources().getDrawable(R.drawable.focused_table));
+                focusedRight = Integer.parseInt(tablesNoRight.get(i));
+            }
+        });
+
+        OnClickListener onClickListenerLeft = new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mainL.setBackgroundColor(getResources().getColor(R.color.gray));
+                firstL.setBackgroundColor(getResources().getColor(R.color.gray));
+                secondL.setBackgroundColor(getResources().getColor(R.color.gray));
+                thirdL.setBackgroundColor(getResources().getColor(R.color.gray));
+                fourthL.setBackgroundColor(getResources().getColor(R.color.gray));
+                fifthL.setBackgroundColor(getResources().getColor(R.color.gray));
+                view.setBackgroundColor(getResources().getColor(R.color.dark_blue));
+
+                focusedLeft = -1;
+                switch (view.getId()) {
+                    case R.id.b_main1:
+                        fromSection = 0;
+                        break;
+                    case R.id.b_f1:
+                        fromSection = 1;
+                        break;
+                    case R.id.b_s1:
+                        fromSection = 2;
+                        break;
+                    case R.id.b_t1:
+                        fromSection = 3;
+                        break;
+                    case R.id.b_fo1:
+                        fromSection = 4;
+                        break;
+                    case R.id.b_fi1:
+                        fromSection = 5;
+                        break;
+                }
+                tablesNoLeft.clear();
+                tablesNoLeft.addAll(mHandler.getAllOrderedTables(fromSection));
+                adapter.notifyDataSetChanged();
+            }
+        };
+
+        mainL.setOnClickListener(onClickListenerLeft);
+        firstL.setOnClickListener(onClickListenerLeft);
+        secondL.setOnClickListener(onClickListenerLeft);
+        thirdL.setOnClickListener(onClickListenerLeft);
+        fourthL.setOnClickListener(onClickListenerLeft);
+        fifthL.setOnClickListener(onClickListenerLeft);
+
+        OnClickListener onClickListenerRight = new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mainR.setBackgroundColor(getResources().getColor(R.color.gray));
+                firstR.setBackgroundColor(getResources().getColor(R.color.gray));
+                secondR.setBackgroundColor(getResources().getColor(R.color.gray));
+                thirdR.setBackgroundColor(getResources().getColor(R.color.gray));
+                fourthR.setBackgroundColor(getResources().getColor(R.color.gray));
+                fifthR.setBackgroundColor(getResources().getColor(R.color.gray));
+                view.setBackgroundColor(getResources().getColor(R.color.dark_blue));
+
+                focusedRight = -1;
+                switch (view.getId()) {
+                    case R.id.b_main2:
+                        toSection = 0;
+                        break;
+                    case R.id.b_f2:
+                        toSection = 1;
+                        break;
+                    case R.id.b_s2:
+                        toSection = 2;
+                        break;
+                    case R.id.b_t2:
+                        toSection = 3;
+                        break;
+                    case R.id.b_fo2:
+                        toSection = 4;
+                        break;
+                    case R.id.b_fi2:
+                        toSection = 5;
+                        break;
+                }
+                tablesNoRight.clear();
+                tablesNoRight.addAll(mHandler.getAllOrderedTables(toSection));
+                adapter2.notifyDataSetChanged();
+            }
+        };
+
+        mainR.setOnClickListener(onClickListenerRight);
+        firstR.setOnClickListener(onClickListenerRight);
+        secondR.setOnClickListener(onClickListenerRight);
+        thirdR.setOnClickListener(onClickListenerRight);
+        fourthR.setOnClickListener(onClickListenerRight);
+        fifthR.setOnClickListener(onClickListenerRight);
+
+        merge.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                Log.e("here", "*****" + focusedLeft + "" + focusedRight + "" + fromSection + "" + toSection);
+                if (focusedLeft != -1 && focusedRight != -1) {
+                    if (focusedLeft == focusedRight && fromSection == toSection) {
+                        Toast.makeText(DineIn.this, "Ops, it's the same table !", Toast.LENGTH_SHORT).show();
+                    } else {
+                        // update on tables temp
+                        mHandler.mergeTablesTemp(fromSection, focusedLeft, toSection, focusedRight);
+                        dialog.dismiss();
+
+                        final Dialog dialog2 = new Dialog(DineIn.this);
+                        dialog2.requestWindowFeature(Window.FEATURE_NO_TITLE);
+                        dialog2.setCancelable(false);
+                        dialog2.setContentView(R.layout.merge_table_dialog_smal);
+                        dialog2.setCanceledOnTouchOutside(true);
+
+                        final ImageView movingTable = dialog2.findViewById(R.id.imageViewt);
+                        final ImageView movingTable2 = dialog2.findViewById(R.id.imageViewt2);
+
+                        slideRight(movingTable);
+
+                        Handler handler = new Handler();
+                        handler.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                dialog2.dismiss();
+                                DineIn.this.recreate();
+                            }
+                        }, 2000);
+
+                        dialog2.show();
+                    }
+                } else
+                    Toast.makeText(DineIn.this, "Please choose tables from both two lists", Toast.LENGTH_SHORT).show();
+            }
+        });
+        dialog.show();
+    }
+
     public void openCheckOutDialog() {
         dialog = new Dialog(DineIn.this);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -398,7 +811,7 @@ public class DineIn extends AppCompatActivity {
         final Spinner tableNo = dialog.findViewById(R.id.tableNo);
         Button done = dialog.findViewById(R.id.b_done);
 
-        switch (current){
+        switch (current) {
             case 0:
                 sectionNo.setText("Main Floor");
                 break;
@@ -427,14 +840,14 @@ public class DineIn extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                List<OrderTransactions> orderTransTemp = mHandler.getOrderTransactionsTemp(""+current , tableNo.getSelectedItem().toString());
-                if(orderTransTemp.size() != 0) {
+                List<OrderTransactions> orderTransTemp = mHandler.getOrderTransactionsTemp("" + current, tableNo.getSelectedItem().toString());
+                if (orderTransTemp.size() != 0) {
                     Intent intent = new Intent(DineIn.this, PayMethods.class);
                     intent.putExtra("sectionNo", "" + current);
                     intent.putExtra("tableNo", tableNo.getSelectedItem().toString());
                     startActivity(intent);
                 } else {
-                    Toast.makeText(DineIn.this , "This table has no order !" , Toast.LENGTH_SHORT).show();
+                    Toast.makeText(DineIn.this, "This table has no order !", Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -538,20 +951,12 @@ public class DineIn extends AppCompatActivity {
             linearLayout.setX(currentList.get(i).getMarginLeft());
             linearLayout.setY(currentList.get(i).getMarginTop());
             linearLayout.setLayoutParams(params);
-            if(checkGreen(textView.getText().toString() , current)){
+            if (checkGreen(textView.getText().toString(), current)) {
                 linearLayout.setBackgroundDrawable(getResources().getDrawable(R.drawable.green_light));
             }
             land.addView(linearLayout);
 
         }
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        greenTables = mHandler.getAllOrderTransactionsTemp();
-        if(focused != null)
-            focused.setBackgroundDrawable(getResources().getDrawable(R.drawable.green_light));
     }
 
     private class SingleTapConfirm extends GestureDetector.SimpleOnGestureListener {
@@ -560,6 +965,31 @@ public class DineIn extends AppCompatActivity {
         public boolean onSingleTapUp(MotionEvent event) {
             return true;
         }
+    }
+
+    public void slideRight(View view) {
+        TranslateAnimation animate = new TranslateAnimation(
+                0,                 // fromXDelta
+                view.getWidth() + 300,                 // toXDelta
+                0,                 // fromYDelta
+                0); // toYDelta
+        animate.setDuration(1500);
+        animate.setFillAfter(true);
+        view.startAnimation(animate);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        greenTables = mHandler.getAllOrderTransactionsTemp();
+        if (focused != null)
+            focused.setBackgroundDrawable(getResources().getDrawable(R.drawable.green_light));
+    }
+
+    @Override
+    public void onBackPressed() {
+        Intent intent = new Intent(DineIn.this , Main.class);
+        startActivity( intent);
     }
 
     void initialize() {
@@ -605,4 +1035,6 @@ public class DineIn extends AppCompatActivity {
         checkOut.setOnClickListener(onRightListListener);
         reprint.setOnClickListener(onRightListListener);
     }
+
+
 }

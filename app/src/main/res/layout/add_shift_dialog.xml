@@ -1,0 +1,253 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="600dp"
+    android:layout_height="420dp"
+    android:background="@color/layer3"
+    android:orientation="vertical"
+    android:padding="40dp">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="25dp"
+        android:layout_marginBottom="7dp"
+        android:gravity="center"
+        android:text="@string/shift_registration"
+        android:textColor="@color/text_color"
+        android:textSize="16sp" />
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TableLayout
+            android:layout_width="match_parent"
+            android:layout_height="150dp"
+            android:layout_marginTop="3dp"
+            android:background="@drawable/focused_table">
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="1dp">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="25dp"
+                    android:layout_margin="1dp"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="@string/shift_no"
+                    android:textColor="@color/exit"
+                    android:textSize="17sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="25dp"
+                    android:layout_margin="1dp"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="@string/shift_name"
+                    android:textColor="@color/exit"
+                    android:textSize="17sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="25dp"
+                    android:layout_margin="1dp"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="@string/from_time"
+                    android:textColor="@color/exit"
+                    android:textSize="17sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="25dp"
+                    android:layout_margin="1dp"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="@string/to_time"
+                    android:textColor="@color/exit"
+                    android:textSize="17sp"
+                    android:textStyle="bold" />
+
+            </TableRow>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="5dp"
+                android:layout_margin="1dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="1dp"
+                    android:layout_weight="1"
+                    android:background="@color/text_color"
+                    android:gravity="center" />
+
+            </TableRow>
+
+            <ScrollView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <TableLayout
+                    android:id="@+id/tableLayout1"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                </TableLayout>
+
+            </ScrollView>
+        </TableLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="25dp"
+            android:layout_margin="3dp"
+            android:layout_weight="1"
+            android:text="@string/shift_no"
+            android:textColor="@color/text_color"
+            android:textSize="17sp"/>
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="25dp"
+            android:layout_margin="3dp"
+            android:layout_weight="1"
+            android:text="@string/shift_name"
+            android:textColor="@color/text_color"
+            android:textSize="17sp"/>
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="25dp"
+            android:layout_margin="3dp"
+            android:layout_weight="1"
+            android:text="@string/from_time"
+            android:textColor="@color/text_color"
+            android:textSize="17sp"/>
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="25dp"
+            android:layout_margin="3dp"
+            android:layout_weight="1"
+            android:text="@string/to_time"
+            android:textColor="@color/text_color"
+            android:textSize="17sp"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <EditText
+            android:id="@+id/shift_no"
+            android:layout_width="0dp"
+            android:layout_height="25dp"
+            android:layout_margin="3dp"
+            android:paddingHorizontal="2dp"
+            android:layout_weight="1"
+            android:background="@color/layer1"
+            android:inputType="number"
+            android:textColor="@color/text_color"
+            android:textSize="17sp"/>
+
+        <EditText
+            android:id="@+id/shift_name"
+            android:layout_width="0dp"
+            android:layout_height="25dp"
+            android:layout_margin="3dp"
+            android:paddingHorizontal="2dp"
+            android:layout_weight="1"
+            android:background="@color/layer1"
+            android:textColor="@color/text_color"
+            android:textSize="17sp"/>
+
+
+        <EditText
+            android:id="@+id/from"
+            android:layout_width="0dp"
+            android:layout_height="25dp"
+            android:layout_margin="3dp"
+            android:paddingHorizontal="2dp"
+            android:layout_weight="1"
+            android:background="@color/layer1"
+            android:textColor="@color/text_color"
+            android:textSize="17sp"
+            android:inputType="date"
+            android:focusable="false"/>
+
+        <EditText
+            android:id="@+id/to"
+            android:layout_width="0dp"
+            android:layout_height="25dp"
+            android:layout_margin="3dp"
+            android:paddingHorizontal="2dp"
+            android:layout_weight="1"
+            android:background="@color/layer1"
+            android:textColor="@color/text_color"
+            android:textSize="17sp"
+            android:inputType="date"
+            android:focusable="false"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginLeft="5dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginRight="5dp"
+        android:layout_marginBottom="5dp"
+        android:orientation="horizontal"
+        android:padding="5dp">
+
+        <Button
+            android:id="@+id/add"
+            android:layout_width="115dp"
+            android:layout_height="40dp"
+            android:layout_margin="5dp"
+            android:background="@color/dark_blue"
+            android:text="@string/add"
+            android:textColor="@color/layer1"
+            android:textStyle="bold" />
+
+        <Button
+            android:id="@+id/save"
+            android:layout_width="115dp"
+            android:layout_height="40dp"
+            android:layout_margin="5dp"
+            android:background="@color/colorPrimaryLight"
+            android:text="@string/save"
+            android:textColor="@color/layer1"
+            android:textStyle="bold" />
+
+        <Button
+            android:id="@+id/exit"
+            android:layout_width="115dp"
+            android:layout_height="40dp"
+            android:layout_margin="5dp"
+            android:background="@color/exit"
+            android:text="@string/exit"
+            android:textColor="@color/layer1"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+</LinearLayout>

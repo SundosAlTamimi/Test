@@ -66,7 +66,7 @@ public class Order extends AppCompatActivity {
     static double balance;
     double totalItemsWithDiscount = 0.0;
 
-    static OrderTransactions OrderTransactionsObj;
+    static ArrayList<OrderTransactions> OrderTransactionsObj;
     static OrderHeader OrderHeaderObj;
 
     int voucherSerial;
@@ -96,12 +96,11 @@ public class Order extends AppCompatActivity {
         initialize();
 
         mDbHandler = new DatabaseHandler(Order.this);
+        OrderTransactionsObj = new ArrayList<>();
         items = mDbHandler.getAllItems();
         wantedItems = new ArrayList<>();
         usedCategoriesList = new ArrayList<>();
         lineDiscount = new ArrayList<Double>();
-
-        setDateAndVoucherNumber();
 
         fillCategories();
 
@@ -115,6 +114,7 @@ public class Order extends AppCompatActivity {
 
         }
         setOrder(orderTypeFlag);
+        setDateAndVoucherNumber();
 
         tableLayoutPosition = 0;
         currentColor = ContextCompat.getColor(this, R.color.layer2);
@@ -238,8 +238,8 @@ public class Order extends AppCompatActivity {
             orderType.setText("Dine In");
             tableNo.setText("Table:  " + tableNumber);
             check.setText("Check:  " + sectionNumber);
-//            user.setText(waiter);
-//            seats.setText("" + seatNo);
+            user.setText(waiter);
+            seats.setText("" + seatNo);
         }
 
         date.setText(today);
@@ -253,13 +253,14 @@ public class Order extends AppCompatActivity {
         SimpleDateFormat df2 = new SimpleDateFormat("yyyyMM");
         yearMonth = df2.format(currentTimeAndDate);
 
-        List<OrderTransactions> transactions = mDbHandler.getAllOrderTransactions();
-        int voucherSerial;
-        if (transactions.size() > 0)
-            voucherSerial = transactions.get(transactions.size() - 1).getVoucherSerial();
-        else
-            voucherSerial = 0;
+        List<OrderHeader> transactions = mDbHandler.getAllOrderHeader();
+        List<OrderHeader> transactionsTemp = mDbHandler.getAllOrderHeaderTemp();
 
+        if (orderTypeFlag == 0) {
+            voucherSerial = (transactions.size() > 0 ? transactions.size() : 0);
+        } else {
+            voucherSerial = (transactionsTemp.size() > 0 ? transactionsTemp.get(transactionsTemp.size()-1).getVoucherSerial()+1 : 0);
+        }
         voucherNo = yearMonth + "-" + voucherSerial;
     }
 
@@ -1037,8 +1038,11 @@ public class Order extends AppCompatActivity {
                             lineDiscountValue = Double.parseDouble(addLineDiscountEditText.getText().toString());
 
                             if (radioButton.isChecked()) {
+                                TableRow tableRow = (TableRow) tableLayout.getChildAt(Integer.parseInt(focused.getTag().toString()));
+                                TextView textViewTotal = (TextView) tableRow.getChildAt(3);
+
                                 lineDiscountValue = (Double.parseDouble(addLineDiscountEditText.getText().toString())) *
-                                        (Double.parseDouble(total.getText().toString())) / 100;
+                                        (Double.parseDouble(textViewTotal.getText().toString())) / 100;
                             }
                             lineDiscount.set(Integer.parseInt(focused.getTag().toString()), lineDiscountValue);
                             calculateTotal();
@@ -1150,13 +1154,13 @@ public class Order extends AppCompatActivity {
             Log.e("here", "******" + disc + "/" + totalItemsWithDiscount + "*" + totalLine + "-" + lineDiscount_);
 
 //            mDbHandler.addOrderTransaction(
-            OrderTransactionsObj = new OrderTransactions(orderTypeFlag, 0, today, Settings.POS_number, Settings.store_number,
+            OrderTransactionsObj.add(new OrderTransactions(orderTypeFlag, 0, today, Settings.POS_number, Settings.store_number,
                     voucherNo, voucherSerial, "" + wantedItems.get(k).getItemBarcode(), wantedItems.get(k).getMenuName(),
                     wantedItems.get(k).getSecondaryName(), wantedItems.get(k).getKitchenAlias(), wantedItems.get(k).getMenuCategory(),
                     wantedItems.get(k).getFamilyName(), Integer.parseInt(textViewQty.getText().toString()), wantedItems.get(k).getPrice(),
                     totalLine, discount, lineDiscount_, discount + lineDiscount_, taxValue,
                     wantedItems.get(k).getTax(), 0, Double.parseDouble(service.getText().toString()), serviceTax,
-                    tableNumber, sectionNumber, Settings.shift_number, Settings.shift_name);
+                    tableNumber, sectionNumber, Settings.shift_number, Settings.shift_name));
         }
     }
 
@@ -1177,6 +1181,8 @@ public class Order extends AppCompatActivity {
 
     void saveInOrderTransactionTemp() {
 
+        calculateTotal();
+
         if(mDbHandler.getOrderTransactionsTemp("" + sectionNumber, "" + tableNumber).size() != 0)
             mDbHandler.deleteFromOrderTransactionTemp("" + sectionNumber, "" + tableNumber);
 
@@ -1195,6 +1201,8 @@ public class Order extends AppCompatActivity {
             double discount = 0.0;
             if(wantedItems.get(k).getDiscountAvailable() == 1)
                 discount = (disc / totalItemsWithDiscount) * (totalLine - lineDiscount_);
+
+            Log.e("************" , "discount (" + disc + "/" + totalItemsWithDiscount + ")*(" + totalLine + "-" + lineDiscount_ +")");
 
             mDbHandler.addOrderTransactionTemp(new OrderTransactions(orderTypeFlag, 0, today, Settings.POS_number, Settings.store_number,
                     voucherNo, voucherSerial, "" + wantedItems.get(k).getItemBarcode(), wantedItems.get(k).getMenuName(),
@@ -1219,11 +1227,11 @@ public class Order extends AppCompatActivity {
                 voucherNo, voucherSerial, Double.parseDouble(total.getText().toString()), ldisc, disc, disc + ldisc,
                 Settings.service_value, Double.parseDouble((tax.getText().toString())), serviceTax, Double.parseDouble((subTotal.getText().toString())),
                 Double.parseDouble(amountDue.getText().toString()), Double.parseDouble(deliveryCharge.getText().toString()), tableNumber,
-                sectionNumber, PayMethods.cashValue, PayMethods.creditCardValue, PayMethods.chequeValue, PayMethods.creditValue,
-                PayMethods.giftCardValue, PayMethods.pointValue, Settings.shift_name, Settings.shift_number, waiter, seatNo));
+                sectionNumber, 0.00, 0.00, 0.00, 0.00,
+                0.00, 0.00, Settings.shift_name, Settings.shift_number, waiter, seatNo));
     }
 
-    public OrderTransactions getOrderTransactionObj() {
+    public ArrayList<OrderTransactions> getOrderTransactionObj() {
         return OrderTransactionsObj;
     }
 
@@ -1339,7 +1347,7 @@ public class Order extends AppCompatActivity {
         seats.setText("" + orderHeaders.get(0).getSeatsNumber());
         total.setText("" + orderHeaders.get(0).getTotal());
         disCount.setText("" + orderHeaders.get(0).getTotalDiscount());
-        lineDisCount.setText("" + orderHeaders.get(0).getTotalLineDiscount());
+        lineDisCount.setText("" + orderHeaders.get(0).getTotalLineDiscount()); // here
         deliveryCharge.setText("" + orderHeaders.get(0).getDeliveryCharge());
         subTotal.setText("" + orderHeaders.get(0).getSubTotal());
         tax.setText("" + orderHeaders.get(0).getTotalTax());

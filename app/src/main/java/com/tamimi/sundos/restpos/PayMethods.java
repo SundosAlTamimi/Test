@@ -61,7 +61,7 @@ public class PayMethods extends AppCompatActivity {
 
     List<OrderTransactions> orderTransTemp = null;
     List<OrderHeader> orderHeaderTemp = null;
-    String sectionNo , tableNo;
+    String sectionNo, tableNo;
 
     ArrayList chequeListName;
     ArrayAdapter<String> adapter2;
@@ -94,15 +94,15 @@ public class PayMethods extends AppCompatActivity {
         obj = new Order();
 
         Bundle extras = getIntent().getExtras();
-        if(extras != null) { // pay from dine in
+        if (extras != null) { // pay from dine in
             sectionNo = extras.getString("sectionNo");
             tableNo = extras.getString("tableNo");
-            Log.e("lll" , ""+ sectionNo + " "+  tableNo);
+            Log.e("lll", "" + sectionNo + " " + tableNo);
 
-            orderTransTemp = mDHandler.getOrderTransactionsTemp(sectionNo , tableNo);
-            orderHeaderTemp = mDHandler.getOrderHeaderTemp(sectionNo , tableNo);
+            orderTransTemp = mDHandler.getOrderTransactionsTemp(sectionNo, tableNo);
+            orderHeaderTemp = mDHandler.getOrderHeaderTemp(sectionNo, tableNo);
 
-            balance.setText(orderHeaderTemp.get(0).getAmountDue()+"");
+            balance.setText(orderHeaderTemp.get(0).getAmountDue() + "");
             mainBalance = balance.getText().toString();
             remainingBalance.setText("Remaining : " + balance.getText().toString());
             check.setText(check.getText().toString() + " " + orderHeaderTemp.get(0).getSectionNO());
@@ -1432,20 +1432,25 @@ public class PayMethods extends AppCompatActivity {
             resivePoint.clear();
         }
 
-        if(orderHeaderTemp == null) {
+        if (orderHeaderTemp == null) {
             //getting the data from order activity and save it in database.
-            mDHandler.addOrderTransaction(obj.getOrderTransactionObj());
             mDHandler.addOrderHeader(obj.getOrderHeaderObj());
+            for (int i = 0; i < obj.getOrderTransactionObj().size(); i++)
+                mDHandler.addOrderTransaction(obj.getOrderTransactionObj().get(i));
+
+            Intent intent = new Intent(PayMethods.this, Order.class);
+            startActivity(intent);
+
         } else {
 
             mDHandler.addOrderHeader(orderHeaderTemp.get(0));
             for (int i = 0; i < orderTransTemp.size(); i++) {
                 mDHandler.addOrderTransaction(orderTransTemp.get(i));
             }
-            mDHandler.deleteFromOrderHeaderTemp(sectionNo , tableNo);
-            mDHandler.deleteFromOrderTransactionTemp(sectionNo , tableNo);
+            mDHandler.deleteFromOrderHeaderTemp(sectionNo, tableNo);
+            mDHandler.deleteFromOrderTransactionTemp(sectionNo, tableNo);
 
-            Intent intent = new Intent(PayMethods.this , DineIn.class);
+            Intent intent = new Intent(PayMethods.this, DineIn.class);
             startActivity(intent);
         }
 

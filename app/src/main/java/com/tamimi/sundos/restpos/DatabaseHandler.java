@@ -8,6 +8,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 
+import com.tamimi.sundos.restpos.Models.BlindShift;
 import com.tamimi.sundos.restpos.Models.Cashier;
 import com.tamimi.sundos.restpos.Models.CategoryWithModifier;
 import com.tamimi.sundos.restpos.Models.Cheque;
@@ -29,6 +30,7 @@ import com.tamimi.sundos.restpos.Models.OrderTransactions;
 import com.tamimi.sundos.restpos.Models.Pay;
 import com.tamimi.sundos.restpos.Models.PayMethod;
 import com.tamimi.sundos.restpos.Models.Recipes;
+import com.tamimi.sundos.restpos.Models.Shift;
 import com.tamimi.sundos.restpos.Models.Tables;
 import com.tamimi.sundos.restpos.Models.UsedCategories;
 import com.tamimi.sundos.restpos.Models.UsedItems;
@@ -39,7 +41,7 @@ import java.util.Collections;
 import java.util.List;
 
 public class DatabaseHandler extends SQLiteOpenHelper {
-//hellohjt
+    //hellohjt
     // Database Version
     private static final int DATABASE_VERSION = 1;
 
@@ -294,7 +296,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
     private static final String CLOCK_IN_CLOCK_OUT = "CLOCK_IN_CLOCK_OUT";
 
-    private static final String POINT_OF_SALE_NUMBER4= "POINT_OF_SALE_NUMBER";
+    private static final String POINT_OF_SALE_NUMBER4 = "POINT_OF_SALE_NUMBER";
     private static final String DATE4 = "DATE";
     private static final String USER_NO4 = "USER_NO";
     private static final String USER_NAME4 = "USER_NAME";
@@ -313,7 +315,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     private static final String IN_DATE5 = "IN_DATE";
     private static final String ACTIVE5 = "ACTIVE";
     private static final String SHIFT_NO5 = "SHIFT_NO";
-    private static final String SHIFT_NAME5 ="SHIFT_NAME";
+    private static final String SHIFT_NAME5 = "SHIFT_NAME";
     //____________________________________________________________________________________
     private static final String MEMBER_SHIP_GROUP_MANAGEMENT_TABLE = "MEMBER_SHIP_GROUP_MANAGEMENT_TABLE";
 
@@ -322,8 +324,28 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     private static final String USER_NO6 = "USER_NO";
     private static final String IN_DATE6 = "IN_DATE";
     private static final String SHIFT_NO6 = "SHIFT_NO";
-    private static final String SHIFT_NAME6 ="SHIFT_NAME";
-    private static final String ACTIVE6 ="ACTIVITY";
+    private static final String SHIFT_NAME6 = "SHIFT_NAME";
+    private static final String ACTIVE6 = "ACTIVITY";
+
+    //____________________________________________________________________________________
+    private static final String SHIFT_REGISTRATION = "SHIFT_REGISTRATION";
+
+    private static final String SHIFT_NO9 = "SHIFT_NO";
+    private static final String SHIFT_NAME9 = "SHIFT_NAME";
+    private static final String FROM_TIME9 = "FROM_TIME";
+    private static final String TO_TIME9 = "TO_TIME";
+
+    //____________________________________________________________________________________
+    private static final String BLIND_SHIFT_IN_OUT = "BLIND_SHIFT_IN_OUT";
+
+    private static final String DATE10 = "DATE";
+    private static final String TIME10 = "TIME";
+    private static final String POS_NO10 = "POS_NO";
+    private static final String SHIFT_NO10 = "SHIFT_NO";
+    private static final String SHIFT_NAME10 = "SHIFT_NAME";
+    private static final String USER_NO10 = "USER_NO";
+    private static final String USER_NAME10 = "USER_NAME";
+    private static final String STATUS10 = "STATUS";
 
     //________________________________________________________________________________________
     private static final String EMPLOYEE_REGISTRATION_TABLE = "EMPLOYEE_REGISTRATION_TABLE";
@@ -737,6 +759,29 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                 + SHIFT_NO6 + " INTEGER,"
                 + SHIFT_NAME6 + " TEXT" + ")";
         db.execSQL(CREATE_MEMBER_SHIP_MANAGEMENT_GROUP_TABLES);
+
+        //___________________________________________________________________________________
+
+        String CREATE_TABLE_SHIFT_REGISTRATION = "CREATE TABLE " + SHIFT_REGISTRATION + "("
+                + SHIFT_NO9 + " INTEGER,"
+                + SHIFT_NAME9 + " TEXT,"
+                + FROM_TIME9 + " TEXT,"
+                + TO_TIME9 + " TEXT" + ")";
+        db.execSQL(CREATE_TABLE_SHIFT_REGISTRATION);
+
+        //___________________________________________________________________________________
+
+        String CREATE_TABLE_BLIND_SHIFT_IN_OUT = "CREATE TABLE " + BLIND_SHIFT_IN_OUT + "("
+                + DATE10 + " TEXT,"
+                + TIME10 + " TEXT,"
+                + POS_NO10 + " INTEGER,"
+                + SHIFT_NO10 + " INTEGER,"
+                + SHIFT_NAME10 + " TEXT,"
+                + USER_NO10 + " INTEGER,"
+                + USER_NAME10 + " TEXT,"
+                + STATUS10 + " INTEGER" + ")";
+        db.execSQL(CREATE_TABLE_BLIND_SHIFT_IN_OUT);
+
         //___________________________________________________________________________________
 
         String CREATE_TABLE_EMPLOYEE_REGISTRATION_TABLE = "CREATE TABLE " + EMPLOYEE_REGISTRATION_TABLE + "("
@@ -812,7 +857,10 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS " + EMPLOYEE_REGISTRATION_TABLE);//20
         db.execSQL("DROP TABLE IF EXISTS " + CUSTOMER_REGISTRATION_TABLE);//21
         db.execSQL("DROP TABLE IF EXISTS " + ORDER_TRANSACTIONS_TEMP);  //22
-        db.execSQL("DROP TABLE IF EXISTS " + ORDER_HEADER_TEMP); //22
+        db.execSQL("DROP TABLE IF EXISTS " + ORDER_HEADER_TEMP); //23
+        db.execSQL("DROP TABLE IF EXISTS " + MEMBER_SHIP_GROUP_MANAGEMENT_TABLE); //24
+        db.execSQL("DROP TABLE IF EXISTS " + SHIFT_REGISTRATION); //25
+        db.execSQL("DROP TABLE IF EXISTS " + BLIND_SHIFT_IN_OUT); //26
         // Create tables again
         onCreate(db);
     }
@@ -1239,17 +1287,17 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         ContentValues values = new ContentValues();
 
         values.put(POINT_OF_SALE_NUMBER3, customerPayment.getPointOfSaleNumber());
-        values.put(USER_NO3,customerPayment.getUserNO());
-        values.put(USER_NAME3,customerPayment.getUserName());
-        values.put(CUSTOMER_NO3,customerPayment.getCustomerNo());
-        values.put(CUSTOMER_NAME3,customerPayment.getCustomerName());
-        values.put(CUSTOMER_BALANCE3,customerPayment.getCustomerBalance());
-        values.put(TRANS_NO3,customerPayment.getTransNo());
-        values.put(TRANS_DATE3,customerPayment.getTransDate());
-        values.put(PAYMENT_TYPE3,customerPayment.getPayMentType());
-        values.put(VALUE3,customerPayment.getValue());
-        values.put(SHIFT_NUMBER3,customerPayment.getShiftNo());
-        values.put(SHIFT_NAME3,customerPayment.getShiftName());
+        values.put(USER_NO3, customerPayment.getUserNO());
+        values.put(USER_NAME3, customerPayment.getUserName());
+        values.put(CUSTOMER_NO3, customerPayment.getCustomerNo());
+        values.put(CUSTOMER_NAME3, customerPayment.getCustomerName());
+        values.put(CUSTOMER_BALANCE3, customerPayment.getCustomerBalance());
+        values.put(TRANS_NO3, customerPayment.getTransNo());
+        values.put(TRANS_DATE3, customerPayment.getTransDate());
+        values.put(PAYMENT_TYPE3, customerPayment.getPayMentType());
+        values.put(VALUE3, customerPayment.getValue());
+        values.put(SHIFT_NUMBER3, customerPayment.getShiftNo());
+        values.put(SHIFT_NAME3, customerPayment.getShiftName());
 
         db.insert(CUSTOMER_PAYMENT, null, values);
         db.close();
@@ -1259,7 +1307,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         db = this.getReadableDatabase();
         ContentValues values = new ContentValues();
 
-        values.put(POINT_OF_SALE_NUMBER4,clockInClockOut.getPointOfSaleNumber());
+        values.put(POINT_OF_SALE_NUMBER4, clockInClockOut.getPointOfSaleNumber());
         values.put(DATE4, clockInClockOut.getDate());
         values.put(USER_NO4, clockInClockOut.getUserNO());
         values.put(USER_NAME4, clockInClockOut.getUserName());
@@ -1282,7 +1330,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         values.put(JOB_GROUP5, jobGroup.getJobGroup());
         values.put(USER_NAME5, jobGroup.getUserName());
         values.put(USER_NO5, jobGroup.getUserNo());
-        values.put(IN_DATE5,jobGroup.getInDate());
+        values.put(IN_DATE5, jobGroup.getInDate());
         values.put(ACTIVE5, jobGroup.getActive());
         values.put(SHIFT_NO5, jobGroup.getShiftNo());
         values.put(SHIFT_NAME5, jobGroup.getShiftName());
@@ -1299,12 +1347,44 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         values.put(MEMBER_SHIP_GROUP, memberShipGroup.getMemberShipGroup());
         values.put(USER_NAME6, memberShipGroup.getUserName());
         values.put(USER_NO6, memberShipGroup.getUserNo());
-        values.put(IN_DATE6,memberShipGroup.getInDate());
+        values.put(IN_DATE6, memberShipGroup.getInDate());
         values.put(ACTIVE6, memberShipGroup.getActive());
         values.put(SHIFT_NO6, memberShipGroup.getShiftNo());
         values.put(SHIFT_NAME6, memberShipGroup.getShiftName());
 
         db.insert(MEMBER_SHIP_GROUP_MANAGEMENT_TABLE, null, values);
+
+        db.close();
+    }
+
+    public void addShift(Shift shift) {
+        db = this.getReadableDatabase();
+        ContentValues values = new ContentValues();
+
+        values.put(SHIFT_NO9, shift.getShiftNo());
+        values.put(SHIFT_NAME9, shift.getShiftName());
+        values.put(FROM_TIME9, shift.getFromTime());
+        values.put(TO_TIME9, shift.getToTime());
+
+        db.insert(SHIFT_REGISTRATION, null, values);
+
+        db.close();
+    }
+
+    public void addBlindShiftInOut(BlindShift blindShift) {
+        db = this.getReadableDatabase();
+        ContentValues values = new ContentValues();
+
+        values.put(DATE10, blindShift.getDate());
+        values.put(TIME10, blindShift.getTime());
+        values.put(POS_NO10, blindShift.getPosNo());
+        values.put(SHIFT_NO10, blindShift.getShiftNo());
+        values.put(SHIFT_NAME10, blindShift.getShiftName());
+        values.put(USER_NO10, blindShift.getUserNo());
+        values.put(USER_NAME10, blindShift.getUserName());
+        values.put(STATUS10, blindShift.getStatus());
+
+        db.insert(BLIND_SHIFT_IN_OUT, null, values);
 
         db.close();
     }
@@ -1317,7 +1397,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         values.put(EMPLOYEE_NAME7, employeeRegistrationModle.getEmployeeName());
         values.put(EMPLOYEE_NO7, employeeRegistrationModle.getEmployeeNO());
         values.put(MOBILE_NO7, employeeRegistrationModle.getMobileNo());
-        values.put(SECURITY_LEVEL7,employeeRegistrationModle.getSecurityLevel());
+        values.put(SECURITY_LEVEL7, employeeRegistrationModle.getSecurityLevel());
         values.put(USER_PASSWORD7, employeeRegistrationModle.getUserPassword());
         values.put(ACTIVE7, employeeRegistrationModle.getActive());
         values.put(HIRE_DATA7, employeeRegistrationModle.getHireDate());
@@ -1342,7 +1422,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         values.put(MEMBER_SHIP_GROUP8, customerRegistrationModel.getMemberShipGroup());
         values.put(CUSTOMER_NAME8, customerRegistrationModel.getCustomerName());
         values.put(CUSTOMER_CODE8, customerRegistrationModel.getCustomerCode());
-        values.put(MEMBER_SHIP_CARD8,customerRegistrationModel.getMemberShipGroup());
+        values.put(MEMBER_SHIP_CARD8, customerRegistrationModel.getMemberShipGroup());
         values.put(GENDER8, customerRegistrationModel.getCoender());
         values.put(REMARK8, customerRegistrationModel.getRemark());
         values.put(STREET_NO_NAME8, customerRegistrationModel.getStreetNoName());
@@ -1604,7 +1684,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                 table.setImageResource(Integer.parseInt(cursor.getString(2)));
                 table.setMarginLeft(Float.parseFloat(cursor.getString(3)));
                 table.setMarginTop(Float.parseFloat(cursor.getString(4)));
-                table.setTableNumber(Integer.parseInt(cursor.getString(5)));
+                table.setTableNumber(Integer.parseInt(cursor.getString(6)));
                 tables.add(table);
 
             } while (cursor.moveToNext());
@@ -1747,10 +1827,10 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         return items;
     }
 
-    public List<OrderTransactions> getOrderTransactionsTemp(String sectionNo , String tableNo) {
+    public List<OrderTransactions> getOrderTransactionsTemp(String sectionNo, String tableNo) {
         List<OrderTransactions> items = new ArrayList<>();
 
-        String selectQuery = "SELECT * FROM " + ORDER_TRANSACTIONS_TEMP + " WHERE SECTION_NO = '" +sectionNo+ "' and TABLE_NO = '" +tableNo+ "'";
+        String selectQuery = "SELECT * FROM " + ORDER_TRANSACTIONS_TEMP + " WHERE SECTION_NO = '" + sectionNo + "' and TABLE_NO = '" + tableNo + "'";
         db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
 
@@ -1796,7 +1876,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     public List<String> getAllOrderedTables(int sectionNo) {
         List<String> tables = new ArrayList<>();
 
-        String selectQuery = "SELECT  DISTINCT TABLE_NO FROM " + ORDER_TRANSACTIONS_TEMP + " WHERE SECTION_NO = '" +sectionNo+ "'" ;
+        String selectQuery = "SELECT  DISTINCT TABLE_NO FROM " + ORDER_TRANSACTIONS_TEMP + " WHERE SECTION_NO = '" + sectionNo + "'";
         db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
 
@@ -1906,9 +1986,9 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
     }
 
-    public ArrayList<OrderHeader> getOrderHeaderTemp(String sectionNo , String tableNo) {
+    public ArrayList<OrderHeader> getAllOrderHeaderTemp() {
         ArrayList<OrderHeader> orderHeaders = new ArrayList<>();
-        String selectQuery = "SELECT * FROM " + ORDER_HEADER_TEMP + " WHERE SECTION_NUMBER = '" +sectionNo+ "' and TABLE_NUMBER = '" +tableNo+ "'";
+        String selectQuery = "SELECT * FROM " + ORDER_HEADER_TEMP;
         db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
 
@@ -1926,6 +2006,52 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                 order_header.setTotal(cursor.getDouble(7));
                 order_header.setTotalLineDiscount(cursor.getDouble(8));
                 order_header.setTotalDiscount(cursor.getDouble(9));
+                order_header.setAllDiscount(cursor.getDouble(10));
+                order_header.setTotalService(cursor.getDouble(11));
+                order_header.setTotalTax(cursor.getDouble(12));
+                order_header.setTotalServiceTax(cursor.getDouble(13));
+                order_header.setSubTotal(cursor.getDouble(14));
+                order_header.setAmountDue(cursor.getDouble(15));
+                order_header.setDeliveryCharge(cursor.getDouble(16));
+                order_header.setTableNO(cursor.getInt(17));
+                order_header.setSectionNO(cursor.getInt(18));
+                order_header.setCashValue(cursor.getDouble(19));
+                order_header.setCardsValue(cursor.getDouble(20));
+                order_header.setChequeValue(cursor.getDouble(21));
+                order_header.setCouponValue(cursor.getDouble(22));
+                order_header.setGiftValue(cursor.getDouble(23));
+                order_header.setPointValue(cursor.getDouble(24));
+                order_header.setShiftNumber(cursor.getInt(25));
+                order_header.setShiftName(cursor.getString(26));
+
+                orderHeaders.add(order_header);
+
+            } while (cursor.moveToNext());
+        return orderHeaders;
+
+
+    }
+
+    public ArrayList<OrderHeader> getOrderHeaderTemp(String sectionNo, String tableNo) {
+        ArrayList<OrderHeader> orderHeaders = new ArrayList<>();
+        String selectQuery = "SELECT * FROM " + ORDER_HEADER_TEMP + " WHERE SECTION_NUMBER = '" + sectionNo + "' and TABLE_NUMBER = '" + tableNo + "'";
+        db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+
+        if (cursor.moveToFirst())
+            do {
+                OrderHeader order_header = new OrderHeader();
+
+                order_header.setOrderType(cursor.getInt(0));
+                order_header.setOrderKind(cursor.getInt(1));
+                order_header.setVoucherDate(cursor.getString(2));
+                order_header.setPointOfSaleNumber(cursor.getInt(3));
+                order_header.setStoreNumber(cursor.getInt(4));
+                order_header.setVoucherNumber(cursor.getString(5));
+                order_header.setVoucherSerial(cursor.getInt(6));
+                order_header.setTotal(cursor.getDouble(7));
+                order_header.setTotalDiscount(cursor.getDouble(8));
+                order_header.setTotalLineDiscount(cursor.getDouble(9));
                 order_header.setAllDiscount(cursor.getDouble(10));
                 order_header.setTotalService(cursor.getDouble(11));
                 order_header.setTotalTax(cursor.getDouble(12));
@@ -2086,7 +2212,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     public ArrayList<ItemWithModifier> getItemWithModifiers(int itemBarcode) {
         ArrayList<ItemWithModifier> modifiers = new ArrayList<>();
 
-        String selectQuery = "SELECT * FROM " + ITEM_WITH_MODIFIER + " where ITEM_CODE = '" + itemBarcode +"'";
+        String selectQuery = "SELECT * FROM " + ITEM_WITH_MODIFIER + " where ITEM_CODE = '" + itemBarcode + "'";
         db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
 
@@ -2125,10 +2251,10 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         return fqs;
     }
 
-    public ArrayList<ItemWithFq> getItemWithFqs( int itemBarcode) {
+    public ArrayList<ItemWithFq> getItemWithFqs(int itemBarcode) {
         ArrayList<ItemWithFq> fqs = new ArrayList<>();
 
-        String selectQuery = "SELECT * FROM " + ITEM_WITH_FQ + " where ITEM_CODE = '" + itemBarcode +"'";
+        String selectQuery = "SELECT * FROM " + ITEM_WITH_FQ + " where ITEM_CODE = '" + itemBarcode + "'";
         db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
 
@@ -2197,6 +2323,49 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         return memberShipGroups;
     }
 
+    public ArrayList<Shift> getAllShifts() {
+        ArrayList<Shift> shifts = new ArrayList<>();
+
+        String selectQuery = "SELECT * FROM " + SHIFT_REGISTRATION;
+        db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+
+        if (cursor.moveToFirst()) {
+            do {
+                Shift shift = new Shift();
+
+                shift.setShiftNo(Integer.parseInt(cursor.getString(0)));
+                shift.setShiftName(cursor.getString(1));
+                shift.setFromTime(cursor.getString(2));
+                shift.setToTime(cursor.getString(3));
+
+                shifts.add(shift);
+
+            } while (cursor.moveToNext());
+        }
+        return shifts;
+    }
+
+    public BlindShift getOpenedShifts(String date, int status) {
+        BlindShift shift = new BlindShift();
+
+        String selectQuery = "SELECT * FROM " + BLIND_SHIFT_IN_OUT + " where DATE = '" + date + "' and STATUS = '" + status + "'";
+        db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+
+        if (cursor.moveToFirst()) {
+
+            shift.setDate(cursor.getString(0));
+            shift.setTime(cursor.getString(1));
+            shift.setPosNo(Integer.parseInt(cursor.getString(2)));
+            shift.setShiftNo(Integer.parseInt(cursor.getString(3)));
+            shift.setShiftName(cursor.getString(4));
+            shift.setUserNo(Integer.parseInt(cursor.getString(5)));
+            shift.setUserName(cursor.getString(6));
+            shift.setStatus(Integer.parseInt(cursor.getString(7)));
+        }
+        return shift;
+    }
 
     public ArrayList<CustomerRegistrationModel> getAllCustomerRegistration() {
         ArrayList<CustomerRegistrationModel> customerRegistrationModels = new ArrayList<>();
@@ -2287,6 +2456,82 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         db.update(USED_CATEGORIES, values, CATEGORY_NAME + " = '" + usedCategories.getCategoryName() + "'", null);
     }
 
+    public void moveTablesTemp(int oldSectionNo, int oldTableNo, int sectionNo, int tableNo) {
+        db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        ContentValues values2 = new ContentValues();
+
+        values.put(SECTION_NO1, sectionNo);
+        values.put(TABLE_NO1, tableNo);
+
+        values2.put(SECTION_NUMBER2, sectionNo);
+        values2.put(TABLE_NUMBER2, tableNo);
+
+        db.update(ORDER_TRANSACTIONS_TEMP, values, SECTION_NO1 + " = '" + oldSectionNo + "' and " + TABLE_NO1 + " = '" + oldTableNo + "'", null);
+        db.update(ORDER_HEADER_TEMP, values2, SECTION_NUMBER2 + " = '" + oldSectionNo + "' and " + TABLE_NUMBER2 + " = '" + oldTableNo + "'", null);
+    }
+
+    public void mergeTablesTemp(int oldSectionNo, int oldTableNo, int sectionNo, int tableNo) {
+        db = this.getWritableDatabase();
+
+        String selectQuery = "SELECT VOUCHER_SERIAL , VOUCHER_NO FROM " + ORDER_TRANSACTIONS_TEMP + " WHERE SECTION_NO = '" + sectionNo + "' and TABLE_NO = '" + tableNo + "'";
+        db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+
+        String voucherSerial = "", voucherNo = "";
+        if (cursor.moveToFirst()) {
+            voucherSerial = cursor.getString(0);
+            voucherNo = cursor.getString(1);
+        }
+        ContentValues values = new ContentValues();
+
+        values.put(SECTION_NO1, sectionNo);
+        values.put(TABLE_NO1, tableNo);
+        values.put(VOUCHER_NO1, voucherNo);
+        values.put(VOUCHER_SERIAL1, voucherSerial);
+
+        db.update(ORDER_TRANSACTIONS_TEMP, values, SECTION_NO1 + " = '" + oldSectionNo + "' and " + TABLE_NO1 + " = '" + oldTableNo + "'", null);
+        //______________________________________________________
+
+        String selectQuery2 = "SELECT TOTAL , TOTAL_DISCOUNT , TOTAL_LINE_DISCOUNT , ALL_DISCOUNT  , SUB_TOTAL , AMOUNT_DUE " +
+                "FROM " + ORDER_HEADER_TEMP + " WHERE SECTION_NUMBER = '" + oldSectionNo + "' and TABLE_NUMBER = '" + oldTableNo + "'";
+
+        String selectQuery3 = "SELECT TOTAL , TOTAL_DISCOUNT , TOTAL_LINE_DISCOUNT , ALL_DISCOUNT  , SUB_TOTAL , AMOUNT_DUE " +
+                "FROM " + ORDER_HEADER_TEMP + " WHERE SECTION_NUMBER = '" + sectionNo + "' and TABLE_NUMBER = '" + tableNo + "'";
+
+        db = this.getWritableDatabase();
+        Cursor cursor2 = db.rawQuery(selectQuery2, null);
+        Cursor cursor3 = db.rawQuery(selectQuery3, null);
+
+        Double total = 0.0, totalDis = 0.0, totalLineDis = 0.0, allDis = 0.0, subTotal = 0.0, amountDue = 0.0;
+        if (cursor2.moveToFirst()) {
+            total = cursor2.getDouble(0);
+            totalDis = cursor2.getDouble(1);
+            totalLineDis = cursor2.getDouble(2);
+            allDis = cursor2.getDouble(3);
+            subTotal = cursor2.getDouble(4);
+            amountDue = cursor2.getDouble(5);
+        }
+        if (cursor3.moveToFirst()) {
+            total += cursor3.getDouble(0);
+            totalDis += cursor3.getDouble(1);
+            totalLineDis += cursor3.getDouble(2);
+            allDis += cursor3.getDouble(3);
+            subTotal += cursor3.getDouble(4);
+            amountDue += cursor3.getDouble(5);
+        }
+        ContentValues values2 = new ContentValues();
+        values2.put(TOTAL2, total);
+        values2.put(TOTAL_DISCOUNT2, totalDis);
+        values2.put(TOTAL_LINE_DISCOUNT2, totalLineDis);
+        values2.put(ALL_DISCOUNT2, allDis);
+        values2.put(SUB_TOTAL2, subTotal);
+        values2.put(AMOUNT_DUE2, amountDue);
+
+        db.update(ORDER_HEADER_TEMP, values2, SECTION_NUMBER2 + " = '" + sectionNo + "' and " + TABLE_NUMBER2 + " = '" + tableNo + "'", null);
+        db.execSQL("delete from " + ORDER_HEADER_TEMP +
+                " where " + SECTION_NUMBER2 + " = '" + oldSectionNo + "' and " + TABLE_NUMBER2 + " = '" + oldTableNo + "'");
+    }
 
     public void deleteAllUsedCategories() {
         SQLiteDatabase db = this.getWritableDatabase();
@@ -2300,15 +2545,15 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         db.close();
     }
 
-    public void deleteFromOrderHeaderTemp(String sectionNo , String tableNo){
+    public void deleteFromOrderHeaderTemp(String sectionNo, String tableNo) {
         SQLiteDatabase db = this.getWritableDatabase();
-        db.execSQL("delete from ORDER_HEADER_TEMP WHERE SECTION_NUMBER = '" +sectionNo+ "' and TABLE_NUMBER = '" +tableNo+ "'" );
+        db.execSQL("delete from ORDER_HEADER_TEMP WHERE SECTION_NUMBER = '" + sectionNo + "' and TABLE_NUMBER = '" + tableNo + "'");
         db.close();
     }
 
-    public void deleteFromOrderTransactionTemp(String sectionNo , String tableNo){
+    public void deleteFromOrderTransactionTemp(String sectionNo, String tableNo) {
         SQLiteDatabase db = this.getWritableDatabase();
-        db.execSQL("delete from ORDER_TRANSACTIONS_TEMP WHERE SECTION_NO = '" +sectionNo+ "' and TABLE_NO = '" +tableNo+ "'" );
+        db.execSQL("delete from ORDER_TRANSACTIONS_TEMP WHERE SECTION_NO = '" + sectionNo + "' and TABLE_NO = '" + tableNo + "'");
         db.close();
     }
 
