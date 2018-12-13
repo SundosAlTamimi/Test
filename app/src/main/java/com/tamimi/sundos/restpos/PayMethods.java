@@ -1347,7 +1347,7 @@ public class PayMethods extends AppCompatActivity {
         payMethod.setShiftNumber(Settings.shift_number);
 
         if (cashValue != 0.00) {
-            payMethod.setPayType("cash");
+            payMethod.setPayType("Cash");
             payMethod.setPayValue(cashValue);
             payMethod.setPayNumber("0");
             payMethod.setPayName("null");
