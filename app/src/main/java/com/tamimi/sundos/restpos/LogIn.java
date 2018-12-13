@@ -194,6 +194,10 @@ public class LogIn extends AppCompatActivity {
 
         ArrayList<Shift> shifts = mDHandler.getAllShifts();
 
+        if(shifts.size() == 0 ){
+            shiftNo = 0;
+            shiftName = "A";
+        }
 
         try {
             for (int i = 0; i < shifts.size(); i++) {
