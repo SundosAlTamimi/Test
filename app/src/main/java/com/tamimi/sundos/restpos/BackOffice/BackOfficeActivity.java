@@ -1,9 +1,12 @@
 package com.tamimi.sundos.restpos.BackOffice;
 
+import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Log;
@@ -14,6 +17,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -26,7 +30,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.tamimi.sundos.restpos.DatabaseHandler;
-import com.tamimi.sundos.restpos.Main;
 import com.tamimi.sundos.restpos.Models.CategoryWithModifier;
 import com.tamimi.sundos.restpos.Models.CustomerPayment;
 import com.tamimi.sundos.restpos.Models.ForceQuestions;
@@ -37,15 +40,18 @@ import com.tamimi.sundos.restpos.Models.JobGroup;
 import com.tamimi.sundos.restpos.Models.MemberShipGroup;
 import com.tamimi.sundos.restpos.Models.Modifier;
 import com.tamimi.sundos.restpos.Models.Money;
+import com.tamimi.sundos.restpos.Models.OrderHeader;
 import com.tamimi.sundos.restpos.Models.PayMethod;
 import com.tamimi.sundos.restpos.R;
 import com.tamimi.sundos.restpos.Settings;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -59,19 +65,23 @@ public class BackOfficeActivity extends AppCompatActivity {
     Button butManagement, butSales, butCustomers, butEmployees, butMenu, butSettings;
     LinearLayout announcement, giftCard, employeeClockInOut, menuSearch;
     LinearLayout membershipGroup, membership, customerRegistration;
-    LinearLayout jobGroup, employeeRegistration, employeeSchedule, payroll, vacation , editTables;
+    LinearLayout jobGroup, employeeRegistration, employeeSchedule, payroll, vacation, editTables;
     LinearLayout menuCategory, menuRegistration, modifier, forceQuestion, menuLayout;
     LinearLayout store, storeOperation, users, moneyCategory;
     LinearLayout salesTotal, cashierInOut, canceledOrderHistory, dailyCashOut, salesByEmployee, salesByServers,
             salesReportForDay, salesByHours, salesVolumeByItem, topSalesItemReport, topGroupSalesReport, topFamilySalesReport,
             salesReportByCustomer, profitLossReport, detailSalesReport;
 
+    private DatePickerDialog.OnDateSetListener mdate;
     int count, count2;
+    TextView test = null, fromDate, toDate;
     Dialog dialog;
     String today;
     DatabaseHandler mDHandler;
     Bitmap imageBitmap = null;
     ImageView moneyPicImageView = null;
+
+    ArrayList<OrderHeader> headerData;
 
     TableRow focusedRaw = null;
     int rawPosition = 0;
@@ -219,6 +229,9 @@ public class BackOfficeActivity extends AppCompatActivity {
                     break;
 
                 case R.id.sales_total:
+
+                    salesTotalDialog();
+
                     break;
 
                 case R.id.cashier_in_out:
@@ -993,6 +1006,233 @@ public class BackOfficeActivity extends AppCompatActivity {
             }
         });
         dialog.show();
+    }
+
+
+    void salesTotalDialog() {
+        dialog = new Dialog(BackOfficeActivity.this);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setCancelable(false);
+        dialog.setContentView(R.layout.sales_total_dialog);
+        dialog.setCanceledOnTouchOutside(true);
+
+        final int[] posNoString = {-1};
+        final String[] shiftNameString = {"All"};
+        final String[] userString = {"All"};
+
+        final TextView salesText, returnsText, netSalesText, salesDiscountText, returnsDiscountText, netDiscountText, salesServiceText, returnsServiceText, netServiceText, cashText,
+                visaText, masterText, chequeText, netPayMethodText, pointText, giftText, creditText;
+        final Spinner shiftName, posNo, users;
+        Button done, exit;
+
+        done = (Button) dialog.findViewById(R.id.doneReport);
+        exit = (Button) dialog.findViewById(R.id.exitReport);
+
+        shiftName = (Spinner) dialog.findViewById(R.id.shiftName);
+        posNo = (Spinner) dialog.findViewById(R.id.posNo);
+        users = (Spinner) dialog.findViewById(R.id.user);
+
+        fromDate = (TextView) dialog.findViewById(R.id.fDate);
+        toDate = (TextView) dialog.findViewById(R.id.tDate);
+        salesText = (TextView) dialog.findViewById(R.id.sales);
+        returnsText = (TextView) dialog.findViewById(R.id.returns);
+        netSalesText = (TextView) dialog.findViewById(R.id.netSales);
+        salesDiscountText = (TextView) dialog.findViewById(R.id.salesDiscount);
+        returnsDiscountText = (TextView) dialog.findViewById(R.id.returnDiscount);
+        netDiscountText = (TextView) dialog.findViewById(R.id.netDiscount);
+        salesServiceText = (TextView) dialog.findViewById(R.id.salesService);
+        returnsServiceText = (TextView) dialog.findViewById(R.id.returnServis);
+        netServiceText = (TextView) dialog.findViewById(R.id.netService);
+        cashText = (TextView) dialog.findViewById(R.id.cash);
+        visaText = (TextView) dialog.findViewById(R.id.visa);
+        masterText = (TextView) dialog.findViewById(R.id.master);
+        chequeText = (TextView) dialog.findViewById(R.id.cheque);
+        netPayMethodText = (TextView) dialog.findViewById(R.id.totalPay);
+        pointText = (TextView) dialog.findViewById(R.id.points);
+        giftText = (TextView) dialog.findViewById(R.id.gifts);
+        creditText = (TextView) dialog.findViewById(R.id.credits);
+
+        Date currentTimeAndDate = Calendar.getInstance().getTime();
+        SimpleDateFormat df = new SimpleDateFormat("dd-MM-yyyy");
+        today = df.format(currentTimeAndDate);
+
+        fromDate.setText(today);
+        toDate.setText(today);
+        ArrayList<String> shiftNumberArray = new ArrayList<>();
+        ArrayList<String> userArray = new ArrayList<>();
+        ArrayList<String> posNoArray = new ArrayList<>();
+
+        shiftNumberArray.add("All");
+        shiftNumberArray.add("ahmad");
+        shiftNumberArray.add("B");
+        userArray.add("All");
+        userArray.add("salll");
+        posNoArray.add("All");
+        posNoArray.add("4");
+        posNoArray.add("7");
+
+
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(BackOfficeActivity.this, R.layout.spinner_style, shiftNumberArray);
+        shiftName.setAdapter(adapter);
+
+        ArrayAdapter<String> adapterUser = new ArrayAdapter<>(BackOfficeActivity.this, R.layout.spinner_style, userArray);
+        users.setAdapter(adapterUser);
+
+        ArrayAdapter<String> adapterPosNo = new ArrayAdapter<>(BackOfficeActivity.this, R.layout.spinner_style, posNoArray);
+        posNo.setAdapter(adapterPosNo);
+
+        headerData = new ArrayList<OrderHeader>();
+
+        headerData = mDHandler.getAllOrderHeader();
+
+        fromDate.setOnClickListener(dateClick);
+        toDate.setOnClickListener(dateClick);
+
+        mdate = new DatePickerDialog.OnDateSetListener() {
+            @Override
+            public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
+                test.setText(dayOfMonth + "-" + month + "-" + year);
+                Log.e("date ",""+dayOfMonth + "-" + month + "-" + year);
+            }
+        };
+
+        done.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                double sales = 0.0, returns = 0.0, allDiscountSales = 0.0, allDiscountReturn = 0.0,
+                        totalServiceSales = 0.0, totalServiceReturn = 0.0, cashValue = 0.0, pointValue = 0.0, visaValue = 0.0, masterValue = 0.0, giftValue = 0.0, creditValue = 0.0, chequeValue = 0.0, netSales = 0.0, netPayMethod = 0.0, netDiscount = 0.0, netService = 0.0;
+
+                userString[0] = users.getSelectedItem().toString();
+                shiftNameString[0] = shiftName.getSelectedItem().toString();
+
+               if(posNo.getSelectedItem().toString().equals("All")){
+                   posNoString[0]=-1;
+               }else{ posNoString[0]=Integer.parseInt(posNo.getSelectedItem().toString());}
+
+                for (int i = 0; i < headerData.size(); i++) {
+                    if (filters(i)) {//1
+                        if (headerData.get(i).getShiftName().equals(shiftNameString[0]) || shiftNameString[0].equals("All")) {
+                            if ( headerData.get(i).getWaiter().equals(userString[0]) ||userString[0].equals("All")) {
+                                if (headerData.get(i).getPointOfSaleNumber()==posNoString[0]|| posNoString[0]==-1) {
+                                    if (headerData.get(i).getOrderKind() == 0) {
+                                        sales += headerData.get(i).getAmountDue();
+                                        allDiscountSales += headerData.get(i).getAllDiscount();
+                                        totalServiceSales += headerData.get(i).getTotalService();
+                                    } else if (headerData.get(i).getOrderKind() == 998) {
+                                        returns += headerData.get(i).getAmountDue();
+                                        allDiscountReturn += headerData.get(i).getAllDiscount();
+                                        totalServiceReturn += headerData.get(i).getTotalService();
+                                    }
+
+//                        if(headerData.get(i).) {     ///in this side we must
+                                    visaValue += headerData.get(i).getCardsValue();
+                                    masterValue += headerData.get(i).getCardsValue();
+//                        }
+                                    cashValue += headerData.get(i).getCashValue();
+                                    pointValue += headerData.get(i).getPointValue();
+                                    giftValue += headerData.get(i).getGiftValue();
+                                    creditValue += headerData.get(i).getCouponValue();  /////???? replace coupon to credit """"
+                                    chequeValue += headerData.get(i).getChequeValue();
+
+                                }
+                            }
+                        }
+                    }//else 1
+                }
+                netSales = sales - returns;
+                netDiscount = allDiscountSales - allDiscountReturn;
+                netService = totalServiceSales - totalServiceReturn;
+                netPayMethod = cashValue + pointValue + visaValue + masterValue + giftValue + creditValue + chequeValue;
+
+                salesText.setText("" + sales);
+                returnsText.setText("" + returns);
+                netSalesText.setText("" + netSales);
+
+                cashText.setText("" + cashValue);
+                pointText.setText("" + pointValue);
+                creditText.setText("" + creditValue);
+                giftText.setText("" + giftValue);
+                visaText.setText("" + visaValue);
+                masterText.setText("" + masterValue);
+                chequeText.setText("" + chequeValue);
+                netPayMethodText.setText("" + netPayMethod);
+
+                salesDiscountText.setText("" + allDiscountSales);
+                returnsDiscountText.setText("" + allDiscountReturn);
+                netDiscountText.setText("" + netDiscount);
+
+
+                salesServiceText.setText("" + totalServiceSales);
+                returnsServiceText.setText("" + totalServiceReturn);
+                netServiceText.setText("" + netService);
+
+            }
+        });
+
+        exit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+
+        dialog.show();
+
+    }
+
+    View.OnClickListener dateClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+
+            switch (v.getId()) {
+                case R.id.fDate:
+                    test = fromDate;
+                    break;
+
+                case R.id.tDate:
+                    test = toDate;
+                    break;
+            }
+
+            Calendar cal = Calendar.getInstance();
+            int year = cal.get(Calendar.YEAR);
+            int month = cal.get(Calendar.MONTH);
+            int day = cal.get(Calendar.DAY_OF_WEEK);
+
+            DatePickerDialog dialogs = new DatePickerDialog(BackOfficeActivity.this, android.R.style.Theme_DeviceDefault_DialogWhenLarge, mdate, year, month, day);
+            dialogs.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));//Theme_Holo_Dialog_MinWidth
+            dialogs.show();
+
+        }
+    };
+
+    public boolean filters(int n) {
+
+
+        String fromDate1 = fromDate.getText().toString().trim();
+        String toDate1 = toDate.getText().toString();
+
+        String date = headerData.get(n).getVoucherDate();
+
+        try {
+
+            if ((formatDate(date).after(formatDate(fromDate1)) || formatDate(date).equals(formatDate(fromDate1))) &&
+                    (formatDate(date).before(formatDate(toDate1)) || formatDate(date).equals(formatDate(toDate1))))
+                return true;
+
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        return false;
+    }
+
+    public Date formatDate(String date) throws ParseException {
+
+        String myFormat = "dd-MM-yyyy"; //In which you need put here
+        SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
+        Date d = sdf.parse(date);
+        return d;
     }
 
     void showJobGroupDialog() {
