@@ -308,6 +308,7 @@ public class Main extends AppCompatActivity {
                     cashier.add(cash);
                 }
                 mDHandler.addCashierInOut(cashier);
+                dialog.dismiss();
             }
         });
 

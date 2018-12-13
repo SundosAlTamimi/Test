@@ -212,7 +212,7 @@
     <string name="modifiers">Modifiers</string>
 
     <string name="tender">Tender</string>
-    <string name="voucher_number">InVoucher Number</string>
+    <string name="voucher_number">Voucher Number</string>
     <string name="print_voucher_options">Print Voucher Options</string>
     <string name="cheque">Cheque</string>
     <string name="credit">Credit</string>
@@ -278,7 +278,7 @@
 
     <string name="customer_code"> Customer Code </string>
     <string name="member_ship_card"> Member Ship Card NO </string>
-    <string name="Gender"> Gender </string>
+    <string name="coender"> Coender </string>
     <string name="Male"> Male </string>
     <string name="Female"> Female </string>
     <string name="city"> City </string>
@@ -314,6 +314,17 @@
 
     <string name="Number_of_seats"> Number of seats </string>
     <string name="Children"> Children </string>
+
+    <string name="move_table">Move Table</string>
+    <string name="merge_table">Merge Table</string>
+    <string name="section">Section</string>
+    <string name="from">From</string>
+    <string name="to">To</string>
+
+    <string name="shift_registration">Shift Registration</string>
+    <string name="shift_no">Shift No</string>
+    <string name="from_time">From Time</string>
+    <string name="to_time">To Time</string>
 
     <string name="point_of_sale"> POS NO </string>
     <string name="original_date"> Original Date : </string>

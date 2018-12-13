@@ -325,6 +325,26 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     private static final String SHIFT_NAME6 = "SHIFT_NAME";
     private static final String ACTIVE6 = "ACTIVITY";
 
+    //____________________________________________________________________________________
+    private static final String SHIFT_REGISTRATION = "SHIFT_REGISTRATION";
+
+    private static final String SHIFT_NO9 = "SHIFT_NO";
+    private static final String SHIFT_NAME9 = "SHIFT_NAME";
+    private static final String FROM_TIME9 = "FROM_TIME";
+    private static final String TO_TIME9 = "TO_TIME";
+
+    //____________________________________________________________________________________
+    private static final String BLIND_SHIFT_IN_OUT = "BLIND_SHIFT_IN_OUT";
+
+    private static final String DATE10 = "DATE";
+    private static final String TIME10 = "TIME";
+    private static final String POS_NO10 = "POS_NO";
+    private static final String SHIFT_NO10 = "SHIFT_NO";
+    private static final String SHIFT_NAME10 = "SHIFT_NAME";
+    private static final String USER_NO10 = "USER_NO";
+    private static final String USER_NAME10 = "USER_NAME";
+    private static final String STATUS10 = "STATUS";
+
     //________________________________________________________________________________________
     private static final String EMPLOYEE_REGISTRATION_TABLE = "EMPLOYEE_REGISTRATION_TABLE";
 
@@ -737,6 +757,29 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                 + SHIFT_NO6 + " INTEGER,"
                 + SHIFT_NAME6 + " TEXT" + ")";
         db.execSQL(CREATE_MEMBER_SHIP_MANAGEMENT_GROUP_TABLES);
+
+        //___________________________________________________________________________________
+
+        String CREATE_TABLE_SHIFT_REGISTRATION = "CREATE TABLE " + SHIFT_REGISTRATION + "("
+                + SHIFT_NO9 + " INTEGER,"
+                + SHIFT_NAME9 + " TEXT,"
+                + FROM_TIME9 + " TEXT,"
+                + TO_TIME9 + " TEXT" + ")";
+        db.execSQL(CREATE_TABLE_SHIFT_REGISTRATION);
+
+        //___________________________________________________________________________________
+
+        String CREATE_TABLE_BLIND_SHIFT_IN_OUT = "CREATE TABLE " + BLIND_SHIFT_IN_OUT + "("
+                + DATE10 + " TEXT,"
+                + TIME10 + " TEXT,"
+                + POS_NO10 + " INTEGER,"
+                + SHIFT_NO10 + " INTEGER,"
+                + SHIFT_NAME10 + " TEXT,"
+                + USER_NO10 + " INTEGER,"
+                + USER_NAME10 + " TEXT,"
+                + STATUS10 + " INTEGER" + ")";
+        db.execSQL(CREATE_TABLE_BLIND_SHIFT_IN_OUT);
+
         //___________________________________________________________________________________
 
         String CREATE_TABLE_EMPLOYEE_REGISTRATION_TABLE = "CREATE TABLE " + EMPLOYEE_REGISTRATION_TABLE + "("
@@ -812,7 +855,10 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS " + EMPLOYEE_REGISTRATION_TABLE);//20
         db.execSQL("DROP TABLE IF EXISTS " + CUSTOMER_REGISTRATION_TABLE);//21
         db.execSQL("DROP TABLE IF EXISTS " + ORDER_TRANSACTIONS_TEMP);  //22
-        db.execSQL("DROP TABLE IF EXISTS " + ORDER_HEADER_TEMP); //22
+        db.execSQL("DROP TABLE IF EXISTS " + ORDER_HEADER_TEMP); //23
+        db.execSQL("DROP TABLE IF EXISTS " + MEMBER_SHIP_GROUP_MANAGEMENT_TABLE); //24
+        db.execSQL("DROP TABLE IF EXISTS " + SHIFT_REGISTRATION); //25
+        db.execSQL("DROP TABLE IF EXISTS " + BLIND_SHIFT_IN_OUT); //26
         // Create tables again
         onCreate(db);
     }
@@ -1604,91 +1650,12 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                 table.setImageResource(Integer.parseInt(cursor.getString(2)));
                 table.setMarginLeft(Float.parseFloat(cursor.getString(3)));
                 table.setMarginTop(Float.parseFloat(cursor.getString(4)));
-                table.setTableNumber(Integer.parseInt(cursor.getString(5)));
+                table.setTableNumber(Integer.parseInt(cursor.getString(6)));
                 tables.add(table);
 
             } while (cursor.moveToNext());
         }
         return tables;
-    }
-
-    public final ArrayList<OrderTransactions> getAllRequestVoucher(String Vfh_No ) {
-        final ArrayList<OrderTransactions> orderTransactions = new ArrayList<>();
-        String selectQuery = "SELECT * FROM " + ORDER_TRANSACTIONS + " where VOUCHER_NO = '" + Vfh_No + "'" +" and ORDER_KIND = '0'";
-        db = this.getWritableDatabase();
-        Cursor cursor = db.rawQuery(selectQuery, null);
-
-        if (cursor.moveToFirst()) {
-            do {
-                OrderTransactions item = new OrderTransactions();
-
-                item.setOrderType(Integer.parseInt(cursor.getString(0)));
-                item.setOrderKind(Integer.parseInt(cursor.getString(1)));
-                item.setVoucherDate(cursor.getString(2));
-                item.setPosNo(Integer.parseInt(cursor.getString(3)));
-                item.setStoreNo(Integer.parseInt(cursor.getString(4)));
-                item.setVoucherNo(cursor.getString(5));
-                item.setVoucherSerial(Integer.parseInt(cursor.getString(6)));
-                item.setItemBarcode(cursor.getString(7));
-                item.setItemName(cursor.getString(8));
-                item.setSecondaryName(cursor.getString(9));
-                item.setKitchenAlias(cursor.getString(10));
-                item.setItemCategory(cursor.getString(11));
-                item.setItemFamily(cursor.getString(12));
-                item.setQty(Integer.parseInt(cursor.getString(13)));
-                item.setPrice(Double.parseDouble(cursor.getString(14)));
-                item.setTotal(Double.parseDouble(cursor.getString(15)));
-                item.setDiscount(Double.parseDouble(cursor.getString(16)));
-                item.setlDiscount(Double.parseDouble(cursor.getString(17)));
-                item.setTotalDiscount(Double.parseDouble(cursor.getString(18)));
-                item.setTaxValue(Double.parseDouble(cursor.getString(19)));
-                item.setTaxPerc(Double.parseDouble(cursor.getString(20)));
-                item.setTaxKind(Integer.parseInt(cursor.getString(21)));
-                item.setService(Integer.parseInt(cursor.getString(22)));
-                item.setServiceTax(Double.parseDouble(cursor.getString(23)));
-                item.setTableNo(Integer.parseInt(cursor.getString(24)));
-                item.setSectionNo(Integer.parseInt(cursor.getString(25)));
-                item.setShiftNo(Integer.parseInt(cursor.getString(26)));
-                item.setShiftName(cursor.getString(27));
-
-                orderTransactions.add(item);
-
-            } while (cursor.moveToNext());
-        }
-
-        return orderTransactions;
-    }
-
-    public final ArrayList<PayMethod> getAllRequestPayMethod(String Vfh_No) {
-        final ArrayList<PayMethod> orderTransactions = new ArrayList<>();
-        String selectQuery = "SELECT * FROM " + PAY_METHOD + " where VOUCHER_NUMBER = '" + Vfh_No + "'"+" and ORDER_KIND = '0'";
-        db = this.getWritableDatabase();
-        Cursor cursor = db.rawQuery(selectQuery, null);
-
-        if (cursor.moveToFirst()) {
-            do {
-                PayMethod item = new PayMethod();
-
-                item.setOrderType(cursor.getInt(0));
-                item.setOrderKind(cursor.getInt(1));
-                item.setVoucherDate(cursor.getString(2));
-                item.setPointOfSaleNumber(cursor.getInt(3));
-                item.setStoreNumber(cursor.getInt(4));
-                item.setVoucherNumber(cursor.getString(5));
-                item.setVoucherSerial(cursor.getInt(6));
-                item.setPayType(cursor.getString(7));
-                item.setPayValue(cursor.getDouble(8));
-                item.setPayNumber(cursor.getString(9));
-                item.setPayName(cursor.getString(10));
-                item.setShiftName(cursor.getString(11));
-                item.setShiftNumber(cursor.getInt(12));
-
-                orderTransactions.add(item);
-
-            } while (cursor.moveToNext());
-        }
-
-        return orderTransactions;
     }
 
     public ArrayList<CreditCard> getAllCreditCards() {
@@ -2279,7 +2246,6 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         return memberShipGroups;
     }
 
-
     public ArrayList<CustomerRegistrationModel> getAllCustomerRegistration() {
         ArrayList<CustomerRegistrationModel> customerRegistrationModels = new ArrayList<>();
 
@@ -2369,6 +2335,82 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         db.update(USED_CATEGORIES, values, CATEGORY_NAME + " = '" + usedCategories.getCategoryName() + "'", null);
     }
 
+    public void moveTablesTemp(int oldSectionNo, int oldTableNo, int sectionNo, int tableNo) {
+        db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        ContentValues values2 = new ContentValues();
+
+        values.put(SECTION_NO1, sectionNo);
+        values.put(TABLE_NO1, tableNo);
+
+        values2.put(SECTION_NUMBER2, sectionNo);
+        values2.put(TABLE_NUMBER2, tableNo);
+
+        db.update(ORDER_TRANSACTIONS_TEMP, values, SECTION_NO1 + " = '" + oldSectionNo + "' and " + TABLE_NO1 + " = '" + oldTableNo + "'", null);
+        db.update(ORDER_HEADER_TEMP, values2, SECTION_NUMBER2 + " = '" + oldSectionNo + "' and " + TABLE_NUMBER2 + " = '" + oldTableNo + "'", null);
+    }
+
+    public void mergeTablesTemp(int oldSectionNo, int oldTableNo, int sectionNo, int tableNo) {
+        db = this.getWritableDatabase();
+
+        String selectQuery = "SELECT VOUCHER_SERIAL , VOUCHER_NO FROM " + ORDER_TRANSACTIONS_TEMP + " WHERE SECTION_NO = '" + sectionNo + "' and TABLE_NO = '" + tableNo + "'";
+        db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+
+        String voucherSerial = "", voucherNo = "";
+        if (cursor.moveToFirst()) {
+            voucherSerial = cursor.getString(0);
+            voucherNo = cursor.getString(1);
+        }
+        ContentValues values = new ContentValues();
+
+        values.put(SECTION_NO1, sectionNo);
+        values.put(TABLE_NO1, tableNo);
+        values.put(VOUCHER_NO1, voucherNo);
+        values.put(VOUCHER_SERIAL1, voucherSerial);
+
+        db.update(ORDER_TRANSACTIONS_TEMP, values, SECTION_NO1 + " = '" + oldSectionNo + "' and " + TABLE_NO1 + " = '" + oldTableNo + "'", null);
+        //______________________________________________________
+
+        String selectQuery2 = "SELECT TOTAL , TOTAL_DISCOUNT , TOTAL_LINE_DISCOUNT , ALL_DISCOUNT  , SUB_TOTAL , AMOUNT_DUE " +
+                "FROM " + ORDER_HEADER_TEMP + " WHERE SECTION_NUMBER = '" + oldSectionNo + "' and TABLE_NUMBER = '" + oldTableNo + "'";
+
+        String selectQuery3 = "SELECT TOTAL , TOTAL_DISCOUNT , TOTAL_LINE_DISCOUNT , ALL_DISCOUNT  , SUB_TOTAL , AMOUNT_DUE " +
+                "FROM " + ORDER_HEADER_TEMP + " WHERE SECTION_NUMBER = '" + sectionNo + "' and TABLE_NUMBER = '" + tableNo + "'";
+
+        db = this.getWritableDatabase();
+        Cursor cursor2 = db.rawQuery(selectQuery2, null);
+        Cursor cursor3 = db.rawQuery(selectQuery3, null);
+
+        Double total = 0.0, totalDis = 0.0, totalLineDis = 0.0, allDis = 0.0, subTotal = 0.0, amountDue = 0.0;
+        if (cursor2.moveToFirst()) {
+            total = cursor2.getDouble(0);
+            totalDis = cursor2.getDouble(1);
+            totalLineDis = cursor2.getDouble(2);
+            allDis = cursor2.getDouble(3);
+            subTotal = cursor2.getDouble(4);
+            amountDue = cursor2.getDouble(5);
+        }
+        if (cursor3.moveToFirst()) {
+            total += cursor3.getDouble(0);
+            totalDis += cursor3.getDouble(1);
+            totalLineDis += cursor3.getDouble(2);
+            allDis += cursor3.getDouble(3);
+            subTotal += cursor3.getDouble(4);
+            amountDue += cursor3.getDouble(5);
+        }
+        ContentValues values2 = new ContentValues();
+        values2.put(TOTAL2, total);
+        values2.put(TOTAL_DISCOUNT2, totalDis);
+        values2.put(TOTAL_LINE_DISCOUNT2, totalLineDis);
+        values2.put(ALL_DISCOUNT2, allDis);
+        values2.put(SUB_TOTAL2, subTotal);
+        values2.put(AMOUNT_DUE2, amountDue);
+
+        db.update(ORDER_HEADER_TEMP, values2, SECTION_NUMBER2 + " = '" + sectionNo + "' and " + TABLE_NUMBER2 + " = '" + tableNo + "'", null);
+        db.execSQL("delete from " + ORDER_HEADER_TEMP +
+                " where " + SECTION_NUMBER2 + " = '" + oldSectionNo + "' and " + TABLE_NUMBER2 + " = '" + oldTableNo + "'");
+    }
 
     public void deleteAllUsedCategories() {
         SQLiteDatabase db = this.getWritableDatabase();
