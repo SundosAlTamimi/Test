@@ -8,6 +8,9 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 
+import com.tamimi.sundos.restpos.Models.BlindClose;
+import com.tamimi.sundos.restpos.Models.BlindCloseDetails;
+import com.tamimi.sundos.restpos.Models.BlindShift;
 import com.tamimi.sundos.restpos.Models.Cashier;
 import com.tamimi.sundos.restpos.Models.CategoryWithModifier;
 import com.tamimi.sundos.restpos.Models.Cheque;
@@ -29,6 +32,7 @@ import com.tamimi.sundos.restpos.Models.OrderTransactions;
 import com.tamimi.sundos.restpos.Models.Pay;
 import com.tamimi.sundos.restpos.Models.PayMethod;
 import com.tamimi.sundos.restpos.Models.Recipes;
+import com.tamimi.sundos.restpos.Models.Shift;
 import com.tamimi.sundos.restpos.Models.Tables;
 import com.tamimi.sundos.restpos.Models.UsedCategories;
 import com.tamimi.sundos.restpos.Models.UsedItems;
@@ -39,7 +43,7 @@ import java.util.Collections;
 import java.util.List;
 
 public class DatabaseHandler extends SQLiteOpenHelper {
-    //hellohjt
+    //hellohjtgdgdg
     // Database Version
     private static final int DATABASE_VERSION = 1;
 
@@ -324,6 +328,70 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     private static final String SHIFT_NO6 = "SHIFT_NO";
     private static final String SHIFT_NAME6 = "SHIFT_NAME";
     private static final String ACTIVE6 = "ACTIVITY";
+
+    //____________________________________________________________________________________
+    private static final String SHIFT_REGISTRATION = "SHIFT_REGISTRATION";
+
+    private static final String SHIFT_NO9 = "SHIFT_NO";
+    private static final String SHIFT_NAME9 = "SHIFT_NAME";
+    private static final String FROM_TIME9 = "FROM_TIME";
+    private static final String TO_TIME9 = "TO_TIME";
+
+    //____________________________________________________________________________________
+    private static final String BLIND_SHIFT_IN = "BLIND_SHIFT_IN";
+
+    private static final String DATE10 = "DATE";
+    private static final String TIME10 = "TIME";
+    private static final String POS_NO10 = "POS_NO";
+    private static final String SHIFT_NO10 = "SHIFT_NO";
+    private static final String SHIFT_NAME10 = "SHIFT_NAME";
+    private static final String USER_NO10 = "USER_NO";
+    private static final String USER_NAME10 = "USER_NAME";
+    private static final String STATUS10 = "STATUS";
+
+    //____________________________________________________________________________________
+    private static final String BLIND_CLOSE = "BLIND_CLOSE";
+
+    private static final String TRANS_NO11 = "TRANS_NO";
+    private static final String DATE11 = "DATE";
+    private static final String TIME11 = "TIME";
+    private static final String POS_NO11 = "POS_NO";
+    private static final String SHIFT_NO11 = "SHIFT_NO";
+    private static final String SHIFT_NAME11 = "SHIFT_NAME";
+    private static final String USER_NO11 = "USER_NO";
+    private static final String USER_NAME11 = "USER_NAME";
+    private static final String SYS_SALES11 = "SYS_SALES";
+    private static final String USER_SALES11 = "USER_SALES";
+    private static final String SALES_DIFF11 = "SALES_DIFF";
+    private static final String SYS_CASH11 = "SYS_CASH";
+    private static final String USER_CASH11 = "USER_CASH";
+    private static final String CASH_DIFF11 = "CASH_DIFF";
+    private static final String SYS_OTHER_PAYMENTS11 = "SYS_OTHER_PAYMENTS";
+    private static final String USER_OTHER_PAYMENTS11 = "USER_OTHER_PAYMENTS";
+    private static final String OTHER_PAYMENTS_DIFF11 = "OTHER_PAYMENTS_DIFF";
+    private static final String TILL_OK11 = "TILL_OK";
+    private static final String TRANS_TYPE11 = "TRANS_TYPE";
+
+    //____________________________________________________________________________________
+    private static final String BLIND_CLOSE_DETAILS = "BLIND_CLOSE_DETAILS";
+
+    private static final String TRANS_NO12 = "TRANS_NO";
+    private static final String DATE12 = "DATE";
+    private static final String TIME12 = "TIME";
+    private static final String POS_NO12 = "POS_NO";
+    private static final String SHIFT_NO12 = "SHIFT_NO";
+    private static final String SHIFT_NAME12 = "SHIFT_NAME";
+    private static final String USER_NO12 = "USER_NO";
+    private static final String USER_NAME12 = "USER_NAME";
+    private static final String CAT_NAME12 = "CAT_NAME";
+    private static final String CAT_QTY12 = "CAT_QTY";
+    private static final String CAT_VALUE12 = "CAT_VALUE";
+    private static final String CAT_TOTAL12 = "CAT_TOTAL";
+    private static final String TYPE12 = "TYPE";
+    private static final String UPDATE_DATE12 = "UPDATE_DATE";
+    private static final String UPDATE_TIME12 = "UPDATE_TIME";
+    private static final String UPDATE_USER_NO12 = "UPDATE_USER_NO";
+    private static final String UPDATE_USER_NAME12 = "UPDATE_USER_NAME";
 
     //________________________________________________________________________________________
     private static final String EMPLOYEE_REGISTRATION_TABLE = "EMPLOYEE_REGISTRATION_TABLE";
@@ -737,6 +805,75 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                 + SHIFT_NO6 + " INTEGER,"
                 + SHIFT_NAME6 + " TEXT" + ")";
         db.execSQL(CREATE_MEMBER_SHIP_MANAGEMENT_GROUP_TABLES);
+
+        //___________________________________________________________________________________
+
+        String CREATE_TABLE_SHIFT_REGISTRATION = "CREATE TABLE " + SHIFT_REGISTRATION + "("
+                + SHIFT_NO9 + " INTEGER,"
+                + SHIFT_NAME9 + " TEXT,"
+                + FROM_TIME9 + " TEXT,"
+                + TO_TIME9 + " TEXT" + ")";
+        db.execSQL(CREATE_TABLE_SHIFT_REGISTRATION);
+
+        //___________________________________________________________________________________
+
+        String CREATE_TABLE_BLIND_SHIFT_IN = "CREATE TABLE " + BLIND_SHIFT_IN + "("
+                + DATE10 + " TEXT,"
+                + TIME10 + " TEXT,"
+                + POS_NO10 + " INTEGER,"
+                + SHIFT_NO10 + " INTEGER,"
+                + SHIFT_NAME10 + " TEXT,"
+                + USER_NO10 + " INTEGER,"
+                + USER_NAME10 + " TEXT,"
+                + STATUS10 + " INTEGER" + ")";
+        db.execSQL(CREATE_TABLE_BLIND_SHIFT_IN);
+
+        //___________________________________________________________________________________
+
+        String CREATE_TABLE_BLIND_CLOSE = "CREATE TABLE " + BLIND_CLOSE + "("
+                + TRANS_NO11 + " INTEGER,"
+                + DATE11 + " TEXT,"
+                + TIME11 + " TEXT,"
+                + POS_NO11 + " INTEGER,"
+                + SHIFT_NO11 + " INTEGER,"
+                + SHIFT_NAME11 + " TEXT,"
+                + USER_NO11 + " INTEGER,"
+                + USER_NAME11 + " TEXT,"
+                + SYS_SALES11 + " INTEGER,"
+                + USER_SALES11 + " TEXT,"
+                + SALES_DIFF11 + " INTEGER,"
+                + SYS_CASH11 + " INTEGER,"
+                + USER_CASH11 + " INTEGER,"
+                + CASH_DIFF11 + " INTEGER,"
+                + SYS_OTHER_PAYMENTS11 + " INTEGER,"
+                + USER_OTHER_PAYMENTS11 + " INTEGER,"
+                + OTHER_PAYMENTS_DIFF11 + " INTEGER,"
+                + TILL_OK11 + " INTEGER,"
+                + TRANS_TYPE11 + " INTEGER" + ")";
+        db.execSQL(CREATE_TABLE_BLIND_CLOSE);
+
+        //___________________________________________________________________________________
+
+        String CREATE_TABLE_BLIND_CLOSE_DETAILS = "CREATE TABLE " + BLIND_CLOSE_DETAILS + "("
+                + TRANS_NO12 + " INTEGER,"
+                + DATE12 + " TEXT,"
+                + TIME12 + " TEXT,"
+                + POS_NO12 + " INTEGER,"
+                + SHIFT_NO12 + " INTEGER,"
+                + SHIFT_NAME12 + " TEXT,"
+                + USER_NO12 + " INTEGER,"
+                + USER_NAME12 + " TEXT,"
+                + CAT_NAME12 + " TEXT,"
+                + CAT_QTY12 + " INTEGER,"
+                + CAT_VALUE12 + " INTEGER,"
+                + CAT_TOTAL12 + " INTEGER,"
+                + TYPE12 + " TEXT,"
+                + UPDATE_DATE12 + " TEXT,"
+                + UPDATE_TIME12 + " TEXT,"
+                + UPDATE_USER_NO12 + " INTEGER,"
+                + UPDATE_USER_NAME12 + " TEXT" + ")";
+        db.execSQL(CREATE_TABLE_BLIND_CLOSE_DETAILS);
+
         //___________________________________________________________________________________
 
         String CREATE_TABLE_EMPLOYEE_REGISTRATION_TABLE = "CREATE TABLE " + EMPLOYEE_REGISTRATION_TABLE + "("
@@ -812,7 +949,12 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS " + EMPLOYEE_REGISTRATION_TABLE);//20
         db.execSQL("DROP TABLE IF EXISTS " + CUSTOMER_REGISTRATION_TABLE);//21
         db.execSQL("DROP TABLE IF EXISTS " + ORDER_TRANSACTIONS_TEMP);  //22
-        db.execSQL("DROP TABLE IF EXISTS " + ORDER_HEADER_TEMP); //22
+        db.execSQL("DROP TABLE IF EXISTS " + ORDER_HEADER_TEMP); //23
+        db.execSQL("DROP TABLE IF EXISTS " + MEMBER_SHIP_GROUP_MANAGEMENT_TABLE); //24
+        db.execSQL("DROP TABLE IF EXISTS " + SHIFT_REGISTRATION); //25
+        db.execSQL("DROP TABLE IF EXISTS " + BLIND_SHIFT_IN); //26
+        db.execSQL("DROP TABLE IF EXISTS " + BLIND_CLOSE); //27
+        db.execSQL("DROP TABLE IF EXISTS " + BLIND_CLOSE_DETAILS); //28
         // Create tables again
         onCreate(db);
     }
@@ -952,6 +1094,62 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
             db.insert(CASHIER_IN_OUT, null, values);
         }
+        db.close();
+    }
+
+    public void addBlindClose(BlindClose obj) {
+        db = this.getReadableDatabase();
+        ContentValues values = new ContentValues();
+
+        values.put(TRANS_NO11, obj.getTransNo());
+        values.put(DATE11, obj.getDate());
+        values.put(TIME11, obj.getTime());
+        values.put(POS_NO11, obj.getPOSNo());
+        values.put(SHIFT_NO11, obj.getShiftNo());
+        values.put(SHIFT_NAME11, obj.getShiftName());
+        values.put(USER_NO11, obj.getUserNo());
+        values.put(USER_NAME11, obj.getUserName());
+        values.put(SYS_SALES11, obj.getSysSales());
+        values.put(USER_SALES11, obj.getUserSales());
+        values.put(SALES_DIFF11, obj.getSalesDiff());
+        values.put(SYS_CASH11, obj.getSysCash());
+        values.put(USER_CASH11, obj.getUserCash());
+        values.put(CASH_DIFF11, obj.getCashDiff());
+        values.put(SYS_OTHER_PAYMENTS11, obj.getSysOthers());
+        values.put(USER_OTHER_PAYMENTS11, obj.getUserOthers());
+        values.put(OTHER_PAYMENTS_DIFF11, obj.getOthersDiff());
+        values.put(TILL_OK11, obj.getTillOk());
+        values.put(TRANS_TYPE11, obj.getTransType());
+
+        db.insert(BLIND_CLOSE, null, values);
+
+        db.close();
+    }
+
+    public void addBlindCloseDetails(BlindCloseDetails obj) {
+        db = this.getReadableDatabase();
+        ContentValues values = new ContentValues();
+
+        values.put(TRANS_NO12, obj.getTransNo());
+        values.put(DATE12, obj.getDate());
+        values.put(TIME12, obj.getTime());
+        values.put(POS_NO12, obj.getPOSNo());
+        values.put(SHIFT_NO12, obj.getShiftNo());
+        values.put(SHIFT_NAME12, obj.getShiftName());
+        values.put(USER_NO12, obj.getUserNo());
+        values.put(USER_NAME12, obj.getUserName());
+        values.put(CAT_NAME12, obj.getCatName());
+        values.put(CAT_QTY12, obj.getCatQty());
+        values.put(CAT_VALUE12, obj.getCatValue());
+        values.put(CAT_TOTAL12, obj.getCatTotal());
+        values.put(TYPE12, obj.getType());
+        values.put(UPDATE_DATE12, obj.getUpdateDate());
+        values.put(UPDATE_TIME12, obj.getUpdateTime());
+        values.put(UPDATE_USER_NO12, obj.getUpdateUserNo());
+        values.put(UPDATE_USER_NAME12, obj.getUpdateUserName());
+
+        db.insert(BLIND_CLOSE_DETAILS, null, values);
+
         db.close();
     }
 
@@ -1309,6 +1507,38 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         db.close();
     }
 
+    public void addShift(Shift shift) {
+        db = this.getReadableDatabase();
+        ContentValues values = new ContentValues();
+
+        values.put(SHIFT_NO9, shift.getShiftNo());
+        values.put(SHIFT_NAME9, shift.getShiftName());
+        values.put(FROM_TIME9, shift.getFromTime());
+        values.put(TO_TIME9, shift.getToTime());
+
+        db.insert(SHIFT_REGISTRATION, null, values);
+
+        db.close();
+    }
+
+    public void addBlindShiftInOut(BlindShift blindShift) {
+        db = this.getReadableDatabase();
+        ContentValues values = new ContentValues();
+
+        values.put(DATE10, blindShift.getDate());
+        values.put(TIME10, blindShift.getTime());
+        values.put(POS_NO10, blindShift.getPosNo());
+        values.put(SHIFT_NO10, blindShift.getShiftNo());
+        values.put(SHIFT_NAME10, blindShift.getShiftName());
+        values.put(USER_NO10, blindShift.getUserNo());
+        values.put(USER_NAME10, blindShift.getUserName());
+        values.put(STATUS10, blindShift.getStatus());
+
+        db.insert(BLIND_SHIFT_IN, null, values);
+
+        db.close();
+    }
+
     public void addEmployeeRegistration(EmployeeRegistrationModle employeeRegistrationModle) {
         db = this.getReadableDatabase();
         ContentValues values = new ContentValues();
@@ -1620,7 +1850,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
         if (cursor.moveToFirst()) {
             do {
-                OrderTransactions item = new OrderTransactions(); 
+                OrderTransactions item = new OrderTransactions();
 
                 item.setOrderType(Integer.parseInt(cursor.getString(0)));
                 item.setOrderKind(Integer.parseInt(cursor.getString(1)));
@@ -2279,6 +2509,123 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         return memberShipGroups;
     }
 
+    public ArrayList<Shift> getAllShifts() {
+        ArrayList<Shift> shifts = new ArrayList<>();
+
+        String selectQuery = "SELECT * FROM " + SHIFT_REGISTRATION;
+        db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+
+        if (cursor.moveToFirst()) {
+            do {
+                Shift shift = new Shift();
+
+                shift.setShiftNo(Integer.parseInt(cursor.getString(0)));
+                shift.setShiftName(cursor.getString(1));
+                shift.setFromTime(cursor.getString(2));
+                shift.setToTime(cursor.getString(3));
+
+                shifts.add(shift);
+
+            } while (cursor.moveToNext());
+        }
+        return shifts;
+    }
+
+    public BlindShift getOpenedShifts(String date, int status) {
+        BlindShift shift = new BlindShift();
+
+        String selectQuery = "SELECT * FROM " + BLIND_SHIFT_IN + " where DATE = '" + date + "' and STATUS = '" + status + "'";
+        db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+
+        if (cursor.moveToFirst()) {
+
+            shift.setDate(cursor.getString(0));
+            shift.setTime(cursor.getString(1));
+            shift.setPosNo(Integer.parseInt(cursor.getString(2)));
+            shift.setShiftNo(Integer.parseInt(cursor.getString(3)));
+            shift.setShiftName(cursor.getString(4));
+            shift.setUserNo(Integer.parseInt(cursor.getString(5)));
+            shift.setUserName(cursor.getString(6));
+            shift.setStatus(Integer.parseInt(cursor.getString(7)));
+        }
+        return shift;
+    }
+
+    public ArrayList<BlindClose> getAllBlindClose() {
+        ArrayList<BlindClose> shifts = new ArrayList<>();
+
+        String selectQuery = "SELECT * FROM " + BLIND_CLOSE;
+        db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+
+        if (cursor.moveToFirst()) {
+            do {
+                BlindClose shift = new BlindClose();
+
+                shift.setTransNo(Integer.parseInt(cursor.getString(0)));
+                shift.setDate(cursor.getString(1));
+                shift.setTime(cursor.getString(2));
+                shift.setPOSNo(Integer.parseInt(cursor.getString(3)));
+                shift.setShiftNo(Integer.parseInt(cursor.getString(4)));
+                shift.setShiftName(cursor.getString(5));
+                shift.setUserNo(Integer.parseInt(cursor.getString(6)));
+                shift.setUserName(cursor.getString(7));
+                shift.setSysSales(Double.parseDouble(cursor.getString(8)));
+                shift.setUserSales(Double.parseDouble(cursor.getString(9)));
+                shift.setSalesDiff(Double.parseDouble(cursor.getString(10)));
+                shift.setSysCash(Double.parseDouble(cursor.getString(11)));
+                shift.setUserCash(Double.parseDouble(cursor.getString(12)));
+                shift.setCashDiff(Double.parseDouble(cursor.getString(13)));
+                shift.setSysOthers(Double.parseDouble(cursor.getString(14)));
+                shift.setUserOthers(Double.parseDouble(cursor.getString(15)));
+                shift.setOthersDiff(Double.parseDouble(cursor.getString(16)));
+                shift.setTillOk(Integer.parseInt(cursor.getString(17)));
+                shift.setTransType(Integer.parseInt(cursor.getString(18)));
+
+                shifts.add(shift);
+
+            } while (cursor.moveToNext());
+        }
+        return shifts;
+    }
+
+    public ArrayList<BlindCloseDetails> getAllBlindCloseDetails() {
+        ArrayList<BlindCloseDetails> shifts = new ArrayList<>();
+
+        String selectQuery = "SELECT * FROM " + BLIND_CLOSE_DETAILS;
+        db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+
+        if (cursor.moveToFirst()) {
+            do {
+                BlindCloseDetails shift = new BlindCloseDetails();
+
+                shift.setTransNo(Integer.parseInt(cursor.getString(0)));
+                shift.setDate(cursor.getString(1));
+                shift.setTime(cursor.getString(2));
+                shift.setPOSNo(Integer.parseInt(cursor.getString(3)));
+                shift.setShiftNo(Integer.parseInt(cursor.getString(4)));
+                shift.setShiftName(cursor.getString(5));
+                shift.setUserNo(Integer.parseInt(cursor.getString(6)));
+                shift.setUserName(cursor.getString(7));
+                shift.setCatName(cursor.getString(8));
+                shift.setCatQty(Integer.parseInt(cursor.getString(9)));
+                shift.setCatValue(Double.parseDouble(cursor.getString(10)));
+                shift.setCatTotal(Double.parseDouble(cursor.getString(11)));
+                shift.setType(cursor.getString(12));
+                shift.setUpdateDate(cursor.getString(13));
+                shift.setUpdateTime(cursor.getString(14));
+                shift.setUpdateUserNo(Integer.parseInt(cursor.getString(15)));
+                shift.setUpdateUserName(cursor.getString(16));
+
+                shifts.add(shift);
+
+            } while (cursor.moveToNext());
+        }
+        return shifts;
+    }
 
     public ArrayList<CustomerRegistrationModel> getAllCustomerRegistration() {
         ArrayList<CustomerRegistrationModel> customerRegistrationModels = new ArrayList<>();
@@ -2369,6 +2716,82 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         db.update(USED_CATEGORIES, values, CATEGORY_NAME + " = '" + usedCategories.getCategoryName() + "'", null);
     }
 
+    public void moveTablesTemp(int oldSectionNo, int oldTableNo, int sectionNo, int tableNo) {
+        db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        ContentValues values2 = new ContentValues();
+
+        values.put(SECTION_NO1, sectionNo);
+        values.put(TABLE_NO1, tableNo);
+
+        values2.put(SECTION_NUMBER2, sectionNo);
+        values2.put(TABLE_NUMBER2, tableNo);
+
+        db.update(ORDER_TRANSACTIONS_TEMP, values, SECTION_NO1 + " = '" + oldSectionNo + "' and " + TABLE_NO1 + " = '" + oldTableNo + "'", null);
+        db.update(ORDER_HEADER_TEMP, values2, SECTION_NUMBER2 + " = '" + oldSectionNo + "' and " + TABLE_NUMBER2 + " = '" + oldTableNo + "'", null);
+    }
+
+    public void mergeTablesTemp(int oldSectionNo, int oldTableNo, int sectionNo, int tableNo) {
+        db = this.getWritableDatabase();
+
+        String selectQuery = "SELECT VOUCHER_SERIAL , VOUCHER_NO FROM " + ORDER_TRANSACTIONS_TEMP + " WHERE SECTION_NO = '" + sectionNo + "' and TABLE_NO = '" + tableNo + "'";
+        db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+
+        String voucherSerial = "", voucherNo = "";
+        if (cursor.moveToFirst()) {
+            voucherSerial = cursor.getString(0);
+            voucherNo = cursor.getString(1);
+        }
+        ContentValues values = new ContentValues();
+
+        values.put(SECTION_NO1, sectionNo);
+        values.put(TABLE_NO1, tableNo);
+        values.put(VOUCHER_NO1, voucherNo);
+        values.put(VOUCHER_SERIAL1, voucherSerial);
+
+        db.update(ORDER_TRANSACTIONS_TEMP, values, SECTION_NO1 + " = '" + oldSectionNo + "' and " + TABLE_NO1 + " = '" + oldTableNo + "'", null);
+        //______________________________________________________
+
+        String selectQuery2 = "SELECT TOTAL , TOTAL_DISCOUNT , TOTAL_LINE_DISCOUNT , ALL_DISCOUNT  , SUB_TOTAL , AMOUNT_DUE " +
+                "FROM " + ORDER_HEADER_TEMP + " WHERE SECTION_NUMBER = '" + oldSectionNo + "' and TABLE_NUMBER = '" + oldTableNo + "'";
+
+        String selectQuery3 = "SELECT TOTAL , TOTAL_DISCOUNT , TOTAL_LINE_DISCOUNT , ALL_DISCOUNT  , SUB_TOTAL , AMOUNT_DUE " +
+                "FROM " + ORDER_HEADER_TEMP + " WHERE SECTION_NUMBER = '" + sectionNo + "' and TABLE_NUMBER = '" + tableNo + "'";
+
+        db = this.getWritableDatabase();
+        Cursor cursor2 = db.rawQuery(selectQuery2, null);
+        Cursor cursor3 = db.rawQuery(selectQuery3, null);
+
+        Double total = 0.0, totalDis = 0.0, totalLineDis = 0.0, allDis = 0.0, subTotal = 0.0, amountDue = 0.0;
+        if (cursor2.moveToFirst()) {
+            total = cursor2.getDouble(0);
+            totalDis = cursor2.getDouble(1);
+            totalLineDis = cursor2.getDouble(2);
+            allDis = cursor2.getDouble(3);
+            subTotal = cursor2.getDouble(4);
+            amountDue = cursor2.getDouble(5);
+        }
+        if (cursor3.moveToFirst()) {
+            total += cursor3.getDouble(0);
+            totalDis += cursor3.getDouble(1);
+            totalLineDis += cursor3.getDouble(2);
+            allDis += cursor3.getDouble(3);
+            subTotal += cursor3.getDouble(4);
+            amountDue += cursor3.getDouble(5);
+        }
+        ContentValues values2 = new ContentValues();
+        values2.put(TOTAL2, total);
+        values2.put(TOTAL_DISCOUNT2, totalDis);
+        values2.put(TOTAL_LINE_DISCOUNT2, totalLineDis);
+        values2.put(ALL_DISCOUNT2, allDis);
+        values2.put(SUB_TOTAL2, subTotal);
+        values2.put(AMOUNT_DUE2, amountDue);
+
+        db.update(ORDER_HEADER_TEMP, values2, SECTION_NUMBER2 + " = '" + sectionNo + "' and " + TABLE_NUMBER2 + " = '" + tableNo + "'", null);
+        db.execSQL("delete from " + ORDER_HEADER_TEMP +
+                " where " + SECTION_NUMBER2 + " = '" + oldSectionNo + "' and " + TABLE_NUMBER2 + " = '" + oldTableNo + "'");
+    }
 
     public void deleteAllUsedCategories() {
         SQLiteDatabase db = this.getWritableDatabase();
