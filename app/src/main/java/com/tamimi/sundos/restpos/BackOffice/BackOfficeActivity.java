@@ -2,11 +2,10 @@ package com.tamimi.sundos.restpos.BackOffice;
 
 import android.app.DatePickerDialog;
 import android.app.Dialog;
+import android.app.TimePickerDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Log;
@@ -27,9 +26,11 @@ import android.widget.Spinner;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
+import android.widget.TimePicker;
 import android.widget.Toast;
 
 import com.tamimi.sundos.restpos.DatabaseHandler;
+import com.tamimi.sundos.restpos.Main;
 import com.tamimi.sundos.restpos.Models.CategoryWithModifier;
 import com.tamimi.sundos.restpos.Models.CustomerPayment;
 import com.tamimi.sundos.restpos.Models.ForceQuestions;
@@ -40,12 +41,12 @@ import com.tamimi.sundos.restpos.Models.JobGroup;
 import com.tamimi.sundos.restpos.Models.MemberShipGroup;
 import com.tamimi.sundos.restpos.Models.Modifier;
 import com.tamimi.sundos.restpos.Models.Money;
-import com.tamimi.sundos.restpos.Models.OrderHeader;
 import com.tamimi.sundos.restpos.Models.PayMethod;
+import com.tamimi.sundos.restpos.Models.Shift;
+import com.tamimi.sundos.restpos.Order;
 import com.tamimi.sundos.restpos.R;
 import com.tamimi.sundos.restpos.Settings;
 
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -72,19 +73,17 @@ public class BackOfficeActivity extends AppCompatActivity {
             salesReportForDay, salesByHours, salesVolumeByItem, topSalesItemReport, topGroupSalesReport, topFamilySalesReport,
             salesReportByCustomer, profitLossReport, detailSalesReport;
 
-    private DatePickerDialog.OnDateSetListener mdate;
     int count, count2;
-    TextView test = null, fromDate, toDate;
     Dialog dialog;
     String today;
     DatabaseHandler mDHandler;
     Bitmap imageBitmap = null;
     ImageView moneyPicImageView = null;
 
-    ArrayList<OrderHeader> headerData;
-
     TableRow focusedRaw = null;
     int rawPosition = 0;
+
+    Calendar myCalendar ;
 
     ArrayList<ItemWithFq> itemWithFqsList;
     ArrayList<ItemWithModifier> itemWithModifiersList;
@@ -153,6 +152,7 @@ public class BackOfficeActivity extends AppCompatActivity {
                     break;
 
                 case R.id.employee_click_out:
+                    showAddShiftDialog();
                     break;
 
                 case R.id.menu_search:
@@ -222,6 +222,7 @@ public class BackOfficeActivity extends AppCompatActivity {
                     break;
 
                 case R.id.users:
+
                     break;
 
                 case R.id.money_category:
@@ -229,9 +230,6 @@ public class BackOfficeActivity extends AppCompatActivity {
                     break;
 
                 case R.id.sales_total:
-
-                    salesTotalDialog();
-
                     break;
 
                 case R.id.cashier_in_out:
@@ -1008,233 +1006,6 @@ public class BackOfficeActivity extends AppCompatActivity {
         dialog.show();
     }
 
-
-    void salesTotalDialog() {
-        dialog = new Dialog(BackOfficeActivity.this);
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        dialog.setCancelable(false);
-        dialog.setContentView(R.layout.sales_total_dialog);
-        dialog.setCanceledOnTouchOutside(true);
-
-        final int[] posNoString = {-1};
-        final String[] shiftNameString = {"All"};
-        final String[] userString = {"All"};
-
-        final TextView salesText, returnsText, netSalesText, salesDiscountText, returnsDiscountText, netDiscountText, salesServiceText, returnsServiceText, netServiceText, cashText,
-                visaText, masterText, chequeText, netPayMethodText, pointText, giftText, creditText;
-        final Spinner shiftName, posNo, users;
-        Button done, exit;
-
-        done = (Button) dialog.findViewById(R.id.doneReport);
-        exit = (Button) dialog.findViewById(R.id.exitReport);
-
-        shiftName = (Spinner) dialog.findViewById(R.id.shiftName);
-        posNo = (Spinner) dialog.findViewById(R.id.posNo);
-        users = (Spinner) dialog.findViewById(R.id.user);
-
-        fromDate = (TextView) dialog.findViewById(R.id.fDate);
-        toDate = (TextView) dialog.findViewById(R.id.tDate);
-        salesText = (TextView) dialog.findViewById(R.id.sales);
-        returnsText = (TextView) dialog.findViewById(R.id.returns);
-        netSalesText = (TextView) dialog.findViewById(R.id.netSales);
-        salesDiscountText = (TextView) dialog.findViewById(R.id.salesDiscount);
-        returnsDiscountText = (TextView) dialog.findViewById(R.id.returnDiscount);
-        netDiscountText = (TextView) dialog.findViewById(R.id.netDiscount);
-        salesServiceText = (TextView) dialog.findViewById(R.id.salesService);
-        returnsServiceText = (TextView) dialog.findViewById(R.id.returnServis);
-        netServiceText = (TextView) dialog.findViewById(R.id.netService);
-        cashText = (TextView) dialog.findViewById(R.id.cash);
-        visaText = (TextView) dialog.findViewById(R.id.visa);
-        masterText = (TextView) dialog.findViewById(R.id.master);
-        chequeText = (TextView) dialog.findViewById(R.id.cheque);
-        netPayMethodText = (TextView) dialog.findViewById(R.id.totalPay);
-        pointText = (TextView) dialog.findViewById(R.id.points);
-        giftText = (TextView) dialog.findViewById(R.id.gifts);
-        creditText = (TextView) dialog.findViewById(R.id.credits);
-
-        Date currentTimeAndDate = Calendar.getInstance().getTime();
-        SimpleDateFormat df = new SimpleDateFormat("dd-MM-yyyy");
-        today = df.format(currentTimeAndDate);
-
-        fromDate.setText(today);
-        toDate.setText(today);
-        ArrayList<String> shiftNumberArray = new ArrayList<>();
-        ArrayList<String> userArray = new ArrayList<>();
-        ArrayList<String> posNoArray = new ArrayList<>();
-
-        shiftNumberArray.add("All");
-        shiftNumberArray.add("ahmad");
-        shiftNumberArray.add("B");
-        userArray.add("All");
-        userArray.add("salll");
-        posNoArray.add("All");
-        posNoArray.add("4");
-        posNoArray.add("7");
-
-
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(BackOfficeActivity.this, R.layout.spinner_style, shiftNumberArray);
-        shiftName.setAdapter(adapter);
-
-        ArrayAdapter<String> adapterUser = new ArrayAdapter<>(BackOfficeActivity.this, R.layout.spinner_style, userArray);
-        users.setAdapter(adapterUser);
-
-        ArrayAdapter<String> adapterPosNo = new ArrayAdapter<>(BackOfficeActivity.this, R.layout.spinner_style, posNoArray);
-        posNo.setAdapter(adapterPosNo);
-
-        headerData = new ArrayList<OrderHeader>();
-
-        headerData = mDHandler.getAllOrderHeader();
-
-        fromDate.setOnClickListener(dateClick);
-        toDate.setOnClickListener(dateClick);
-
-        mdate = new DatePickerDialog.OnDateSetListener() {
-            @Override
-            public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
-                test.setText(dayOfMonth + "-" + month + "-" + year);
-                Log.e("date ",""+dayOfMonth + "-" + month + "-" + year);
-            }
-        };
-
-        done.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                double sales = 0.0, returns = 0.0, allDiscountSales = 0.0, allDiscountReturn = 0.0,
-                        totalServiceSales = 0.0, totalServiceReturn = 0.0, cashValue = 0.0, pointValue = 0.0, visaValue = 0.0, masterValue = 0.0, giftValue = 0.0, creditValue = 0.0, chequeValue = 0.0, netSales = 0.0, netPayMethod = 0.0, netDiscount = 0.0, netService = 0.0;
-
-                userString[0] = users.getSelectedItem().toString();
-                shiftNameString[0] = shiftName.getSelectedItem().toString();
-
-               if(posNo.getSelectedItem().toString().equals("All")){
-                   posNoString[0]=-1;
-               }else{ posNoString[0]=Integer.parseInt(posNo.getSelectedItem().toString());}
-
-                for (int i = 0; i < headerData.size(); i++) {
-                    if (filters(i)) {//1
-                        if (headerData.get(i).getShiftName().equals(shiftNameString[0]) || shiftNameString[0].equals("All")) {
-                            if ( headerData.get(i).getWaiter().equals(userString[0]) ||userString[0].equals("All")) {
-                                if (headerData.get(i).getPointOfSaleNumber()==posNoString[0]|| posNoString[0]==-1) {
-                                    if (headerData.get(i).getOrderKind() == 0) {
-                                        sales += headerData.get(i).getAmountDue();
-                                        allDiscountSales += headerData.get(i).getAllDiscount();
-                                        totalServiceSales += headerData.get(i).getTotalService();
-                                    } else if (headerData.get(i).getOrderKind() == 998) {
-                                        returns += headerData.get(i).getAmountDue();
-                                        allDiscountReturn += headerData.get(i).getAllDiscount();
-                                        totalServiceReturn += headerData.get(i).getTotalService();
-                                    }
-
-//                        if(headerData.get(i).) {     ///in this side we must
-                                    visaValue += headerData.get(i).getCardsValue();
-                                    masterValue += headerData.get(i).getCardsValue();
-//                        }
-                                    cashValue += headerData.get(i).getCashValue();
-                                    pointValue += headerData.get(i).getPointValue();
-                                    giftValue += headerData.get(i).getGiftValue();
-                                    creditValue += headerData.get(i).getCouponValue();  /////???? replace coupon to credit """"
-                                    chequeValue += headerData.get(i).getChequeValue();
-
-                                }
-                            }
-                        }
-                    }//else 1
-                }
-                netSales = sales - returns;
-                netDiscount = allDiscountSales - allDiscountReturn;
-                netService = totalServiceSales - totalServiceReturn;
-                netPayMethod = cashValue + pointValue + visaValue + masterValue + giftValue + creditValue + chequeValue;
-
-                salesText.setText("" + sales);
-                returnsText.setText("" + returns);
-                netSalesText.setText("" + netSales);
-
-                cashText.setText("" + cashValue);
-                pointText.setText("" + pointValue);
-                creditText.setText("" + creditValue);
-                giftText.setText("" + giftValue);
-                visaText.setText("" + visaValue);
-                masterText.setText("" + masterValue);
-                chequeText.setText("" + chequeValue);
-                netPayMethodText.setText("" + netPayMethod);
-
-                salesDiscountText.setText("" + allDiscountSales);
-                returnsDiscountText.setText("" + allDiscountReturn);
-                netDiscountText.setText("" + netDiscount);
-
-
-                salesServiceText.setText("" + totalServiceSales);
-                returnsServiceText.setText("" + totalServiceReturn);
-                netServiceText.setText("" + netService);
-
-            }
-        });
-
-        exit.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dialog.dismiss();
-            }
-        });
-
-        dialog.show();
-
-    }
-
-    View.OnClickListener dateClick = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-
-            switch (v.getId()) {
-                case R.id.fDate:
-                    test = fromDate;
-                    break;
-
-                case R.id.tDate:
-                    test = toDate;
-                    break;
-            }
-
-            Calendar cal = Calendar.getInstance();
-            int year = cal.get(Calendar.YEAR);
-            int month = cal.get(Calendar.MONTH);
-            int day = cal.get(Calendar.DAY_OF_WEEK);
-
-            DatePickerDialog dialogs = new DatePickerDialog(BackOfficeActivity.this, android.R.style.Theme_DeviceDefault_DialogWhenLarge, mdate, year, month, day);
-            dialogs.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));//Theme_Holo_Dialog_MinWidth
-            dialogs.show();
-
-        }
-    };
-
-    public boolean filters(int n) {
-
-
-        String fromDate1 = fromDate.getText().toString().trim();
-        String toDate1 = toDate.getText().toString();
-
-        String date = headerData.get(n).getVoucherDate();
-
-        try {
-
-            if ((formatDate(date).after(formatDate(fromDate1)) || formatDate(date).equals(formatDate(fromDate1))) &&
-                    (formatDate(date).before(formatDate(toDate1)) || formatDate(date).equals(formatDate(toDate1))))
-                return true;
-
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-
-        return false;
-    }
-
-    public Date formatDate(String date) throws ParseException {
-
-        String myFormat = "dd-MM-yyyy"; //In which you need put here
-        SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
-        Date d = sdf.parse(date);
-        return d;
-    }
-
     void showJobGroupDialog() {
         dialog = new Dialog(BackOfficeActivity.this);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -1315,6 +1086,156 @@ public class BackOfficeActivity extends AppCompatActivity {
 
         dialog.show();
 
+    }
+
+    void showAddShiftDialog() {
+        dialog = new Dialog(BackOfficeActivity.this);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setCancelable(false);
+        dialog.setContentView(R.layout.add_shift_dialog);
+        dialog.setCanceledOnTouchOutside(true);
+
+        final TableLayout tableLayout = dialog.findViewById(R.id.tableLayout1);
+        final EditText shiftNo = dialog.findViewById(R.id.shift_no);
+        final EditText shiftName = dialog.findViewById(R.id.shift_name);
+        final EditText fromTime = dialog.findViewById(R.id.from);
+        final EditText toTime = dialog.findViewById(R.id.to);
+        Button add = dialog.findViewById(R.id.add);
+        Button save = dialog.findViewById(R.id.save);
+        Button exit = dialog.findViewById(R.id.exit);
+
+        fromTime.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // TODO Auto-generated method stub
+                final Calendar c = Calendar.getInstance();
+                int mHour = c.get(Calendar.HOUR_OF_DAY);
+                int mMinute = c.get(Calendar.MINUTE);
+
+                TimePickerDialog timePickerDialog = new TimePickerDialog(BackOfficeActivity.this,
+                        new TimePickerDialog.OnTimeSetListener() {
+                            @Override
+                            public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+                                String AM_PM ;
+                                if(hourOfDay < 12) {
+                                    AM_PM = "AM";
+
+                                } else {
+                                    AM_PM = "PM";
+                                    hourOfDay -= 12;
+                                }
+                                fromTime.setText(hourOfDay + ":" + minute + " " + AM_PM);
+                            }
+                        }, mHour, mMinute, false);
+                timePickerDialog.show();
+            }
+        });
+        toTime.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // TODO Auto-generated method stub
+                final Calendar c = Calendar.getInstance();
+                final int mHour = c.get(Calendar.HOUR_OF_DAY);
+                int mMinute = c.get(Calendar.MINUTE);
+
+                TimePickerDialog timePickerDialog = new TimePickerDialog(BackOfficeActivity.this,
+                        new TimePickerDialog.OnTimeSetListener() {
+                            @Override
+                            public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+                                String AM_PM ;
+                                if(hourOfDay < 12) {
+                                    AM_PM = "AM";
+
+                                } else {
+                                    AM_PM = "PM";
+                                    hourOfDay -= 12;
+                                }
+                                toTime.setText(hourOfDay + ":" + minute + " " + AM_PM);
+                            }
+                        }, mHour, mMinute, false);
+                timePickerDialog.show();
+            }
+        });
+        add.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (!shiftNo.getText().toString().equals("") && !shiftName.getText().toString().equals("") &&
+                        !fromTime.getText().toString().equals("") && !toTime.getText().toString().equals("")) {
+
+                    final TableRow row = new TableRow(BackOfficeActivity.this);
+
+                    TableLayout.LayoutParams lp = new TableLayout.LayoutParams();
+                    lp.setMargins(2, 0, 2, 0);
+                    row.setLayoutParams(lp);
+
+                    for (int i = 0; i < 4; i++) {
+                        TextView textView = new TextView(BackOfficeActivity.this);
+
+                        switch (i) {
+                            case 0:
+                                textView.setText(shiftNo.getText().toString());
+                                break;
+                            case 1:
+                                textView.setText(shiftName.getText().toString());
+                                break;
+                            case 2:
+                                textView.setText(fromTime.getText().toString());
+                                break;
+                            case 3:
+                                textView.setText(toTime.getText().toString());
+                                break;
+                        }
+
+                        textView.setTextColor(ContextCompat.getColor(BackOfficeActivity.this, R.color.text_color));
+                        textView.setGravity(Gravity.CENTER);
+
+                        TableRow.LayoutParams lp1 = new TableRow.LayoutParams(0, TableRow.LayoutParams.MATCH_PARENT, 1.0f);
+                        textView.setLayoutParams(lp1);
+
+                        row.addView(textView);
+                    }
+                    tableLayout.addView(row);
+
+                    shiftNo.setText("");
+                    shiftName.setText("");
+                    fromTime.setText("");
+                    toTime.setText("");
+
+                } else
+                    Toast.makeText(BackOfficeActivity.this, "please fill requested fields", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        save.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(tableLayout.getChildCount() != 0) {
+                    for (int i = 0; i < tableLayout.getChildCount(); i++) {
+                        TableRow tableRow = (TableRow) tableLayout.getChildAt(i);
+                        TextView shNo = (TextView) tableRow.getChildAt(0);
+                        TextView shName = (TextView) tableRow.getChildAt(1);
+                        TextView from = (TextView) tableRow.getChildAt(2);
+                        TextView to = (TextView) tableRow.getChildAt(3);
+
+                        mDHandler.addShift(new Shift(Integer.parseInt(shNo.getText().toString()), shName.getText().toString(),
+                                from.getText().toString(), to.getText().toString()));
+
+                        Toast.makeText(BackOfficeActivity.this, "saved !", Toast.LENGTH_SHORT).show();
+                        dialog.dismiss();
+                    }
+                } else
+                    Toast.makeText(BackOfficeActivity.this, "No shifts to be saved !", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        exit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialog.dismiss();
+            }
+        });
+
+        dialog.show();
     }
 
     void showMemberShipGroupDialog() {

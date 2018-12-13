@@ -78,6 +78,7 @@
     <string name="product_name">Pro-Name</string>
     <string name="unit_price">Price</string>
     <string name="total">Total</string>
+    <string name="main_total">Main Total</string>
     <string name="zero_decimal">0.00</string>
     <string name="delivery_change">Delivery Change</string>
     <string name="sub_total">Sub Total</string>
@@ -85,6 +86,7 @@
     <string name="service">Service</string>
     <string name="amount_due">Amount Due</string>
     <string name="cash">Cash</string>
+    <string name="other_payments">Other Payments</string>
     <string name="pay">Pay</string>
     <string name="credit_card">Credit Card</string>
     <string name="credit_card_name">Credit Card Name</string>
@@ -212,7 +214,7 @@
     <string name="modifiers">Modifiers</string>
 
     <string name="tender">Tender</string>
-    <string name="voucher_number">InVoucher Number</string>
+    <string name="voucher_number">Voucher Number</string>
     <string name="print_voucher_options">Print Voucher Options</string>
     <string name="cheque">Cheque</string>
     <string name="credit">Credit</string>
@@ -278,7 +280,7 @@
 
     <string name="customer_code"> Customer Code </string>
     <string name="member_ship_card"> Member Ship Card NO </string>
-    <string name="Gender"> Gender </string>
+    <string name="coender"> Coender </string>
     <string name="Male"> Male </string>
     <string name="Female"> Female </string>
     <string name="city"> City </string>
@@ -315,32 +317,16 @@
     <string name="Number_of_seats"> Number of seats </string>
     <string name="Children"> Children </string>
 
-    <string name="point_of_sale"> POS NO </string>
-    <string name="original_date"> Original Date : </string>
-    <string name="original_time"> Original Time : </string>
-    <string name="customer"> Customer : </string>
-    <string name="refund_QTY"> R.Qty </string>
-    <string name="refund_total"> R.Total </string>
-    <string name="table_numbers">Table NO : </string>
-    <string name="Disc"> Discount : </string>
-    <string name="Net_Total">Net Total : </string>
-    <string name="Total"> Total : </string>
-    <string name="payMethodRefund"> Pay Method Refund </string>
-    <string name="sales_totals">Sales Total</string>
-    <string name="returns">Return :</string>
-    <string name="net_sales">Net Sales :</string>
-    <string name="sales">Sales :</string>
-    <string name="user">User</string>
+    <string name="move_table">Move Table</string>
+    <string name="merge_table">Merge Table</string>
+    <string name="section">Section</string>
+    <string name="from">From</string>
+    <string name="to">To</string>
+
+    <string name="shift_registration">Shift Registration</string>
+    <string name="shift_no">Shift No</string>
     <string name="shift_name">Shift Name</string>
-    <string name="to_date">to Date :</string>
-    <string name="from_date">From Date :</string>
-    <string name="total_payMethod">Total PayMethod</string>
-    <string name="sales_discount">Sales Discount :</string>
-    <string name="returns_discount">Return Discount :</string>
-    <string name="net_Discount">Net Discount :</string>
-    <string name="sales_service">Sales Service :</string>
-    <string name="returns_service">Return Service :</string>
-    <string name="net_Service">Net Service :</string>
-    <string name="visa">Visa</string>
-    <string name="master">Master</string>
+    <string name="from_time">From Time</string>
+    <string name="to_time">To Time</string>
+
 </resources>
