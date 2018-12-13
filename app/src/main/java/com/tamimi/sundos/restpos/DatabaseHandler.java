@@ -1620,7 +1620,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
         if (cursor.moveToFirst()) {
             do {
-                OrderTransactions item = new OrderTransactions();
+                OrderTransactions item = new OrderTransactions(); 
 
                 item.setOrderType(Integer.parseInt(cursor.getString(0)));
                 item.setOrderKind(Integer.parseInt(cursor.getString(1)));
